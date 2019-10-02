@@ -192,8 +192,8 @@ class MapObjectTableViewer(QWidget):
 
     def deleteButtonClicked(self):
         r = self.tableView.currentIndex().row()
-        print('here')
-        print(self.queryModel.record(r).value('id'))
+        if DEBUG: print('here')
+        if DEBUG: print(self.queryModel.record(r).value('id'))
         self.DeleteSignal.emit(self.queryModel.record(r).value('id'))
         self.searchButtonClicked()
 

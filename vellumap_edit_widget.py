@@ -108,7 +108,7 @@ class MapEditorWidget(QWidget):
 
     #load style sheet from qss
     def loadStylesheet(self, filename):
-        print('loading style', filename)
+        if DEBUG: print('loading style', filename)
         file = QFile(filename)
         stylesheet = file.readAll()
         QApplication.instance().setStyleSheet(str(stylesheet, encoding='utf-8'))

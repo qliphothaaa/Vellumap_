@@ -34,7 +34,7 @@ class OpenMapDialog(QDialog):
         filter = "database (*.db)"
         filename, _ = QFileDialog.getOpenFileName(None, "Open File", "./db/", filter)
         if filename:
-            print(filename)
+            #print(filename)
             filename = re.split('/', filename)[-1]#get the last name on path
             filename = filename[:-3]#delete the ".db"
             self.fileNameSignal.emit(filename)

@@ -67,7 +67,6 @@ class MapObject(DataAccess):
     def setPosition(self, x, y):
         self.x = x
         self.y = y
-        print(x)
         self.grMapObject.setPos(x, y)
 
     def setName(self, name):
@@ -88,7 +87,6 @@ class MapObject(DataAccess):
     def generateSqlForRename(self, name):
         if DEBUG: print('OBJECT: connect to database, op:update Name:%s'%name)
         sql = "Update ObjectGraphic set Name = '%s' where (id = '%d');" % (name, self.id)
-        print(sql)
         return sql
 
     def generateSqlForAdd(self):

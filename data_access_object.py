@@ -1,6 +1,6 @@
 from PyQt5.QtSql import *
 import sys
-DEBUG = True
+DEBUG = False
 class DataAccess():
     def __init__(self):
         pass

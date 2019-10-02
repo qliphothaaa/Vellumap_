@@ -128,24 +128,19 @@ class Scene(DataAccess):
 
     def updateType(self, typeName):
         if DEBUG: print('SCENE:update object grpahic and type attribute after update type in database')
-        print('updateType')
+        if DEBUG: print('updateType')
         model = self.viewData('type')
         item = self.getTypeByName(typeName)
         for i in range(model.rowCount()):
             if model.record(i).value('name') == typeName:
                 databaseRecord = model.record(i)
                 item.update(databaseRecord.value('name'), databaseRecord.value('shape'), databaseRecord.value('color'), databaseRecord.value('width'), databaseRecord.value('height'))
-                print(item.getObjects())
                 for obj in item.getObjects():
-                    print('do')
                     obj.updateGr(*(item.getAttribute()))
 
 
     def renameObject(self, id, newName):
-        print('scene id: %s'% id)
         for i in self.objects:
-            print('loop id: %d' % i.getId())
             if i.getId() == id:
                 i.setName(newName)
-                print('%d changed'%i.getId())
 
