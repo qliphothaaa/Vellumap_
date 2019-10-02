@@ -8,6 +8,7 @@ import re
 class VellumapWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.is_open = False
         self.filename = 'None'
         self.onFileOpen()
         self.initUI()
@@ -62,6 +63,7 @@ class VellumapWindow(QMainWindow):
         self.setWindowTitle('Vellumap - %s'% self.filename)
 
         self.show()
+        self.is_open = True
 
 
 
@@ -79,9 +81,13 @@ class VellumapWindow(QMainWindow):
     def onFileOpen(self):
         openfileDialog = OpenMapDialog(self)
         openfileDialog.fileNameSignal.connect(self.setFilename)
-        openfileDialog.exitSignal.connect(sys.exit)
+        if (self.is_open):
+            pass
+        else:
+            openfileDialog.exitSignal.connect(sys.exit)
         openfileDialog.show()
         openfileDialog.exec_()
+        
 
     def setFilename(self, name):
         self.filename = name
