@@ -1,14 +1,14 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from map_graphics_view import QMapGraphicsView
-from map_scene import Scene
-from map_object_type import ObjectType
-from map_object import MapObject
-from TypeButton import QTypePushButton
-from vellumap_type_view_widget import TypeViewerWidget
-from vellumap_object_information import ObjectMapInfoWidget
-from vellumap_object_viewer import MapObjectTableViewer
+from model.map_graphics_view import QMapGraphicsView
+from model.map_scene import Scene
+from model.map_object_type import ObjectType
+from model.map_object import MapObject
+from view.TypeButton import QTypePushButton
+from view.vellumap_type_view_widget import TypeViewerWidget
+from view.vellumap_object_information import ObjectMapInfoWidget
+from view.vellumap_object_viewer import MapObjectTableViewer
 
 DEBUG = False
 #main widget for map editor
@@ -42,7 +42,7 @@ class MapEditorWidget(QWidget):
 
         #create graphic scene
         self.scene = Scene(self.mapName)
-        self.grScene = self.scene.grScene
+        self.gr_scene = self.scene.gr_scene
         self.typeTable = TypeViewerWidget(self.mapName)
         self.objectTable = MapObjectTableViewer(self.mapName)
 
@@ -83,7 +83,7 @@ class MapEditorWidget(QWidget):
     #load View
     def loadView(self):
         if DEBUG: print('MAPWIDGET: start load graphic')
-        self.view = QMapGraphicsView(self.scene.grScene, self)
+        self.view = QMapGraphicsView(self.scene.gr_scene, self)
         self.layout.addWidget(self.view)
 
     def loadInfo(self):

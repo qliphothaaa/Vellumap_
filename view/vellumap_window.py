@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
-from vellumap_edit_widget import MapEditorWidget
-from open_map_dialog import OpenMapDialog
+from view.vellumap_edit_widget import MapEditorWidget
+from view.open_map_dialog import OpenMapDialog
 import sys
 import re
 

@@ -6,16 +6,16 @@ class DataAccess():
         pass
 
     #read database return model
-    def viewData(self, tableName):
+    def viewData(self, table_name):
         if DEBUG: print('try to access database, R')
         if QSqlDatabase.contains('qt_sql_default_connection'):
             db = QSqlDatabase.database('qt_sql_default_connection')
         else:
             db = QSqlDatabase.addDatabase("QSQLITE")
-            db.setDatabaseName('./db/%s.db' % self.mapName)
+            db.setDatabaseName('./db/%s.db' % self.map_name)
             db.open()
         model = QSqlTableModel()
-        model.setTable(tableName)
+        model.setTable(table_name)
         model.select()
         return model
 
@@ -26,7 +26,7 @@ class DataAccess():
             db = QSqlDatabase.database('qt_sql_default_connection')
         else:
             db = QSqlDatabase.addDatabase("QSQLITE")
-            db.setDatabaseName('./db/%s.db' % self.mapName)
+            db.setDatabaseName('./db/%s.db' % self.map_name)
             db.open()
         query = QSqlQuery()
         try: 
@@ -36,14 +36,14 @@ class DataAccess():
         db.commit()
 
 
-    def accessDatabaseforId(self, tableName):
+    def accessDatabaseforId(self, table_name):
         if QSqlDatabase.contains('qt_sql_default_connection'):
             db = QSqlDatabase.database('qt_sql_default_connection')
         else:
             db = QSqlDatabase.addDatabase("QSQLITE")
-            db.setDatabaseName('./db/%s.db' % self.mapName)
+            db.setDatabaseName('./db/%s.db' % self.map_name)
             db.open()
-        sql = "select seq from sqlite_sequence where name='%s'" % tableName
+        sql = "select seq from sqlite_sequence where name='%s'" % table_name
         query = QSqlQuery()
         try:
             query.exec_(sql)

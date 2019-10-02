@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from map_graphics_object import QMapGraphicsObject
+from model.map_graphics_object import QMapGraphicsObject
 
 DEBUG = True
 
@@ -59,16 +59,16 @@ class QMapGraphicsView(QGraphicsView):
     def leftMouseButtonPress(self, event):
         self.current_item = self.getItemAtClicked(event)
         if isinstance(self.current_item, QMapGraphicsObject):
-            self.currentObjectSignal.emit(*self.current_item.mapObject.getMapInfo())
+            self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
             self.addToTop()
         super().mousePressEvent(event)
 
     def leftMouseButtonRelease(self, event):
         if isinstance(self.current_item, QMapGraphicsObject):
-            self.currentObjectSignal.emit(*self.current_item.mapObject.getMapInfo())
+            self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
         for item in self.grScene.selectedItems():
             if isinstance(item, QMapGraphicsObject):
-                item.mapObject.updatePosition(*item.mapObject.getPosition())
+                item.map_object.updatePosition(*item.map_object.getPosition())
 
 
         super().mouseReleaseEvent(event)
@@ -81,7 +81,7 @@ class QMapGraphicsView(QGraphicsView):
     def deleteSelectedItem(self):
         for item in self.grScene.selectedItems():
             if isinstance(item, QMapGraphicsObject):
-                self.BackSpaceSignal.emit(item.mapObject.getId())
+                self.BackSpaceSignal.emit(item.map_object.getId())
 
 
     def addToTop(self):

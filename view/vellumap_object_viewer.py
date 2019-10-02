@@ -3,6 +3,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtSql import *
 
+DEBUG = False
+
 class MapObjectTableViewer(QWidget):
     DeleteSignal = pyqtSignal(int)
     def __init__(self,mapName, parent=None):

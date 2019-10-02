@@ -2,14 +2,14 @@ import re
 #object type, contain a prototype description of object
 DEBUG = False
 class ObjectType():
-    def __init__(self, typeName, defaultColor, shape, width, height):
+    def __init__(self, type_name, default_color, shape, width, height):
 
-        self.typeName = typeName
-        self.defaultColor = defaultColor
+        self.type_name = type_name
+        self.default_color = default_color
         self.shape = shape
         self.width = width
         self.height = height
-        self.objectNameBase = re.split('type',self.typeName)[1]
+        self.object_name_base = re.split('type',self.type_name)[1]
         self.objects = []
 
 
@@ -25,14 +25,14 @@ class ObjectType():
         return self.shape
 
     def getColor(self):
-        return self.defaultColor
+        return self.default_color
 
     def getObjects(self):
         return self.objects
 
     def getName(self):
         if DEBUG: print('TYPE: get type name')
-        return self.typeName
+        return self.type_name
 
     def getAttribute(self):
         color = self.getColor()
@@ -53,10 +53,10 @@ class ObjectType():
         if DEBUG: print('TYPE: add object to type')
         self.objects.append(mapObject)
 
-    def update(self, typeName, shape, color, width, height):
+    def update(self, type_name, shape, color, width, height):
         if DEBUG: print('TYPE: update type attribute')
-        self.typeName = typeName
-        self.defaultColor = color
+        self.type_name = type_name
+        self.default_color = color
         self.shape = shape
         self.width = width
         self.height = height

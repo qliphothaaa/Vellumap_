@@ -2,9 +2,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtSql import *
-from map_object_type import ObjectType
-from add_type_dialog import AddTypeDialog
-from update_type_dialog import UpdateTypeDialog
+from model.map_object_type import ObjectType
+from view.add_type_dialog import AddTypeDialog
+from view.update_type_dialog import UpdateTypeDialog
 
 class TypeViewerWidget(QWidget):
     RefreshSignal = pyqtSignal()

@@ -1,35 +1,35 @@
-from map_graphics_scene import QMapGraphicsScene
-from map_object import MapObject
-from map_object_type import ObjectType
-from data_access_object import DataAccess
+from model.map_graphics_scene import QMapGraphicsScene
+from model.map_object import MapObject
+from model.map_object_type import ObjectType
+from model.data_access_object import DataAccess
 from PyQt5.QtSql import *
 DEBUG = False
 #The main scene that contain all things
 class Scene(DataAccess):
-    def __init__(self, mapName):
+    def __init__(self, map_name):
         super().__init__()
         self.object_types = []
         self.objects = []
-        self.mapName = mapName
+        self.map_name = map_name
         self.scene_width = 6400
         self.scene_height = 6400
         self.initUI()
 
     def initUI(self):
-        if DEBUG: print('SCENE:init grScene')
-        self.grScene = QMapGraphicsScene(self)
-        self.grScene.setGrScene(self.scene_width, self.scene_height)
+        if DEBUG: print('SCENE:init gr_scene')
+        self.gr_scene = QMapGraphicsScene(self)
+        self.gr_scene.setGrScene(self.scene_width, self.scene_height)
 
         self.clearTypes()
         self.loadType()
         self.loadObject()
 
-    def createNewObject(self, typeName):
-        ObjectType = self.getTypeByName(typeName)
-        mapObject = MapObject(self.mapName, ObjectType, ObjectType.objectNameBase+'unnamed') 
+    def createNewObject(self, type_name):
+        ObjectType = self.getTypeByName(type_name)
+        mapObject = MapObject(self.map_name, ObjectType, ObjectType.object_name_base+'_unnamed') 
         self.addObjectConnection(mapObject)
         ObjectType.addMapObjectConnection(mapObject)
-        self.grScene.addItem(mapObject.grMapObject)
+        self.gr_scene.addItem(mapObject.grMapObject)
 
 
     def addObjectConnection(self, obj):
@@ -40,17 +40,17 @@ class Scene(DataAccess):
         if DEBUG: print('SCENE:remove object from Scene')
         self.objects.remove(obj)
 
-    def removeObjectById(self, objectId):
+    def removeObjectById(self, object_id):
         if DEBUG: print('SCENE:remove object it self')
-        item = self.getObjectById(objectId)
-        self.grScene.removeItem(item.grMapObject)
+        item = self.getObjectById(object_id)
+        self.gr_scene.removeItem(item.grMapObject)
         self.removeObjectConnection(item)
         item.remove()
 
-    def getObjectById(self, objectId):
+    def getObjectById(self, object_id):
         if DEBUG: print('SCENE:find object by id')
         for item in self.objects:
-            if item.getId() == objectId:
+            if item.getId() == object_id:
                 return item
 
     def addType(self, object_type):
@@ -61,18 +61,18 @@ class Scene(DataAccess):
         if DEBUG: print('SCENE:remove type from Scene')
         self.object_types.remove(object_type)
 
-    def getTypeByName(self, typeName):
+    def getTypeByName(self, type_name):
         if DEBUG: print('SCENE:find type by name')
         for item in self.object_types:
-            if item.getName() == typeName:
+            if item.getName() == type_name:
                 return item
 
-    def removeTypeByName(self, typeName):
+    def removeTypeByName(self, type_name):
         if DEBUG: print('SCENE:remove type it self')
-        item = self.getTypeByName(typeName)
+        item = self.getTypeByName(type_name)
         self.removeTypeConnection(item)
         for obj in item.getObjects():
-            self.grScene.removeItem(obj.grMapObject)
+            self.gr_scene.removeItem(obj.grMapObject)
         item.remove()
 
     def clearTypes(self):
@@ -86,17 +86,17 @@ class Scene(DataAccess):
     def loadObject(self):
         model = self.viewData('ObjectGraphic')
         for i in range(model.rowCount()):
-            objectType = self.getTypeByName(model.record(i).value('type'))
-            objectName = model.record(i).value('name')
-            objectId = model.record(i).value('id')
-            objectX = model.record(i).value('x')
-            objectY = model.record(i).value('y')
+            object_type = self.getTypeByName(model.record(i).value('type'))
+            object_name = model.record(i).value('name')
+            object_id = model.record(i).value('id')
+            object_x = model.record(i).value('x')
+            object_y = model.record(i).value('y')
 
-            mapObject = MapObject(self.mapName, objectType, objectName,False)
-            mapObject.setId(objectId)
-            self.grScene.addItem(mapObject.grMapObject)
+            mapObject = MapObject(self.map_name, object_type, object_name,False)
+            mapObject.setId(object_id)
+            self.gr_scene.addItem(mapObject.grMapObject)
             self.addObjectConnection(mapObject)
-            mapObject.setPosition(objectX, objectY)
+            mapObject.setPosition(object_x, object_y)
             
 
     def loadType(self):
@@ -112,11 +112,11 @@ class Scene(DataAccess):
             
 
 
-    def loadNewType(self, typeName):
+    def loadNewType(self, type_name):
         if DEBUG: print('SCENE:load new type when new type add to database')
         model = self.viewData('type')
         for i in range(model.rowCount()):
-            if model.record(i).value('name')==typeName:
+            if model.record(i).value('name')==type_name:
                 name = model.record(i).value('name')
                 color = model.record(i).value('color')
                 shape = model.record(i).value('shape')
@@ -126,13 +126,13 @@ class Scene(DataAccess):
                 return
 
 
-    def updateType(self, typeName):
+    def updateType(self, type_name):
         if DEBUG: print('SCENE:update object grpahic and type attribute after update type in database')
         if DEBUG: print('updateType')
         model = self.viewData('type')
-        item = self.getTypeByName(typeName)
+        item = self.getTypeByName(type_name)
         for i in range(model.rowCount()):
-            if model.record(i).value('name') == typeName:
+            if model.record(i).value('name') == type_name:
                 databaseRecord = model.record(i)
                 item.update(databaseRecord.value('name'), databaseRecord.value('shape'), databaseRecord.value('color'), databaseRecord.value('width'), databaseRecord.value('height'))
                 for obj in item.getObjects():
