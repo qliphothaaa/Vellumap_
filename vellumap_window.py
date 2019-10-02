@@ -20,7 +20,7 @@ class VellumapWindow(QMainWindow):
 
 #create menubar
         fileMenu = menubar.addMenu('File')
-        fileMenu.addAction(self.createAct('Open Database', 'Ctrl+O', 'Open file', self.onFileOpen))
+        fileMenu.addAction(self.createAct('Open file', 'Ctrl+O', 'Open file', self.onFileOpen))
         fileMenu.addSeparator()
         fileMenu.addAction(self.createAct('Export to 2D', 'Ctrl+S', 'Save map in pic', self.onFileSave2D))
         fileMenu.addAction(self.createAct('Export to 3D', 'Ctrl+Shift+S', 'Save map in obj', self.onFileSave3D))
@@ -56,10 +56,14 @@ class VellumapWindow(QMainWindow):
         mapEditor.objectInfo.changeObjectNameSignal.connect(mapEditor.scene.renameObject)
         mapEditor.objectTable.DeleteSignal.connect(mapEditor.scene.removeObjectById)
 
+#finish generate GUI
+
         self.setGeometry(0,0,1200,800)
         self.setWindowTitle('Vellumap - %s'% self.filename)
 
         self.show()
+
+
 
 
     def onScenePosChanged(self, x, y):
