@@ -115,3 +115,7 @@ class QMapGraphicsView(QGraphicsView):
             if not (clamped or self.zoomClamp is False):
                 self.scale(self.zoomFactor, self.zoomFactor)
 
+    def focusOn(self, x, y):
+        self.centerOn(x, y)
+
+

@@ -27,6 +27,7 @@ class AddTypeDialog(QDialog):
         self.widthLabel = QLabel('Width:')
         self.heightLabel = QLabel('Height:')
 
+        self.colorButton = QPushButton(' select color ')
         self.confirmTypeButton = QPushButton(' confirm ')
         self.cancelTypeButton = QPushButton(' cancel ')
 
@@ -46,10 +47,12 @@ class AddTypeDialog(QDialog):
         self.layout.addRow(self.nameLabel, self.nameEdit)
         self.layout.addRow(self.shapeLabel,self.graphciComboBox)
         self.layout.addRow(self.colorLabel, self.colorEdit)
+        self.layout.addRow('', self.colorButton)
         self.layout.addRow(self.widthLabel, self.widthEdit)
         self.layout.addRow(self.heightLabel,self.heightEdit)
         self.layout.addRow('', self.confirmTypeButton)
         self.layout.addRow('', self.cancelTypeButton)
+        #self.layout.addRow('', self.colorButton)
 
         font = QFont()
         font.setPixelSize(20)
@@ -66,6 +69,10 @@ class AddTypeDialog(QDialog):
         self.heightEdit.setFont(font)
 
         font.setPixelSize(16)
+        self.colorButton.setFont(font)
+        self.colorButton.setFixedHeight(32)
+        self.colorButton.setFixedWidth(140)
+
         self.confirmTypeButton.setFont(font)
         self.confirmTypeButton.setFixedHeight(32)
         self.confirmTypeButton.setFixedWidth(140)
@@ -79,6 +86,7 @@ class AddTypeDialog(QDialog):
 
         self.confirmTypeButton.clicked.connect(self.confirmTypeButtonClicked)
         self.cancelTypeButton.clicked.connect(self.close)
+        self.colorButton.clicked.connect(self.showColorDialog)
     
     def confirmTypeButtonClicked(self):
         name = self.nameEdit.text()
@@ -116,6 +124,11 @@ class AddTypeDialog(QDialog):
                 self.close()
                 self.clearEdit()
             return
+
+    def showColorDialog(self):
+        get_color = QColorDialog.getColor()
+        if get_color.isValid():
+            self.colorEdit.setText(get_color.name())
 
     def clearEdit(self):
         self.nameEdit.clear()

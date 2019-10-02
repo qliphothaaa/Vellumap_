@@ -7,6 +7,7 @@ DEBUG = False
 
 class MapObjectTableViewer(QWidget):
     DeleteSignal = pyqtSignal(int)
+    FocusSignal = pyqtSignal(float, float)
     def __init__(self,mapName, parent=None):
         super(MapObjectTableViewer,self).__init__(parent, Qt.Window)
         self.setWindowTitle('Object table')
@@ -87,8 +88,11 @@ class MapObjectTableViewer(QWidget):
         self.queryModel.setHeaderData(0, Qt.Horizontal, 'Size')
 
         self.deleteButton = QPushButton('delete')
+        self.focusButton = QPushButton('focus')
         self.deleteButton.clicked.connect(self.deleteButtonClicked)
+        self.focusButton .clicked.connect(self.focusButtonClicked)
         self.Hlayout3.addWidget(self.deleteButton)
+        self.Hlayout3.addWidget(self.focusButton)
 
 
         self.layout.addLayout(self.Hlayout1)
@@ -194,10 +198,14 @@ class MapObjectTableViewer(QWidget):
 
     def deleteButtonClicked(self):
         r = self.tableView.currentIndex().row()
-        if DEBUG: print('here')
-        if DEBUG: print(self.queryModel.record(r).value('id'))
         self.DeleteSignal.emit(self.queryModel.record(r).value('id'))
         self.searchButtonClicked()
+
+    def focusButtonClicked(self):
+        r = self.tableView.currentIndex().row()
+        self.FocusSignal.emit(self.queryModel.record(r).value('x'), self.queryModel.record(r).value('y'))
+        self.close()
+        
 
 if __name__ == "__main__":
     import sys
