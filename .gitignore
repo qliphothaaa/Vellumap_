@@ -1,2 +1,5 @@
 /db/*.db
 test/*.py
+*.pyc
+*.swp
+__pycache__
