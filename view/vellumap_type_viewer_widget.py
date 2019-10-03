@@ -6,13 +6,13 @@ from model.map_object_type import ObjectType
 from view.add_type_dialog import AddTypeDialog
 from view.update_type_dialog import UpdateTypeDialog
 
-class TypeViewerWidget(QWidget):
+class MapTypeViewerWidget(QWidget):
     RefreshSignal = pyqtSignal()
     DeleteSignal = pyqtSignal(str)
     AddSignal = pyqtSignal(str)
     UpdateSignal = pyqtSignal(str)
     def __init__(self, mapName, parent=None):
-        super(TypeViewerWidget,self).__init__(parent,Qt.Window)
+        super(MapTypeViewerWidget,self).__init__(parent,Qt.Window)
         self.setWindowTitle('type table')
         self.tableView = None
         self.mapName=mapName

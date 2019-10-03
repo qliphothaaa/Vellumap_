@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+import re
 #from model.map_object import MapObject
 
 #button class for create object
@@ -11,7 +12,8 @@ class QTypePushButton(QPushButton):
     def __init__(self, object_type, parent):
         super(QTypePushButton, self).__init__( parent)
         self.title = object_type.type_name
-        self.setText(self.title)
+        self.real_title =  re.sub('^type', '', self.title)
+        self.setText(self.real_title)
 
 
     def mousePressEvent(self,e):
@@ -19,4 +21,3 @@ class QTypePushButton(QPushButton):
         if e.button() == Qt.LeftButton:
             self.TypeNameSignal.emit(self.title)
         super().mousePressEvent(e)
-

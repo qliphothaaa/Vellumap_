@@ -6,9 +6,9 @@ from model.map_scene import Scene
 from model.map_object_type import ObjectType
 from model.map_object import MapObject
 from view.TypeButton import QTypePushButton
-from view.vellumap_type_view_widget import TypeViewerWidget
-from view.vellumap_object_information import ObjectMapInfoWidget
-from view.vellumap_object_viewer import MapObjectTableViewer
+from view.vellumap_type_viewer_widget import MapTypeViewerWidget
+from view.vellumap_object_information_widget import ObjectMapInfoWidget
+from view.vellumap_object_viewer_widget import MapObjectViewerWidget
 
 DEBUG = False
 #main widget for map editor
@@ -43,8 +43,8 @@ class MapEditorWidget(QWidget):
         #create graphic scene
         self.scene = Scene(self.mapName)
         self.gr_scene = self.scene.gr_scene
-        self.typeTable = TypeViewerWidget(self.mapName)
-        self.objectTable = MapObjectTableViewer(self.mapName)
+        self.typeTable = MapTypeViewerWidget(self.mapName)
+        self.objectTable = MapObjectViewerWidget(self.mapName)
 
 
         #load sub widgets

@@ -26,10 +26,13 @@ class Scene(DataAccess):
 
     def createNewObject(self, type_name):
         ObjectType = self.getTypeByName(type_name)
+        #x = x
+        #y = y
         mapObject = MapObject(self.map_name, ObjectType, ObjectType.object_name_base+'_unnamed') 
         self.addObjectConnection(mapObject)
         ObjectType.addMapObjectConnection(mapObject)
         self.gr_scene.addItem(mapObject.grMapObject)
+        #mapObject.setPosition(x, y)
 
 
     def addObjectConnection(self, obj):
@@ -52,6 +55,11 @@ class Scene(DataAccess):
         for item in self.objects:
             if item.getId() == object_id:
                 return item
+
+    def getObjectXYById(self, object_id):
+        for item in self.objects:
+            if item.getId() == object_id:
+                return item.getPosition()
 
     def addType(self, object_type):
         if DEBUG: print('SCENE:add type to Scene')

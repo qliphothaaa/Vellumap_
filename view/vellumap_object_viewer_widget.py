@@ -5,11 +5,11 @@ from PyQt5.QtSql import *
 
 DEBUG = False
 
-class MapObjectTableViewer(QWidget):
+class MapObjectViewerWidget(QWidget):
     DeleteSignal = pyqtSignal(int)
     FocusSignal = pyqtSignal(float, float)
     def __init__(self,mapName, parent=None):
-        super(MapObjectTableViewer,self).__init__(parent, Qt.Window)
+        super(MapObjectViewerWidget,self).__init__(parent, Qt.Window)
         self.setWindowTitle('Object table')
         self.mapName=mapName
         self.squeryModel = None
@@ -19,6 +19,7 @@ class MapObjectTableViewer(QWidget):
         self.totalRecord = 0
         self.pageRecord = 10
         self.initUI()
+        #self.search_cache = ''
 
     def initUI(self):
         self.layout = QVBoxLayout()
@@ -149,9 +150,14 @@ class MapObjectTableViewer(QWidget):
         s = '%'
         for i in range(0, len(temp)):
             s = s + temp[i] + "%"
-        queryCondition = ("select * from ObjectGraphic where %s like '%s' order by %s"%(conditionChoice, s, conditionChoice))
+        if (conditionChoice == 'Type'):
+            queryCondition = ("select * from ObjectGraphic where %s like '____%s' order by %s"%(conditionChoice, s, conditionChoice))
+        else:
+            queryCondition = ("select * from ObjectGraphic where %s like '%s' order by %s"%(conditionChoice, s, conditionChoice))
+
         self.queryModel.setQuery(queryCondition)
         self.totalRecord = self.queryModel.rowCount()
+
 
 
     def searchButtonClicked(self):
@@ -203,6 +209,7 @@ class MapObjectTableViewer(QWidget):
 
     def focusButtonClicked(self):
         r = self.tableView.currentIndex().row()
+        #self.FocusSignal.emit(self.queryModel.record(r).value('id'))
         self.FocusSignal.emit(self.queryModel.record(r).value('x'), self.queryModel.record(r).value('y'))
         #self.close()
         
