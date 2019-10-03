@@ -204,7 +204,7 @@ class MapObjectTableViewer(QWidget):
     def focusButtonClicked(self):
         r = self.tableView.currentIndex().row()
         self.FocusSignal.emit(self.queryModel.record(r).value('x'), self.queryModel.record(r).value('y'))
-        self.close()
+        #self.close()
         
 
 if __name__ == "__main__":
