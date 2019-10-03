@@ -9,6 +9,7 @@ DEBUG = True
 class QMapGraphicsView(QGraphicsView):
     scenePosChanged = pyqtSignal(int, int)
     UpdateObjectPos = pyqtSignal(int, int)
+    CreateObjectSignal = pyqtSignal(int, int)
     currentObjectSignal = pyqtSignal(int, str, str, str, str, int, int, int)
     BackSpaceSignal = pyqtSignal(int)
     
@@ -50,6 +51,7 @@ class QMapGraphicsView(QGraphicsView):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
+            self.CreateObjectSignal.emit(int(self.mapToScene(event.pos()).x()), int(self.mapToScene(event.pos()).y()))
             self.leftMouseButtonPress(event)
 
     def mouseReleaseEvent(self,event):

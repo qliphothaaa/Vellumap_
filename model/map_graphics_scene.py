@@ -10,6 +10,7 @@ class QMapGraphicsScene(QGraphicsScene):
         self.scene = scene
         self.gridSize = 20
         self._color_background = QColor('#393939')
+        #self._color_background = QColor('#c0c0c0')
         self._color_light = QColor('#2f2f2f')
         self._color_dark = QColor('#292929')
 

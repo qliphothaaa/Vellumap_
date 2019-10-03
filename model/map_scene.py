@@ -13,6 +13,7 @@ class Scene(DataAccess):
         self.map_name = map_name
         self.scene_width = 6400
         self.scene_height = 6400
+        self.to_create = ''
         self.initUI()
 
     def initUI(self):
@@ -24,15 +25,29 @@ class Scene(DataAccess):
         self.loadType()
         self.loadObject()
 
-    def createNewObject(self, type_name):
-        ObjectType = self.getTypeByName(type_name)
-        #x = x
-        #y = y
-        mapObject = MapObject(self.map_name, ObjectType, ObjectType.object_name_base+'_unnamed') 
-        self.addObjectConnection(mapObject)
-        ObjectType.addMapObjectConnection(mapObject)
-        self.gr_scene.addItem(mapObject.grMapObject)
-        #mapObject.setPosition(x, y)
+    def setTempTypeName(self, type_name):
+        if (self.to_create == type_name):
+            self.to_create = ''
+        else:
+            self.to_create = type_name
+
+
+    def createNewObject(self, x, y):
+        if (self.to_create != ''):
+            ObjectType = self.getTypeByName(self.to_create)
+        else:
+            return 0
+        x = x - ObjectType.getSize()[0]/2
+        y = y - ObjectType.getSize()[1]/2
+        if (isinstance(ObjectType, type(None))):
+            print("not exist")
+        else:
+            mapObject = MapObject(self.map_name, ObjectType, ObjectType.object_name_base+'_unnamed') 
+            self.addObjectConnection(mapObject)
+            ObjectType.addMapObjectConnection(mapObject)
+            mapObject.setPosition(x, y)
+            self.gr_scene.addItem(mapObject.grMapObject)
+        #print(self.to_create)
 
 
     def addObjectConnection(self, obj):
