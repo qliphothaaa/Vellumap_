@@ -83,6 +83,7 @@ class ObjectMapInfoWidget(QWidget):
         if target_id is not ' ' and newName is not '':
             self.changeObjectNameSignal.emit(target_id,newName)
             self.nameLineEdit.clear()
+            self.object_name.setText(newName)
             
 
 if __name__ == "__main__":
