@@ -14,6 +14,7 @@ DEBUG = False
 #main widget for map editor
 class MapEditorWidget(QWidget):
     setTempTypeNameSignal = pyqtSignal(str)
+    ChangeModeSignal = pyqtSignal(str)
     def __init__(self, mapName, parent=None):
         super().__init__(parent)
         self.mapName = mapName
@@ -64,6 +65,7 @@ class MapEditorWidget(QWidget):
         for objectType in self.scene.object_types:
             button = QTypePushButton(objectType, self)
             button.TypeNameSignal.connect(self.setTempTypeNameSignal)
+            button.ChangeModeSignal.connect(self.ChangeModeSignal)
             self.layout_button_sub.addWidget(button)
 
     #load all button

@@ -23,12 +23,14 @@ class QMapGraphicsView(QGraphicsView):
         self.initUI()
         self.setScene(self.grScene)
 
+        self.mode = 'select'
+
         self.zoomInFactor = 1.25
         self.zoomOutFactor = 1 / self.zoomInFactor
         self.zoomClamp = True
         self.zoom = 10
         self.zoomStep = 1
-        self.zoomRange = [0, 9]
+        self.zoomRange = [0, 10]
 
     
     def initUI(self):
@@ -42,6 +44,14 @@ class QMapGraphicsView(QGraphicsView):
         self.scenePosChanged.emit(int(self.last_scene_mouse_position.x()), int(self.last_scene_mouse_position.y()))
         super().mouseMoveEvent(event)
 
+    def changeMode(self, mode_name):
+        self.mode = mode_name
+        if (mode_name == "create"):
+            self.setDragMode(QGraphicsView.NoDrag)
+        else:
+            self.setDragMode(QGraphicsView.RubberBandDrag)
+        print(mode_name)
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Up:
             self.zoomIn()
@@ -52,7 +62,6 @@ class QMapGraphicsView(QGraphicsView):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            self.CreateObjectSignal.emit(int(self.mapToScene(event.pos()).x()), int(self.mapToScene(event.pos()).y()))
             self.leftMouseButtonPress(event)
 
     def mouseReleaseEvent(self,event):
@@ -60,18 +69,23 @@ class QMapGraphicsView(QGraphicsView):
             self.leftMouseButtonRelease(event)
 
     def leftMouseButtonPress(self, event):
-        self.current_item = self.getItemAtClicked(event)
-        if isinstance(self.current_item, QMapGraphicsObject):
-            self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
-            self.addToTop()
+        if (self.mode == 'select'):
+            self.current_item = self.getItemAtClicked(event)
+            if isinstance(self.current_item, QMapGraphicsObject):
+                self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
+                self.addToTop()
+        elif (self.mode == 'create'):
+            self.CreateObjectSignal.emit(int(self.mapToScene(event.pos()).x()), int(self.mapToScene(event.pos()).y()))
+
         super().mousePressEvent(event)
 
     def leftMouseButtonRelease(self, event):
-        if isinstance(self.current_item, QMapGraphicsObject):
-            self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
-        for item in self.grScene.selectedItems():
-            if isinstance(item, QMapGraphicsObject):
-                item.map_object.updatePosition(*item.map_object.getPosition())
+        if (self.mode == 'select'):
+            if isinstance(self.current_item, QMapGraphicsObject):
+                self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
+            for item in self.grScene.selectedItems():
+                if isinstance(item, QMapGraphicsObject):
+                    item.map_object.updatePosition(*item.map_object.getPosition())
 
 
         super().mouseReleaseEvent(event)

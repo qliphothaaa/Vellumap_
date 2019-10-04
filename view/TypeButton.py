@@ -9,6 +9,7 @@ import re
 DEBUG = False
 class QTypePushButton(QPushButton):
     TypeNameSignal = pyqtSignal(str)
+    ChangeModeSignal = pyqtSignal(str)
     def __init__(self, object_type, parent):
         super(QTypePushButton, self).__init__( parent)
         self.button_size = QSize(100, 20)
@@ -25,8 +26,10 @@ class QTypePushButton(QPushButton):
             self.TypeNameSignal.emit(self.title)
             if(self.pressed):
                 self.setStyleSheet("");
+                self.ChangeModeSignal.emit('select')
             else:
                 self.setStyleSheet("color: black;");
+                self.ChangeModeSignal.emit('create')
             self.pressed = not(self.pressed)
             
         super().mousePressEvent(e)

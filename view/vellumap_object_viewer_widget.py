@@ -160,7 +160,7 @@ class MapObjectViewerWidget(QWidget):
 
 
 
-    def searchButtonClicked(self):
+    def searchButtonClicked(self, num=-1):
         self.currentPage = 1
         self.pageEdit.setText(str(self.currentPage))
         self.getPageCount()
@@ -204,8 +204,9 @@ class MapObjectViewerWidget(QWidget):
 
     def deleteButtonClicked(self):
         r = self.tableView.currentIndex().row()
-        self.DeleteSignal.emit(self.queryModel.record(r).value('id'))
-        self.searchButtonClicked()
+        if(r is not -1):
+            self.DeleteSignal.emit(self.queryModel.record(r).value('id'))
+            self.searchButtonClicked()
 
     def focusButtonClicked(self):
         r = self.tableView.currentIndex().row()

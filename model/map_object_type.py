@@ -9,9 +9,7 @@ class ObjectType():
         self.shape = shape
         self.width = width
         self.height = height
-        #self.object_name_base = re.split('type',self.type_name)[1]
         self.object_name_base = re.sub('^type','',self.type_name)
-        #re.sub('^type', '', s)
 
         self.objects = []
 
