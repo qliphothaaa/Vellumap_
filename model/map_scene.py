@@ -3,6 +3,8 @@ from model.map_object import MapObject
 from model.map_object_type import ObjectType
 from model.data_access_object import DataAccess
 from PyQt5.QtSql import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 DEBUG = False
 #The main scene that contain all things
 class Scene(DataAccess):
@@ -11,10 +13,11 @@ class Scene(DataAccess):
         self.object_types = []
         self.objects = []
         self.map_name = map_name
-        self.scene_width = 6400
-        self.scene_height = 6400
+        self.scene_width = 15000
+        self.scene_height = 15000
         self.to_create = ''
         self.initUI()
+        
 
     def initUI(self):
         if DEBUG: print('SCENE:init gr_scene')
@@ -32,20 +35,21 @@ class Scene(DataAccess):
             self.to_create = type_name
 
 
-    def createNewObject(self, x, y):
+    def createNewObject(self, real_x, real_y):
         if (self.to_create != ''):
             ObjectType = self.getTypeByName(self.to_create)
         else:
             return 0
-        x = x - ObjectType.getSize()[0]/2
-        y = y - ObjectType.getSize()[1]/2
+
+        width, height = ObjectType.getSize()
+        map_x, map_y = self.convertRealPosToMapPos(width, height, real_x, real_y)
         if (isinstance(ObjectType, type(None))):
             print("not exist")
         else:
             mapObject = MapObject(self.map_name, ObjectType, ObjectType.object_name_base+'_unnamed') 
             self.addObjectConnection(mapObject)
             ObjectType.addMapObjectConnection(mapObject)
-            mapObject.setPosition(x, y)
+            mapObject.setPosition(map_x, map_y)
             self.gr_scene.addItem(mapObject.grMapObject)
         #print(self.to_create)
 
@@ -105,6 +109,24 @@ class Scene(DataAccess):
     def clearObjects(self):
         if DEBUG: print('SCENE:reset all object in Scene')
         self.objects = []
+
+    '''
+    def drawCross(self, x, y):
+        self.removeCross()
+        outlinePen = QPen(Qt.white)
+        outlinePen.setWidth(5)
+        self.line = self.gr_scene.addLine(x, y-30, x, y+30, outlinePen)
+        self.line2 = self.gr_scene.addLine(x-30, y, x+30, y, outlinePen)
+
+    def removecross(self):
+        if (self.line==None and self.line2==None):
+            pass
+        else:
+            self.gr_scene.removeItem(self.line)
+            self.gr_scene.removeItem(self.line2)
+    '''
+
+
 
     def loadObject(self):
         model = self.viewData('ObjectGraphic')
@@ -166,4 +188,17 @@ class Scene(DataAccess):
         for i in self.objects:
             if i.getId() == id:
                 i.setName(newName)
+
+
+    def convertRealPosToMapPos(self, width, height, real_x, real_y):
+        map_x = real_x - width/2
+        map_y = real_y - height/2
+        return (map_x, map_y)
+
+    def convertMapPosToRealPos(self, width, height, map_x, map_y):
+        real_x = map_x + width/2
+        real_y = map_y - height/2
+        return (real_x, real_y)
+
+
 

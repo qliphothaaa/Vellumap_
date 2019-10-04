@@ -58,6 +58,7 @@ class VellumapWindow(QMainWindow):
         mapEditor.objectInfo.changeObjectNameSignal.connect(mapEditor.scene.renameObject)
         mapEditor.objectTable.DeleteSignal.connect(mapEditor.scene.removeObjectById)
         mapEditor.objectTable.FocusSignal.connect(mapEditor.view.focusOn)
+        #mapEditor.view.DrawCrossSignal.connect(mapEditor.scene.drawCross)
 
 #finish generate GUI
 

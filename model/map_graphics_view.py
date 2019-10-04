@@ -12,6 +12,7 @@ class QMapGraphicsView(QGraphicsView):
     CreateObjectSignal = pyqtSignal(int, int)
     currentObjectSignal = pyqtSignal(int, str, str, str, str, int, int, int)
     BackSpaceSignal = pyqtSignal(int)
+    #DrawCrossSignal = pyqtSignal(int, int)
     
 
     def __init__(self, grScene, parent=None):
@@ -27,7 +28,7 @@ class QMapGraphicsView(QGraphicsView):
         self.zoomClamp = True
         self.zoom = 10
         self.zoomStep = 1
-        self.zoomRange = [0, 10]
+        self.zoomRange = [0, 9]
 
     
     def initUI(self):
@@ -119,5 +120,7 @@ class QMapGraphicsView(QGraphicsView):
 
     def focusOn(self, x, y):
         self.centerOn(x, y)
+        #self.DrawCrossSignal.emit(x, y)
+
 
 
