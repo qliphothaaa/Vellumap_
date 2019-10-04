@@ -65,17 +65,19 @@ class ObjectMapInfoWidget(QWidget):
         
 
     def setInfo(self,id, name, typeName, width, height, x, y, size):
-
-        typeName = re.sub('^type', '', typeName)
-        self.object_id.setText(str(id))
-        self.object_name.setText(name)
-        self.object_type.setText(typeName)
-        self.object_width.setText(width)
-        self.object_height.setText(height)
-        self.object_x.setText(str(x))
-        self.object_y.setText(str(y))
-        #self.current_id = id
-        #self.object_size.setText(str(size))
+        if (id+1):
+            typeName = re.sub('^type', '', typeName)
+            self.object_id.setText(str(id))
+            self.object_name.setText(name)
+            self.object_type.setText(typeName)
+            self.object_width.setText(width)
+            self.object_height.setText(height)
+            self.object_x.setText(str(x))
+            self.object_y.setText(str(y))
+            #self.current_id = id
+            #self.object_size.setText(str(size))
+        else:
+            self.clearInfo()
 
     def clearInfo(self):
         self.object_id.setText('')

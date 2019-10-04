@@ -74,6 +74,8 @@ class QMapGraphicsView(QGraphicsView):
             if isinstance(self.current_item, QMapGraphicsObject):
                 self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
                 self.addToTop()
+            else:
+                self.currentObjectSignal.emit(-1,'','','','','','','')
         elif (self.mode == 'create'):
             self.CreateObjectSignal.emit(int(self.mapToScene(event.pos()).x()), int(self.mapToScene(event.pos()).y()))
 
@@ -83,9 +85,12 @@ class QMapGraphicsView(QGraphicsView):
         if (self.mode == 'select'):
             if isinstance(self.current_item, QMapGraphicsObject):
                 self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
+            else:
+                self.currentObjectSignal.emit(-1,'','','','','','','')
             for item in self.grScene.selectedItems():
                 if isinstance(item, QMapGraphicsObject):
                     item.map_object.updatePosition(*item.map_object.getPosition())
+                    
 
 
         super().mouseReleaseEvent(event)
