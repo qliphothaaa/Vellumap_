@@ -11,6 +11,7 @@ class MapObject(DataAccess):
         self.y = 0
         self.object_type = object_type
         self.size = 1
+        self.description = ''
 
         self.map_name = map_name
         self.is_create = is_create
@@ -25,6 +26,7 @@ class MapObject(DataAccess):
         if is_create:
             self.accessDataBase(self.generateSqlForAdd())
             self.id = int(self.accessDatabaseforId(self.tableName))
+            self.accessDataBase(self.generateSqlForAddDiscription())
 
     def __str__(self):
         return ('<object: %s, %s >' % (self.object_name, self.object_type))
@@ -53,6 +55,7 @@ class MapObject(DataAccess):
         self.grMapObject = None
         self.object_type.removeMapObjectConnection(self)
         self.accessDataBase(self.generateSqlForDelete())
+        self.accessDataBase(self.generateSqlForDeleteDescription())
 
     def getPosition(self):
         if DEBUG: print('OBJECT: get position of object')
@@ -74,6 +77,10 @@ class MapObject(DataAccess):
         self.accessDataBase(self.generateSqlForRename(name))
         self.object_name = name
 
+    def setDescription(self, description_text):
+        self.accessDataBase(self.generateSqlForChangeDescription(description_text))
+        self.description = description_text
+
     def getName(self):
         if DEBUG: print('OBJECT: get name of object')
         return self.object_name
@@ -89,19 +96,37 @@ class MapObject(DataAccess):
         sql = "Update ObjectGraphic set Name = '%s' where (id = '%d');" % (name, self.id)
         return sql
 
+    def generateSqlForChangeDescription(self, description_text):
+        if DEBUG: print('OBJECT: connect to database, op:update Name:%s'%name)
+        sql = "Update ObjectDescription set Description = '%s' where (id = '%d');" % (description_text, self.id)
+        return sql
+
     def generateSqlForAdd(self):
         if DEBUG: print('OBJECT: connect to database, op:add object')
         sql = "insert into ObjectGraphic values (null,'%s',%e, %e,'%s',%e);" % (self.object_name, *(self.getPosition()), self.object_type.type_name, 1.0)
         return sql
+
+    def generateSqlForAddDiscription(self):
+        sql = "insert into ObjectDescription values (%d, '%s');" % (self.id, 'blank')
+        return sql
+        
+
 
     def generateSqlForDelete(self):
         if DEBUG: print('OBJECT: connect to database, op:delete object')
         sql = "Delete from ObjectGraphic where(id = '%s');" % self.id
         return sql
 
+    def generateSqlForDeleteDescription(self):
+        if DEBUG: print('OBJECT: connect to database, op:delete object')
+        sql = "Delete from ObjectDescription where(id = '%s');" % self.id
+        return sql
+
     def generateSqlForUpdatePosition(self,x,y):
         if DEBUG: print('OBJECT: connect to database, op:update position')
         sql = "Update ObjectGraphic set X = %e, y = %e where (id = '%s');" % (x, y, self.id)
         return sql
+
+
 
 

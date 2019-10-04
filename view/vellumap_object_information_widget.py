@@ -6,10 +6,10 @@ import re
 
 class ObjectMapInfoWidget(QWidget):
     changeObjectNameSignal = pyqtSignal(int,str)
-    changeObjectDescriptionSignal = pyqtSignal(str)
+    changeObjectDescriptionSignal = pyqtSignal(int, str)
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.current_id = 0
+        #self.current_id = 0
         self.initUI()
 
     def initUI(self):
@@ -74,11 +74,21 @@ class ObjectMapInfoWidget(QWidget):
         self.object_height.setText(height)
         self.object_x.setText(str(x))
         self.object_y.setText(str(y))
-        self.current_id = id
+        #self.current_id = id
         #self.object_size.setText(str(size))
 
+    def clearInfo(self):
+        self.object_id.setText('')
+        self.object_name.setText('')
+        self.object_type.setText('')
+        self.object_width.setText('')
+        self.object_height.setText('')
+        self.object_x.setText('')
+        self.object_y.setText('')
+        #self.current_id = -1
+
+
     def changeName(self):
-        #id = int(self.idLabel.text().rsplit(':')[1])
         newName =  self.nameLineEdit.text()
         if (self.object_id.text() is not '' and newName is not ''):
             target_id = int(self.object_id.text())
@@ -87,7 +97,10 @@ class ObjectMapInfoWidget(QWidget):
             self.object_name.setText(newName)
 
     def changeDescription(self):
-        pass
+        description_text = self.descriptionEdit.toPlainText()
+        if (self.object_id.text() is not '' and description_text is not ''):
+            target_id = int(self.object_id.text())
+            self.changeObjectDescriptionSignal.emit(target_id, description_text)
             
 
 if __name__ == "__main__":

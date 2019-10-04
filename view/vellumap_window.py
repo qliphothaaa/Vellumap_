@@ -57,6 +57,7 @@ class VellumapWindow(QMainWindow):
         mapEditor.typeTable.UpdateSignal.connect(mapEditor.scene.updateType)
         mapEditor.setTempTypeNameSignal.connect(mapEditor.scene.setTempTypeName)
         mapEditor.objectInfo.changeObjectNameSignal.connect(mapEditor.scene.renameObject)
+        mapEditor.objectInfo.changeObjectDescriptionSignal.connect(mapEditor.scene.changeDescriptionObject)
         mapEditor.objectTable.DeleteSignal.connect(mapEditor.scene.removeObjectById)
         mapEditor.objectTable.FocusSignal.connect(mapEditor.view.focusOn)
         mapEditor.ChangeModeSignal.connect(mapEditor.view.changeMode)

@@ -189,6 +189,12 @@ class Scene(DataAccess):
             if i.getId() == id:
                 i.setName(newName)
 
+    def changeDescriptionObject(self, id, description):
+        for i in self.objects:
+            if i.getId() == id:
+                i.setDescription(description)
+
+
 
     def convertRealPosToMapPos(self, width, height, real_x, real_y):
         map_x = real_x - width/2

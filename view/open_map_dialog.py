@@ -54,6 +54,8 @@ class OpenMapDialog(QDialog):
             message = QMessageBox.question(self, 'question message', 'file exists, load file?', QMessageBox.Yes, QMessageBox.No)
             if message == QMessageBox.No:
                 return
+        else:
+            self.createDatabase(filename)
 
         self.fileNameSignal.emit(filename)
         self.setNameFinished = True
@@ -65,7 +67,7 @@ class OpenMapDialog(QDialog):
 
     def createDatabase(self,filename):
         filePath = './db/%s.db' % filename
-        sqlfile = open('vellumap.sql', 'r').read()
+        sqlfile = open('view/vellumap.sql', 'r').read()
         try:
             conn = sqlite3.connect(filePath)
         except Error as e:
@@ -76,10 +78,6 @@ class OpenMapDialog(QDialog):
             conn.commit()
             conn.close()
 
-    '''
-    def questionMessage(self):
-            return
-    '''
 
 if __name__ == '__main__':
     import sys
