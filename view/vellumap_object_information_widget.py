@@ -14,7 +14,6 @@ class ObjectMapInfoWidget(QWidget):
 
     def initUI(self):
         self.setFixedSize(200,500)
-        self.layout_sub = QHBoxLayout()
         self.layout = QFormLayout()
         self.setLayout(self.layout)
 
@@ -64,12 +63,12 @@ class ObjectMapInfoWidget(QWidget):
         self.layout.addItem(spacerItem)
         
 
-    def setInfo(self,id, name, typeName, width, height, x, y, size):
+    def setInfo(self,id, name, type_name, width, height, x, y, size):
         if (id+1):
-            typeName = re.sub('^type', '', typeName)
+            type_name = re.sub('^type', '', type_name)
             self.object_id.setText(str(id))
             self.object_name.setText(name)
-            self.object_type.setText(typeName)
+            self.object_type.setText(type_name)
             self.object_width.setText(width)
             self.object_height.setText(height)
             self.object_x.setText(str(x))
