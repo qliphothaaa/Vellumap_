@@ -13,10 +13,12 @@ class ObjectMapInfoWidget(QWidget):
         self.initUI()
 
     def initUI(self):
+        #set layout
         self.setFixedSize(200,500)
         self.layout = QFormLayout()
         self.setLayout(self.layout)
 
+        #crate labels
         self.idLabel = QLabel('Id:')
         self.nameLabel = QLabel('Name:')
         self.typeNameLabel = QLabel('type:')
@@ -25,7 +27,6 @@ class ObjectMapInfoWidget(QWidget):
         self.xLabel = QLabel('X:')
         self.yLabel = QLabel('Y:')
         self.renameLabel = QLabel('new name:')
-        #self.sizeLabel = QLabel('Size:')
 
         self.object_id = QLabel('')
         self.object_name = QLabel('')
@@ -36,17 +37,19 @@ class ObjectMapInfoWidget(QWidget):
         self.object_y = QLabel('')
         self.object_size = QLabel('')
 
+        #crate editor
         self.nameLineEdit = QLineEdit()
-
-        self.renameButton = QPushButton(' rename ')
-        self.renameButton.clicked.connect(self.changeName)
         self.descriptionEdit = QTextEdit()
         self.descriptionEdit.setFixedHeight(200)
+
+        #create button 
+        self.renameButton = QPushButton(' rename ')
+        self.renameButton.clicked.connect(self.changeName)
         self.changeDescriptionButton = QPushButton(' change Description ')
         self.changeDescriptionButton.clicked.connect(self.changeDescription)
         spacerItem = QSpacerItem(0,0,QSizePolicy.Minimum,QSizePolicy.Expanding)
-        
 
+        #set layout
         self.layout.addRow(self.idLabel, self.object_id)
         self.layout.addRow(self.nameLabel, self.object_name)
         self.layout.addRow(self.typeNameLabel, self.object_type)
@@ -54,8 +57,6 @@ class ObjectMapInfoWidget(QWidget):
         self.layout.addRow(self.heightLabel, self.object_height)
         self.layout.addRow(self.xLabel, self.object_x)
         self.layout.addRow(self.yLabel, self.object_y)
-        #self.layout.addRow(self.sizeLabel, self.object_size)
-        #self.layout.addLayout(self.layout_sub)
         self.layout.addRow(self.renameLabel, self.nameLineEdit)
         self.layout.addRow(self.renameButton)
         self.layout.addRow(self.descriptionEdit)
@@ -78,6 +79,7 @@ class ObjectMapInfoWidget(QWidget):
         else:
             self.clearInfo()
 
+
     def clearInfo(self):
         self.object_id.setText('')
         self.object_name.setText('')
@@ -96,6 +98,7 @@ class ObjectMapInfoWidget(QWidget):
             self.ChangeObjectNameSignal.emit(target_id,new_name)
             self.nameLineEdit.clear()
             self.object_name.setText(new_name)
+
 
     def changeDescription(self):
         description_text = self.descriptionEdit.toPlainText()

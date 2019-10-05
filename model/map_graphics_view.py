@@ -50,7 +50,6 @@ class QMapGraphicsView(QGraphicsView):
             self.setDragMode(QGraphicsView.NoDrag)
         else:
             self.setDragMode(QGraphicsView.RubberBandDrag)
-        print(mode_name)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Up:
@@ -97,7 +96,6 @@ class QMapGraphicsView(QGraphicsView):
 
     def getItemAtClicked(self, event):
         pos = event.pos()
-        print(pos)
         obj = self.itemAt(pos)
         return obj
 
@@ -140,8 +138,6 @@ class QMapGraphicsView(QGraphicsView):
 
     def focusOn(self, x, y):
         self.centerOn(x, y)
-        print(x)
-        print(y)
         #self.current_item = self.itemAt(x+20, y+20)
         #self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
 

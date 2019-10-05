@@ -43,7 +43,6 @@ class MapEditorWidget(QWidget):
 
         #create graphic scene
         self.scene = Scene(self.mapName)
-        self.gr_scene = self.scene.gr_scene
         self.typeTable = MapTypeViewerWidget(self.mapName)
         self.objectTable = MapObjectViewerWidget(self.mapName)
 

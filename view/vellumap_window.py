@@ -17,9 +17,10 @@ class VellumapWindow(QMainWindow):
         return 'main Window'
 
     def initUI(self):
+        #create menubar
         menubar = self.menuBar()
 
-#create menubar
+        #add action to menuBar
         fileMenu = menubar.addMenu('File')
         fileMenu.addAction(self.createAct('Open file', 'Ctrl+O', 'Open file', self.onFileOpen))
         fileMenu.addSeparator()
@@ -27,8 +28,6 @@ class VellumapWindow(QMainWindow):
         fileMenu.addAction(self.createAct('Export to 3D', 'Ctrl+Shift+S', 'Save map in obj', self.onFileSave3D))
         fileMenu.addSeparator()
         fileMenu.addAction(self.createAct('Exit', 'Ctrl+Q', 'Exit application', self.close))
-
-
         editMenu = menubar.addMenu('Edit')
         editMenu.addAction(self.createAct('Delete', 'Backspace', 'delete object', self.onEditDelete))
 
@@ -43,31 +42,39 @@ class VellumapWindow(QMainWindow):
         self.status_mouse_pos = QLabel('')
         self.statusBar().addPermanentWidget(self.status_mouse_pos)
 
+        #connect signal with function
+
+        #signal in view widget
         mapEditor.view.scenePosChanged.connect(self.onScenePosChanged)
         mapEditor.view.currentObjectSignal.connect(mapEditor.objectInfo.setInfo)
-
-        mapEditor.typeTable.RefreshSignal.connect(mapEditor.clearLayout)
-        mapEditor.typeTable.RefreshSignal.connect(mapEditor.loadTypeButtonSub)
-        
         mapEditor.view.BackSpaceSignal.connect(mapEditor.scene.removeObjectById)
         mapEditor.view.BackSpaceSignal.connect(mapEditor.objectTable.searchButtonClicked)
         mapEditor.view.CreateObjectSignal.connect(mapEditor.scene.createNewObject)
+
+        #signal in type table widget
+        mapEditor.typeTable.RefreshSignal.connect(mapEditor.clearLayout)
+        mapEditor.typeTable.RefreshSignal.connect(mapEditor.loadTypeButtonSub)
         mapEditor.typeTable.DeleteSignal.connect(mapEditor.scene.removeTypeByName)
         mapEditor.typeTable.AddSignal.connect(mapEditor.scene.loadNewType)
         mapEditor.typeTable.UpdateSignal.connect(mapEditor.scene.updateType)
-        mapEditor.setTempTypeNameSignal.connect(mapEditor.scene.setTempTypeName)
-        mapEditor.objectInfo.changeObjectNameSignal.connect(mapEditor.scene.renameObject)
-        mapEditor.objectInfo.changeObjectDescriptionSignal.connect(mapEditor.scene.changeDescriptionObject)
+
+        #signal in object table widget
         mapEditor.objectTable.DeleteSignal.connect(mapEditor.scene.removeObjectById)
         mapEditor.objectTable.FocusSignal.connect(mapEditor.view.focusOn)
+
+        #signal in object information widget
+        mapEditor.objectInfo.ChangeObjectNameSignal.connect(mapEditor.scene.renameObject)
+        mapEditor.objectInfo.ChangeObjectDescriptionSignal.connect(mapEditor.scene.changeDescriptionObject)
+
+        #signal in  main widget
+        mapEditor.setTempTypeNameSignal.connect(mapEditor.scene.setTempTypeName)
         mapEditor.ChangeModeSignal.connect(mapEditor.view.changeMode)
         #mapEditor.view.DrawCrossSignal.connect(mapEditor.scene.drawCross)
+        
 
-#finish generate GUI
-
+        #finish generate GUI
         self.setGeometry(0,0,1200,800)
         self.setWindowTitle('Vellumap - %s'% self.filename)
-
         self.show()
         self.is_open = True
 
@@ -76,6 +83,7 @@ class VellumapWindow(QMainWindow):
 
     def onScenePosChanged(self, x, y):
         self.status_mouse_pos.setText('Scene Pos: [%d, %d]' % (x, y))
+
 
     def createAct(self, name, shortCut, tooltip, callback):
         act = QAction(name, self)
@@ -101,7 +109,6 @@ class VellumapWindow(QMainWindow):
 
     def setFilename(self, name):
         self.filename = name
-
 
     def onFileSave2D(self):
         print(self.filename)

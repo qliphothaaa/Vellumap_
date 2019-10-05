@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtSql import *
-from model.map_object_type import ObjectType
 from view.add_type_dialog import AddTypeDialog
 from view.update_type_dialog import UpdateTypeDialog
 
@@ -35,8 +34,6 @@ class MapTypeViewerWidget(QWidget):
         self.grid_layout.addWidget(self.groupBox,0,0)
         self.grid_layout.addWidget(self.tableView,0,1)
 
-        self.refreshButton = QPushButton('refresh table')
-        self.refreshButton.clicked.connect(self.viewType)
         self.addButton = QPushButton('add type')
         self.addButton.clicked.connect(self.addTypeButtonClicked)
         self.updateButton = QPushButton('update type')
@@ -47,7 +44,6 @@ class MapTypeViewerWidget(QWidget):
         self.groupBox_layout.addWidget(self.addButton)
         self.groupBox_layout.addWidget(self.updateButton)
         self.groupBox_layout.addWidget(self.deleteButton)
-        self.groupBox_layout.addWidget(self.refreshButton)
         self.viewType()
 
     def viewType(self):

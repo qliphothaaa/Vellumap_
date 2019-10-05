@@ -135,7 +135,7 @@ class UpdateTypeDialog(QDialog):
             print("SQL error:", sys.exc_info()[0])
         print(QMessageBox.information(self, 'info', 'success' , QMessageBox.Yes, QMessageBox.Yes))
         self.update_success_signal.emit('type'+name)
-        self.clearEdit()
+        #self.clearEdit()
         self.close()
         
     def showColorDialog(self):

@@ -19,7 +19,6 @@ class MapObjectViewerWidget(QWidget):
         self.totalRecord = 0
         self.pageRecord = 10
         self.initUI()
-        #self.search_cache = ''
 
     def initUI(self):
         self.layout = QVBoxLayout()
@@ -28,7 +27,7 @@ class MapObjectViewerWidget(QWidget):
         self.Hlayout3 = QHBoxLayout()
         self.setGeometry(900,200,800,600)
 
-#init Hlayout 1
+        #init Hlayout 1
         self.searchEdit = QLineEdit()
         self.searchEdit.setFixedHeight(32)
         font = QFont()
@@ -48,17 +47,24 @@ class MapObjectViewerWidget(QWidget):
         self.Hlayout1.addWidget(self.searchButton)
         self.Hlayout1.addWidget(self.conditionComboBox)
 
-#init Hlayout 2
+        #init Hlayout 2
         self.jumpToLabel = QLabel('jump')
         self.pageEdit = QLineEdit()
         self.pageEdit.setFixedWidth(30)
         s = "/" + str(self.totalPage) + 'page'
         self.pageLabel = QLabel(s)
+
         self.jumpToButton = QPushButton('jump to')
+        self.jumpToButton.setFixedWidth(100)
+        self.jumpToButton.clicked.connect(self.jumpToButtonClicked)
+
         self.prevButton = QPushButton(' last page ')
-        self.nextButton = QPushButton(' next page ')
         self.prevButton.setFixedWidth(100)
+        self.prevButton.clicked.connect(self.prevButtonClicked)
+
+        self.nextButton = QPushButton(' next page ')
         self.nextButton.setFixedWidth(100)
+        self.nextButton.clicked.connect(self.nextButtonClicked)
 
         Hlayout = QHBoxLayout()
         Hlayout.addWidget(self.jumpToLabel)
@@ -72,6 +78,7 @@ class MapObjectViewerWidget(QWidget):
         widget.setFixedWidth(500)
         self.Hlayout2.addWidget(widget)
 
+        #init table
         self.db = QSqlDatabase.addDatabase("QSQLITE")
         self.db.setDatabaseName('./db/%s.db'% self.mapName)
         self.db.open()
@@ -88,24 +95,26 @@ class MapObjectViewerWidget(QWidget):
         self.queryModel.setHeaderData(0, Qt.Horizontal, 'Type')
         self.queryModel.setHeaderData(0, Qt.Horizontal, 'Size')
 
+        #init layout 3
         self.deleteButton = QPushButton('delete')
-        self.focusButton = QPushButton('focus')
         self.deleteButton.clicked.connect(self.deleteButtonClicked)
-        self.focusButton .clicked.connect(self.focusButtonClicked)
+
+        self.focusButton = QPushButton('focus')
+        self.focusButton.clicked.connect(self.focusButtonClicked)
         self.Hlayout3.addWidget(self.deleteButton)
         self.Hlayout3.addWidget(self.focusButton)
 
 
+        #combine all layout
         self.layout.addLayout(self.Hlayout1)
         self.layout.addWidget(self.tableView)
         self.layout.addLayout(self.Hlayout3)
         self.layout.addLayout(self.Hlayout2)
         self.setLayout(self.layout)
         self.searchButton.clicked.connect(self.searchButtonClicked)
-        self.prevButton.clicked.connect(self.prevButtonClicked)
-        self.nextButton.clicked.connect(self.nextButtonClicked)
-        self.jumpToButton.clicked.connect(self.jumpToButtonClicked)
         self.searchEdit.returnPressed.connect(self.searchButtonClicked)
+
+        #init data
         self.searchButtonClicked()
 
 

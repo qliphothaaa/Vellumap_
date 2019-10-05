@@ -43,6 +43,7 @@ class Scene(DataAccess):
 
         width, height = ObjectType.getSize()
         map_x, map_y = self.convertRealPosToMapPos(width, height, real_x, real_y)
+        print(map_x, map_y)
         if (isinstance(ObjectType, type(None))):
             print("not exist")
         else:
@@ -50,6 +51,7 @@ class Scene(DataAccess):
             self.addObjectConnection(mapObject)
             ObjectType.addMapObjectConnection(mapObject)
             mapObject.setPosition(map_x, map_y)
+            mapObject.updatePosition(map_x, map_y)
             self.gr_scene.addItem(mapObject.grMapObject)
         #print(self.to_create)
 
