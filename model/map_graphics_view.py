@@ -10,7 +10,7 @@ class QMapGraphicsView(QGraphicsView):
     scenePosChanged = pyqtSignal(int, int)
     UpdateObjectPos = pyqtSignal(int, int)
     CreateObjectSignal = pyqtSignal(int, int)
-    currentObjectSignal = pyqtSignal(int, str, str, str, str, int, int, int)
+    currentObjectSignal = pyqtSignal(int, str, str, str, str, int, int, int, str)
     BackSpaceSignal = pyqtSignal(int)
     #DrawCrossSignal = pyqtSignal(int, int)
     
@@ -74,7 +74,7 @@ class QMapGraphicsView(QGraphicsView):
                 self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
                 self.addToTop()
             else:
-                self.currentObjectSignal.emit(-1,'','','','','','','')
+                self.currentObjectSignal.emit(-1,'','','','','','','','')
         elif (self.mode == 'create'):
             self.CreateObjectSignal.emit(int(self.mapToScene(event.pos()).x()), int(self.mapToScene(event.pos()).y()))
 
@@ -85,7 +85,7 @@ class QMapGraphicsView(QGraphicsView):
             if isinstance(self.current_item, QMapGraphicsObject):
                 self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
             else:
-                self.currentObjectSignal.emit(-1,'','','','','','','')
+                self.currentObjectSignal.emit(-1,'','','','','','','','')
             for item in self.grScene.selectedItems():
                 if isinstance(item, QMapGraphicsObject):
                     item.map_object.updatePosition(*item.map_object.getPosition())

@@ -132,14 +132,16 @@ class Scene(DataAccess):
 
     def loadObject(self):
         model = self.viewData('ObjectGraphic')
+        model2 = self.viewData('ObjectDescription')
         for i in range(model.rowCount()):
             object_type = self.getTypeByName(model.record(i).value('type'))
             object_name = model.record(i).value('name')
             object_id = model.record(i).value('id')
             object_x = model.record(i).value('x')
             object_y = model.record(i).value('y')
+            description = model2.record(i).value('description')
 
-            mapObject = MapObject(self.map_name, object_type, object_name,False)
+            mapObject = MapObject(self.map_name, object_type, object_name,False, description)
             mapObject.setId(object_id)
             self.gr_scene.addItem(mapObject.grMapObject)
             self.addObjectConnection(mapObject)

@@ -25,6 +25,7 @@ class MapObjectViewerWidget(QWidget):
         self.Hlayout1 = QHBoxLayout()
         self.Hlayout2 = QHBoxLayout()
         self.Hlayout3 = QHBoxLayout()
+        self.Hlayout_table = QHBoxLayout()
         self.setGeometry(900,200,800,600)
 
         #init Hlayout 1
@@ -86,14 +87,27 @@ class MapObjectViewerWidget(QWidget):
         self.tableView.horizontalHeader().setStretchLastSection(True)
         self.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.tableView.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        #self.tableView.setSelectionMode(QTableView.ExtendedSelection)
         self.queryModel = QSqlQueryModel()
         self.tableView.setModel(self.queryModel)
-
+        self.tableView.clicked.connect(self.setDescription)
+        '''
         self.queryModel.setHeaderData(0, Qt.Horizontal,  'Object Name')
         self.queryModel.setHeaderData(0, Qt.Horizontal, 'X')
-        self.queryModel.setHeaderData(0, Qt.Horizontal, 'Y')
+        self.queryModel.setHeaderData(0, Qt.Horizontal, 'Ysdf')
         self.queryModel.setHeaderData(0, Qt.Horizontal, 'Type')
         self.queryModel.setHeaderData(0, Qt.Horizontal, 'Size')
+        '''
+
+
+        self.descriptionText = QTextEdit()
+        self.descriptionText.setFixedWidth(150)
+        self.descriptionText.setDisabled(True)
+        self.descriptionText.setStyleSheet("color: white;");
+
+        self.Hlayout_table.addWidget(self.tableView)
+        self.Hlayout_table.addWidget(self.descriptionText)
+
 
         #init layout 3
         self.deleteButton = QPushButton('delete')
@@ -107,7 +121,7 @@ class MapObjectViewerWidget(QWidget):
 
         #combine all layout
         self.layout.addLayout(self.Hlayout1)
-        self.layout.addWidget(self.tableView)
+        self.layout.addLayout(self.Hlayout_table)
         self.layout.addLayout(self.Hlayout3)
         self.layout.addLayout(self.Hlayout2)
         self.setLayout(self.layout)
@@ -155,10 +169,9 @@ class MapObjectViewerWidget(QWidget):
             self.setButtonStatus()
             return
 
+
         temp = self.searchEdit.text()
-        s = '%'
-        for i in range(0, len(temp)):
-            s = s + temp[i] + "%"
+        s = '%' + temp + '%'
         if (conditionChoice == 'Type'):
             queryCondition = ("select * from ObjectGraphic where %s like '____%s' order by %s"%(conditionChoice, s, conditionChoice))
         else:
@@ -222,7 +235,12 @@ class MapObjectViewerWidget(QWidget):
         #self.FocusSignal.emit(self.queryModel.record(r).value('id'))
         self.FocusSignal.emit(self.queryModel.record(r).value('x'), self.queryModel.record(r).value('y'))
         #self.close()
-        
+
+    def setDescription(self):
+        r = self.tableView.currentIndex().row()
+        queryModelDescription = QSqlQueryModel()
+        queryModelDescription.setQuery("select * from ObjectDescription")
+        self.descriptionText.setText(queryModelDescription.record(r).value('description'))
 
 if __name__ == "__main__":
     import sys

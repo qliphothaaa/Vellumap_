@@ -3,15 +3,14 @@ from model.data_access_object import DataAccess
 DEBUG = False
 #the main object for map object
 class MapObject(DataAccess):
-    def __init__(self, map_name, object_type, object_name, is_create=True):
-
+    def __init__(self, map_name, object_type, object_name, is_create=True, description='nothing'):
         self.id = None
         self.object_name = object_name
         self.x = 0
         self.y = 0
         self.object_type = object_type
         self.size = 1
-        self.description = ''
+        self.description = description
 
         self.map_name = map_name
         self.is_create = is_create
@@ -28,9 +27,6 @@ class MapObject(DataAccess):
             self.id = int(self.accessDatabaseforId(self.tableName))
             self.accessDataBase(self.generateSqlForAddDiscription())
 
-    def __str__(self):
-        return ('<object: %s, %s >' % (self.object_name, self.object_type))
-
         
     def getMapInfo(self):
         if DEBUG: print('OBJECT: get object info')
@@ -40,8 +36,9 @@ class MapObject(DataAccess):
         width = str(self.object_type.getSize()[0])
         height = str(self.object_type.getSize()[1])
         position = self.getPosition()
+        description = self.description
         size = self.size
-        return (id, name, type_name, width, height, *position, size)
+        return (id, name, type_name, width, height, *position, size, description)
 
     def updateGr(self, color, shape, width, height):
         self.grMapObject.setColor(color)

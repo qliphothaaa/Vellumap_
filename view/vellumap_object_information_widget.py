@@ -64,7 +64,7 @@ class ObjectMapInfoWidget(QWidget):
         self.layout.addItem(spacerItem)
         
 
-    def setInfo(self,id, name, type_name, width, height, x, y, size):
+    def setInfo(self,id, name, type_name, width, height, x, y, size, description='121'):
         if (id+1):
             type_name = re.sub('^type', '', type_name)
             self.object_id.setText(str(id))
@@ -74,8 +74,7 @@ class ObjectMapInfoWidget(QWidget):
             self.object_height.setText(height)
             self.object_x.setText(str(x))
             self.object_y.setText(str(y))
-            #self.current_id = id
-            #self.object_size.setText(str(size))
+            self.descriptionEdit.setText(description)
         else:
             self.clearInfo()
 
@@ -88,7 +87,7 @@ class ObjectMapInfoWidget(QWidget):
         self.object_height.setText('')
         self.object_x.setText('')
         self.object_y.setText('')
-        #self.current_id = -1
+        self.descriptionEdit.setText('')
 
 
     def changeName(self):
