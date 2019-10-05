@@ -13,7 +13,7 @@ class QTypePushButton(QPushButton):
     def __init__(self, object_type, parent):
         super(QTypePushButton, self).__init__( parent)
         self.button_size = QSize(100, 20)
-        self.title = object_type.type_name
+        self.title = object_type
         self.real_title =  re.sub('^type', '', self.title)
         self.setText(self.real_title)
         self.pressed = False

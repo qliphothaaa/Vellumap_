@@ -61,7 +61,7 @@ class MapEditorWidget(QWidget):
     #load button from type to sub layout
     def loadTypeButtonSub(self):
         if DEBUG: print('MAPWIDGET: start load button to sub layout')
-        for objectType in self.scene.object_types:
+        for objectType in self.scene.getTypeNameList():
             button = QTypePushButton(objectType, self)
             button.TypeNameSignal.connect(self.setTempTypeNameSignal)
             button.ChangeModeSignal.connect(self.ChangeModeSignal)

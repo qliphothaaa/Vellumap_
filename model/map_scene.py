@@ -197,6 +197,11 @@ class Scene(DataAccess):
                 i.setDescription(description)
 
 
+    def getTypeNameList(self):
+        list = []
+        for object_type in self.object_types:
+            list.append(object_type.getName())
+        return list
 
     def convertRealPosToMapPos(self, width, height, real_x, real_y):
         map_x = real_x - width/2
