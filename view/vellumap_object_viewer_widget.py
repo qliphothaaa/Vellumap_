@@ -238,9 +238,10 @@ class MapObjectViewerWidget(QWidget):
 
     def setDescription(self):
         r = self.tableView.currentIndex().row()
+        object_id = self.queryModel.record(r).value('id')
         queryModelDescription = QSqlQueryModel()
-        queryModelDescription.setQuery("select * from ObjectDescription")
-        self.descriptionText.setText(queryModelDescription.record(r).value('description'))
+        queryModelDescription.setQuery("select * from ObjectDescription where id is %d "% object_id)
+        self.descriptionText.setText(queryModelDescription.record(0).value('description'))
 
 if __name__ == "__main__":
     import sys

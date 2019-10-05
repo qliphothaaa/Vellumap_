@@ -35,8 +35,8 @@ class TypeButtonGroupWidget(QWidget):
         if (button_title == self.recent_button_name):
             self.ChangeColorSignal.emit(True,button_title)
             self.ChangeModeSignal.emit('select')
-            print("The titel is same, reset the button")
             self.recent_button_name = ''
+            self.SetCurrentTypeNameSignal.emit('')
         else:
             if (self.recent_button_name == ''):
                 self.ChangeColorSignal.emit(True,button_title)
