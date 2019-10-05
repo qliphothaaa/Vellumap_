@@ -52,7 +52,7 @@ class VellumapWindow(QMainWindow):
         mapEditor.view.CreateObjectSignal.connect(mapEditor.scene.createNewObject)
 
         #signal in type table widget
-        mapEditor.typeTable.RefreshSignal.connect(mapEditor.clearLayout)
+        mapEditor.typeTable.RefreshSignal.connect(mapEditor.buttonGroup.clearButtons)
         mapEditor.typeTable.RefreshSignal.connect(mapEditor.loadTypeButtonSub)
         mapEditor.typeTable.DeleteSignal.connect(mapEditor.scene.removeTypeByName)
         mapEditor.typeTable.AddSignal.connect(mapEditor.scene.loadNewType)

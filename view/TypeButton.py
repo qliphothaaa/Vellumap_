@@ -8,28 +8,35 @@ import re
 #This is generate from type
 DEBUG = False
 class QTypePushButton(QPushButton):
-    TypeNameSignal = pyqtSignal(str)
-    ChangeModeSignal = pyqtSignal(str)
+    ClickedSignal = pyqtSignal(str)
     def __init__(self, object_type, parent):
         super(QTypePushButton, self).__init__( parent)
         self.button_size = QSize(100, 20)
         self.title = object_type
         self.real_title =  re.sub('^type', '', self.title)
         self.setText(self.real_title)
-        self.pressed = False
+        self.color_changed = False
         self.setMinimumSize(self.button_size)
 
 
     def mousePressEvent(self,e):
         if DEBUG: print('BUTTON: button pressed, create Object')
         if e.button() == Qt.LeftButton:
-            self.TypeNameSignal.emit(self.title)
-            if(self.pressed):
-                self.setStyleSheet("");
-                self.ChangeModeSignal.emit('select')
-            else:
-                self.setStyleSheet("color: black;");
-                self.ChangeModeSignal.emit('create')
-            self.pressed = not(self.pressed)
-            
+            self.ClickedSignal.emit(self.title)
         super().mousePressEvent(e)
+
+
+    def changeColor(self):
+        if (self.color_changed):
+            self.setStyleSheet(""); 
+            self.color_changed = False
+        else:
+            self.setStyleSheet("color: black;");
+            self.color_changed = True
+
+
+    def checkPermission(self,permission, name):
+        if (self.title == name):
+            self.changeColor()
+
+

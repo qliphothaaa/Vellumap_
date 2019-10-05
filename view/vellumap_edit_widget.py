@@ -9,6 +9,7 @@ from view.TypeButton import QTypePushButton
 from view.vellumap_type_viewer_widget import MapTypeViewerWidget
 from view.vellumap_object_information_widget import ObjectMapInfoWidget
 from view.vellumap_object_viewer_widget import MapObjectViewerWidget
+from view.vellumap_button_group_widget import TypeButtonGroupWidget
 
 DEBUG = False
 #main widget for map editor
@@ -22,8 +23,6 @@ class MapEditorWidget(QWidget):
         #self.loadStylesheet(self.stylesheet_filename)
         self.initUI()
 
-    def __str__(self):
-        return 'MapEditor'
 
     def initUI(self):
         self.layout_main = QVBoxLayout()
@@ -32,7 +31,7 @@ class MapEditorWidget(QWidget):
         self.layout_info = QVBoxLayout()
 
         self.layout_button = QVBoxLayout()
-        self.layout_button_sub = QVBoxLayout()
+        self.buttonGroup = TypeButtonGroupWidget()
 
         self.setLayout(self.layout_main)
         self.layout_main.addLayout(self.layout)
@@ -53,19 +52,14 @@ class MapEditorWidget(QWidget):
         self.loadTypeButtonSub()
         self.loadTypeButton()
 
-    #clear all button from bottom group
-    def clearLayout(self):
-        for i in reversed(range(self.layout_button_sub.count())):
-            self.layout_button_sub.itemAt(i).widget().deleteLater()
 
-    #load button from type to sub layout
+    #load button from type to button group widget
     def loadTypeButtonSub(self):
         if DEBUG: print('MAPWIDGET: start load button to sub layout')
-        for objectType in self.scene.getTypeNameList():
-            button = QTypePushButton(objectType, self)
-            button.TypeNameSignal.connect(self.setTempTypeNameSignal)
-            button.ChangeModeSignal.connect(self.ChangeModeSignal)
-            self.layout_button_sub.addWidget(button)
+        self.buttonGroup.addButtonFromList(self.scene.getTypeNameList())
+        self.buttonGroup.ChangeModeSignal.connect(self.ChangeModeSignal)
+        self.buttonGroup.SetCurrentTypeNameSignal.connect(self.setTempTypeNameSignal)
+
 
     #load all button
     def loadTypeButton(self):
@@ -74,7 +68,7 @@ class MapEditorWidget(QWidget):
         self.showTypeTable_button.clicked.connect(self.showTypeTable)
         spacerItem = QSpacerItem(0,0,QSizePolicy.Minimum,QSizePolicy.Expanding)
 
-        self.layout_button.addLayout(self.layout_button_sub)
+        self.layout_button.addWidget(self.buttonGroup)
         self.layout_button.addWidget(self.showTypeTable_button)
         self.layout_button.addItem(spacerItem)
 
