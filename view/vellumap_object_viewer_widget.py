@@ -91,6 +91,7 @@ class MapObjectViewerWidget(QWidget):
         self.queryModel = QSqlQueryModel()
         self.tableView.setModel(self.queryModel)
         self.tableView.clicked.connect(self.setDescription)
+        self.tableView.clicked.connect(self.changeFocusButton)
         '''
         self.queryModel.setHeaderData(0, Qt.Horizontal,  'Object Name')
         self.queryModel.setHeaderData(0, Qt.Horizontal, 'X')
@@ -232,9 +233,12 @@ class MapObjectViewerWidget(QWidget):
 
     def focusButtonClicked(self):
         r = self.tableView.currentIndex().row()
-        #self.FocusSignal.emit(self.queryModel.record(r).value('id'))
         self.FocusSignal.emit(self.queryModel.record(r).value('x'), self.queryModel.record(r).value('y'))
-        #self.close()
+
+    def changeFocusButton(self):
+        r = self.tableView.currentIndex().row()
+        self.focusButton.setText('Focus on: ' + str(self.queryModel.record(r).value('id')))
+
 
     def setDescription(self):
         r = self.tableView.currentIndex().row()

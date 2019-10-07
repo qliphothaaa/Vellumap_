@@ -14,8 +14,8 @@ class MapObject(DataAccess):
         self.description = description
 
         self.map_name = map_name
-        self.is_create = is_create
-        self.tableName = 'ObjectGraphic'
+        #self.is_create = is_create
+        self.table_name = 'ObjectGraphic'
 
         #add grpahic to graphic scene
 
@@ -23,7 +23,7 @@ class MapObject(DataAccess):
         #add self data to database
         if is_create:
             self.accessDataBase(self.generateSqlForAdd())
-            self.id = int(self.accessDatabaseforId(self.tableName))
+            self.id = int(self.accessDatabaseforId(self.table_name))
             self.accessDataBase(self.generateSqlForAddDiscription())
 
     def getTypeName(self):
@@ -34,7 +34,7 @@ class MapObject(DataAccess):
         self.grMapObject = QMapGraphicsObject(self, *(object_type.getAttribute()))
 
         
-    def getMapInfo(self):
+    def getMapInfo(self): #rename
         if DEBUG: print('OBJECT: get object info')
         id = self.getId()
         name = self.object_name
@@ -93,8 +93,8 @@ class MapObject(DataAccess):
         if DEBUG: print('OBJECT: get name of object')
         return self.object_name
 
-    def setId(self, objectId):
-        self.id = objectId
+    def setId(self, object_id):
+        self.id = object_id
 
     def getId(self):
         return self.id
