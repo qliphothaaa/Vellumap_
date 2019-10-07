@@ -3,13 +3,14 @@ from model.data_access_object import DataAccess
 DEBUG = False
 #the main object for map object
 class MapObject(DataAccess):
-    def __init__(self, map_name, object_type, object_name, is_create=True, description='nothing'):
+    def __init__(self, map_name, object_type_name, object_name, is_create=True, description='nothing'):
         self.id = None
         self.object_name = object_name
         self.x = 0
         self.y = 0
-        self.object_type = object_type
-        self.size = 1
+        self.width = 0
+        self.height = 0
+        self.object_type_name = object_type_name
         self.description = description
 
         self.map_name = map_name
@@ -17,9 +18,7 @@ class MapObject(DataAccess):
         self.tableName = 'ObjectGraphic'
 
         #add grpahic to graphic scene
-        self.grMapObject = QMapGraphicsObject(self, *(object_type.getAttribute()))
 
-        self.object_type.addMapObjectConnection(self)
 
         #add self data to database
         if is_create:
@@ -27,18 +26,24 @@ class MapObject(DataAccess):
             self.id = int(self.accessDatabaseforId(self.tableName))
             self.accessDataBase(self.generateSqlForAddDiscription())
 
+    def getTypeName(self):
+        return self.object_type_name
+    
+
+    def generateGraphic(self, object_type):
+        self.grMapObject = QMapGraphicsObject(self, *(object_type.getAttribute()))
+
         
     def getMapInfo(self):
         if DEBUG: print('OBJECT: get object info')
         id = self.getId()
         name = self.object_name
-        type_name = self.object_type.getName()
-        width = str(self.object_type.getSize()[0])
-        height = str(self.object_type.getSize()[1])
+        type_name = self.object_type_name
+        width = str(self.width)
+        height = str(self.height)
         position = self.getPosition()
         description = self.description
-        size = self.size
-        return (id, name, type_name, width, height, *position, size, description)
+        return (id, name, type_name, width, height, *position, description)
 
     def updateGr(self, color, shape, width, height):
         self.grMapObject.setColor(color)
@@ -47,20 +52,26 @@ class MapObject(DataAccess):
         self.grMapObject.setHeight(height)
 
 
+    def setSize(self, width, height):
+        self.width = width
+        self.height = height
+
+
     def remove(self):
         if DEBUG: print('OBJECT: remove object it self')
         self.grMapObject = None
-        self.object_type.removeMapObjectConnection(self)
         self.accessDataBase(self.generateSqlForDelete())
         self.accessDataBase(self.generateSqlForDeleteDescription())
 
-    def getPosition(self):
+    def renewPosition(self):
         if DEBUG: print('OBJECT: get position of object')
         self.x = self.grMapObject.scenePos().x()
         self.y = self.grMapObject.scenePos().y()
-        return (self.x,self.y)
 
-    def updatePosition(self, x, y):
+    def getPosition(self):
+        return (self.x, self.y)
+
+    def updatePositionTodatabase(self, x, y):
         if DEBUG: print('OBJECT: update position of object')
         self.accessDataBase(self.generateSqlForUpdatePosition(x,y))
 
@@ -100,11 +111,11 @@ class MapObject(DataAccess):
 
     def generateSqlForAdd(self):
         if DEBUG: print('OBJECT: connect to database, op:add object')
-        sql = "insert into ObjectGraphic values (null,'%s',%e, %e,'%s',%e);" % (self.object_name, *(self.getPosition()), self.object_type.type_name, 1.0)
+        sql = "insert into ObjectGraphic values (null,'%s',%e, %e,'%s',%e);" % (self.object_name, *(self.getPosition()), self.object_type_name, 2.0)
         return sql
 
     def generateSqlForAddDiscription(self):
-        sql = "insert into ObjectDescription values (%d, '%s');" % (self.id, 'blank')
+        sql = "insert into ObjectDescription values (%d, '%s');" % (self.id, self.description)
         return sql
         
 

@@ -53,10 +53,11 @@ class VellumapWindow(QMainWindow):
 
         #signal in type table widget
         mapEditor.typeTable.RefreshSignal.connect(mapEditor.buttonGroup.clearButtons)
-        mapEditor.typeTable.RefreshSignal.connect(mapEditor.loadTypeButtonSub)
+        mapEditor.typeTable.RefreshSignal.connect(mapEditor.reloadTypeButtonSub)
         mapEditor.typeTable.DeleteSignal.connect(mapEditor.scene.removeTypeByName)
         mapEditor.typeTable.AddSignal.connect(mapEditor.scene.loadNewType)
         mapEditor.typeTable.UpdateSignal.connect(mapEditor.scene.updateType)
+        mapEditor.typeTable.ResetModeSignal.connect(mapEditor.buttonGroup.changeButtonColor)
 
         #signal in object table widget
         mapEditor.objectTable.DeleteSignal.connect(mapEditor.scene.removeObjectById)
@@ -69,7 +70,6 @@ class VellumapWindow(QMainWindow):
         #signal in  main widget
         mapEditor.setTempTypeNameSignal.connect(mapEditor.scene.setTempTypeName)
         mapEditor.ChangeModeSignal.connect(mapEditor.view.changeMode)
-        #mapEditor.view.DrawCrossSignal.connect(mapEditor.scene.drawCross)
         
 
         #finish generate GUI

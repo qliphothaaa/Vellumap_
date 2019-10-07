@@ -10,6 +10,7 @@ class TypeButtonGroupWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.recent_button_name = ''
+        self.button_list = []
         self.initUI()
 
     def initUI(self):
@@ -22,13 +23,15 @@ class TypeButtonGroupWidget(QWidget):
             button = QTypePushButton(objec_type_name, self)
             self.ChangeColorSignal.connect(button.checkPermission)
             button.ClickedSignal.connect(self.changeButtonColor)
-            
+            self.button_list.append(button)
             self.layout_button.addWidget(button)
 
 
     def clearButtons(self):
         for i in reversed(range(self.layout_button.count())):
+            #self.ChangeColorSignal.disconnect(self.layout_button.itemAt(i).widget().checkPermission)
             self.layout_button.itemAt(i).widget().deleteLater()
+            self.button_list = []
 
 
     def changeButtonColor(self, button_title):

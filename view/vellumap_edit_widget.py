@@ -26,11 +26,15 @@ class MapEditorWidget(QWidget):
 
     def initUI(self):
         self.layout_main = QVBoxLayout()
-        self.layout = QHBoxLayout()
-        self.layout.setContentsMargins(0,0,0,0)
-        self.layout_info = QVBoxLayout()
 
-        self.layout_button = QVBoxLayout()
+        self.layout = QHBoxLayout()#main layout 
+        self.layout_view = QVBoxLayout() #layout for view
+        self.layout.setContentsMargins(0,0,0,0) 
+
+        self.layout_info = QVBoxLayout() #layout for infomation
+
+        self.layout_button = QVBoxLayout() #layout for button
+
         self.buttonGroup = TypeButtonGroupWidget()
 
         self.setLayout(self.layout_main)
@@ -51,35 +55,7 @@ class MapEditorWidget(QWidget):
         self.loadView()
         self.loadTypeButtonSub()
         self.loadTypeButton()
-
-
-    #load button from type to button group widget
-    def loadTypeButtonSub(self):
-        if DEBUG: print('MAPWIDGET: start load button to sub layout')
-        self.buttonGroup.addButtonFromList(self.scene.getTypeNameList())
-        self.buttonGroup.ChangeModeSignal.connect(self.ChangeModeSignal)
-        self.buttonGroup.SetCurrentTypeNameSignal.connect(self.setTempTypeNameSignal)
-
-
-    #load all button
-    def loadTypeButton(self):
-        if DEBUG: print('MAPWIDGET: start load button to button layout')
-        self.showTypeTable_button = QPushButton("+")
-        self.showTypeTable_button.clicked.connect(self.showTypeTable)
-        spacerItem = QSpacerItem(0,0,QSizePolicy.Minimum,QSizePolicy.Expanding)
-
-        self.layout_button.addWidget(self.buttonGroup)
-        self.layout_button.addWidget(self.showTypeTable_button)
-        self.layout_button.addItem(spacerItem)
-
-        self.layout.addLayout(self.layout_button)
-
-    
-    #load View
-    def loadView(self):
-        if DEBUG: print('MAPWIDGET: start load graphic')
-        self.view = QMapGraphicsView(self.scene.gr_scene, self)
-        self.layout.addWidget(self.view)
+        
 
     def loadInfo(self):
         if DEBUG: print('MAPWIDGET: start load object information widget')
@@ -89,6 +65,50 @@ class MapEditorWidget(QWidget):
         self.layout_info.addItem(spacerItem)
         self.layout.addLayout(self.layout_info)
         self.layout_info.addWidget(self.showObjectTable_button)
+
+
+    #load View
+    def loadView(self):
+        if DEBUG: print('MAPWIDGET: start load graphic')
+        self.view = QMapGraphicsView(self.scene.gr_scene, self)
+        self.pushButton = QPushButton('Import picture')
+        self.pushButton.setFixedWidth(300)
+        self.layout_view.addWidget(self.view)
+        self.layout_view.addWidget(self.pushButton)
+        self.layout.addLayout(self.layout_view)
+
+
+    #load button from type to button group widget
+    def loadTypeButtonSub(self):
+        if DEBUG: print('MAPWIDGET: start load button to sub layout')
+        self.buttonGroup.addButtonFromList(self.scene.getTypeNameList())
+        self.buttonGroup.ChangeModeSignal.connect(self.ChangeModeSignal)
+        self.buttonGroup.SetCurrentTypeNameSignal.connect(self.setTempTypeNameSignal)
+
+    def reloadTypeButtonSub(self):
+        self.buttonGroup.addButtonFromList(self.scene.getTypeNameList())
+        self.buttonGroup.ChangeModeSignal.connect(self.ChangeModeSignal)
+
+
+    def deleteButtonGroup(self):
+        for i in reversed(range(self.layout_button.count())):
+            self.layout_button.itemAt(i).widget().deleteLater()
+        
+
+    #load all button
+    def loadTypeButton(self):
+        if DEBUG: print('MAPWIDGET: start load button to button layout')
+        self.showTypeTable_button = QPushButton("+")
+        self.showTypeTable_button.clicked.connect(self.showTypeTable)
+        self.spacerItem = QSpacerItem(0,0,QSizePolicy.Minimum,QSizePolicy.Expanding)
+        self.layout_button.addWidget(self.buttonGroup)
+        self.layout_button.addWidget(self.showTypeTable_button)
+        self.layout_button.addItem(self.spacerItem)
+        self.layout.addLayout(self.layout_button)
+
+
+
+    
 
 
     #show the type table

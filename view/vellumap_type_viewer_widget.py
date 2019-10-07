@@ -10,6 +10,7 @@ class MapTypeViewerWidget(QWidget):
     DeleteSignal = pyqtSignal(str)
     AddSignal = pyqtSignal(str)
     UpdateSignal = pyqtSignal(str)
+    ResetModeSignal = pyqtSignal(str)
     def __init__(self, mapName, parent=None):
         super(MapTypeViewerWidget,self).__init__(parent,Qt.Window)
         self.setWindowTitle('type table')
@@ -78,7 +79,9 @@ class MapTypeViewerWidget(QWidget):
         if self.model:
             self.DeleteSignal.emit(self.model.record(self.tableView.currentIndex().row()).value('name'))
             self.model.removeRow(self.tableView.currentIndex().row())
+        self.ResetModeSignal.emit(self.model.record(self.tableView.currentIndex().row()).value('name'))
         self.viewType()
+        
 
 if __name__ == '__main__':
     import sys

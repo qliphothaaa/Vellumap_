@@ -14,26 +14,28 @@ class ObjectType():
         self.objects = []
 
 
+    def __str__(self):
+        return self.shape
     def remove(self):
         if DEBUG: print('TYPE: remove object it self')
-        templist = self.objects[:]
-        for mapObject in templist:
-            mapObject.remove()
         self.objects = []
         self = None
 
-    def getShape(self):
-        return self.shape
+    def getName(self):
+        return self.type_name
 
     def getColor(self):
         return self.default_color
 
+    def getShape(self):
+        return self.shape
+
     def getObjects(self):
         return self.objects
 
-    def getName(self):
-        if DEBUG: print('TYPE: get type name')
-        return self.type_name
+    def getSize(self):
+        if DEBUG: print('TYPE: get width and height of type')
+        return (self.width, self.height)
 
     def getAttribute(self):
         color = self.getColor()
@@ -42,9 +44,6 @@ class ObjectType():
         height = self.getSize()[1]
         return (color, shape, width, height)
 
-    def getSize(self):
-        if DEBUG: print('TYPE: get width and height of type')
-        return (self.width, self.height)
 
     def removeMapObjectConnection(self,obj):
         if DEBUG: print('TYPE: remove object from type')
