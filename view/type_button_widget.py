@@ -2,15 +2,14 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 import re
-#from model.map_object import MapObject
 
 #button class for create object
 #This is generate from type
 DEBUG = False
-class QTypePushButton(QPushButton):
+class TypePushButton(QPushButton):
     ClickedSignal = pyqtSignal(str)
     def __init__(self, object_type, parent):
-        super(QTypePushButton, self).__init__( parent)
+        super(TypePushButton, self).__init__( parent)
         self.button_size = QSize(100, 20)
         self.title = object_type
         self.real_title =  re.sub('^type', '', self.title)

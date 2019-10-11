@@ -5,11 +5,11 @@ from PyQt5.QtSql import *
 
 DEBUG = False
 
-class MapObjectViewerWidget(QWidget):
+class ObjectTableWidget(QWidget):
     DeleteSignal = pyqtSignal(int)
     FocusSignal = pyqtSignal(float, float)
     def __init__(self,mapName, parent=None):
-        super(MapObjectViewerWidget,self).__init__(parent, Qt.Window)
+        super(ObjectTableWidget,self).__init__(parent, Qt.Window)
         self.setWindowTitle('Object table')
         self.mapName=mapName
         self.squeryModel = None
@@ -39,7 +39,7 @@ class MapObjectViewerWidget(QWidget):
         self.searchButton.setFixedHeight(32)
 
         self.conditionComboBox = QComboBox()
-        searchCondition = ['Type','Name']
+        searchCondition = ['Type','Name', 'description']
         self.conditionComboBox.setFixedHeight(32)
         self.conditionComboBox.setFont(font)
         self.conditionComboBox.addItems(searchCondition)
@@ -92,13 +92,6 @@ class MapObjectViewerWidget(QWidget):
         self.tableView.setModel(self.queryModel)
         self.tableView.clicked.connect(self.setDescription)
         self.tableView.clicked.connect(self.changeFocusButton)
-        '''
-        self.queryModel.setHeaderData(0, Qt.Horizontal,  'Object Name')
-        self.queryModel.setHeaderData(0, Qt.Horizontal, 'X')
-        self.queryModel.setHeaderData(0, Qt.Horizontal, 'Ysdf')
-        self.queryModel.setHeaderData(0, Qt.Horizontal, 'Type')
-        self.queryModel.setHeaderData(0, Qt.Horizontal, 'Size')
-        '''
 
 
         self.descriptionText = QTextEdit()
@@ -175,8 +168,16 @@ class MapObjectViewerWidget(QWidget):
         s = '%' + temp + '%'
         if (conditionChoice == 'Type'):
             queryCondition = ("select * from ObjectGraphic where %s like '____%s' order by %s"%(conditionChoice, s, conditionChoice))
-        else:
+        if (conditionChoice == 'Name'):
             queryCondition = ("select * from ObjectGraphic where %s like '%s' order by %s"%(conditionChoice, s, conditionChoice))
+
+        if (conditionChoice == 'description'):
+            queryCondition = "select id from ObjectDescription where Description like '%s' order by %s"%( s,  conditionChoice)
+            '''
+            self.queryModel.setQuery(queryCondition)
+            queryCondition = ("select * from ObjectGraphic where %s like '%s' order by %s"%(conditionChoice, s, conditionChoice))
+            '''
+        
 
         self.queryModel.setQuery(queryCondition)
         self.totalRecord = self.queryModel.rowCount()

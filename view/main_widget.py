@@ -3,17 +3,15 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from model.map_graphics_view import QMapGraphicsView
 from model.map_scene import Scene
-from model.map_object_type import ObjectType
-from model.map_object import MapObject
-from view.TypeButton import QTypePushButton
-from view.vellumap_type_viewer_widget import MapTypeViewerWidget
-from view.vellumap_object_information_widget import ObjectMapInfoWidget
-from view.vellumap_object_viewer_widget import MapObjectViewerWidget
-from view.vellumap_button_group_widget import TypeButtonGroupWidget
+from view.type_table_widget import TypeTableWidget
+from view.object_information_widget import ObjectInfoWidget
+from view.object_table_widget import ObjectTableWidget
+from view.type_button_group_widget import TypeButtonGroupWidget
+from view.load_background_dialog import LoadBackgroundDialog
 
 DEBUG = False
 #main widget for map editor
-class MapEditorWidget(QWidget):
+class MainWidget(QWidget):
     setTempTypeNameSignal = pyqtSignal(str)
     ChangeModeSignal = pyqtSignal(str)
     def __init__(self, mapName, parent=None):
@@ -46,8 +44,8 @@ class MapEditorWidget(QWidget):
 
         #create graphic scene
         self.scene = Scene(self.mapName)
-        self.typeTable = MapTypeViewerWidget(self.mapName)
-        self.objectTable = MapObjectViewerWidget(self.mapName)
+        self.typeTable = TypeTableWidget(self.mapName)
+        self.objectTable = ObjectTableWidget(self.mapName)
 
 
         #load sub widgets
@@ -59,7 +57,7 @@ class MapEditorWidget(QWidget):
 
     def loadInfo(self):
         if DEBUG: print('MAPWIDGET: start load object information widget')
-        self.objectInfo = ObjectMapInfoWidget()
+        self.objectInfo = ObjectInfoWidget()
         spacerItem = QSpacerItem(0,0,QSizePolicy.Minimum,QSizePolicy.Expanding)
         self.layout_info.addWidget(self.objectInfo)
         self.layout_info.addItem(spacerItem)
@@ -73,6 +71,7 @@ class MapEditorWidget(QWidget):
         self.view = QMapGraphicsView(self.scene.gr_scene, self)
         self.pushButton = QPushButton('Import picture')
         self.pushButton.setFixedWidth(300)
+        self.pushButton.clicked.connect(self.showLoadBackground)
         self.layout_view.addWidget(self.view)
         self.layout_view.addWidget(self.pushButton)
         self.layout.addLayout(self.layout_view)
@@ -108,8 +107,6 @@ class MapEditorWidget(QWidget):
 
 
 
-    
-
 
     #show the type table
     def showTypeTable(self):
@@ -119,6 +116,15 @@ class MapEditorWidget(QWidget):
     def showObjectTable(self):
         if DEBUG: print('MAPWIDGET: open object table')
         self.objectTable.show()
+
+    def showLoadBackground(self):
+        loadBackgroundDialog = LoadBackgroundDialog(self)
+        loadBackgroundDialog.LoadBackgroundSignal.connect(self.scene.loadBackground)
+        loadBackgroundDialog.show()
+        loadBackgroundDialog.exec_()
+        #loadBackgroundDialog.LoadBackgroundSignal.emit('img.jpg', 10)
+ 
+        
 
 
     #load style sheet from qss

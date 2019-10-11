@@ -7,10 +7,10 @@ DEBUG = True
 
 #class that contain the graphics
 class QMapGraphicsView(QGraphicsView):
-    scenePosChanged = pyqtSignal(int, int)
+    ScenePosSignal = pyqtSignal(int, int)
     UpdateObjectPos = pyqtSignal(int, int)
     CreateObjectSignal = pyqtSignal(int, int)
-    currentObjectSignal = pyqtSignal(int, str, str, str, str, int, int, str)
+    CurrentObjectSignal = pyqtSignal(int, str, str, str, str, int, int, str)
     BackSpaceSignal = pyqtSignal(int)
     
 
@@ -41,7 +41,7 @@ class QMapGraphicsView(QGraphicsView):
 
     def mouseMoveEvent(self, event):
         self.last_scene_mouse_position = self.mapToScene(event.pos())
-        self.scenePosChanged.emit(int(self.last_scene_mouse_position.x()), int(self.last_scene_mouse_position.y()))
+        self.ScenePosSignal.emit(int(self.last_scene_mouse_position.x()), int(self.last_scene_mouse_position.y()))
         super().mouseMoveEvent(event)
 
     def changeMode(self, mode_name):
@@ -67,10 +67,11 @@ class QMapGraphicsView(QGraphicsView):
         if (self.mode == 'select'):
             self.current_item = self.getItemAtClicked(event)
             if isinstance(self.current_item, QMapGraphicsObject):
-                self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
+                self.CurrentObjectSignal.emit(*self.current_item.map_object.getObjectInfo())
+                
                 self.addToTop()
             else:
-                self.currentObjectSignal.emit(-1,'','','','','','','')
+                self.CurrentObjectSignal.emit(-1,'','','','','','','')
         elif (self.mode == 'create'):
             self.CreateObjectSignal.emit(int(self.mapToScene(event.pos()).x()), int(self.mapToScene(event.pos()).y()))
 
@@ -81,11 +82,11 @@ class QMapGraphicsView(QGraphicsView):
             for item in self.grScene.selectedItems():
                 if isinstance(item, QMapGraphicsObject):
                     item.map_object.renewPosition()
-                    item.map_object.updatePositionTodatabase(*item.map_object.getPosition())
+                    item.map_object.updatePositionToDatabase(*item.map_object.getPosition())
             if isinstance(self.current_item, QMapGraphicsObject):
-                self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
+                self.CurrentObjectSignal.emit(*self.current_item.map_object.getObjectInfo())
             else:
-                self.currentObjectSignal.emit(-1,'','','','','','','')
+                self.CurrentObjectSignal.emit(-1,'','','','','','','')
         super().mouseReleaseEvent(event)
 
     def getItemAtClicked(self, event):
@@ -96,7 +97,7 @@ class QMapGraphicsView(QGraphicsView):
     def deleteSelectedItem(self):
         for item in self.grScene.selectedItems():
             if isinstance(item, QMapGraphicsObject):
-                self.BackSpaceSignal.emit(item.map_object.getId())
+                self.BackSpaceSignal.emit(item.map_object.id)
 
 
     def addToTop(self):
@@ -132,8 +133,6 @@ class QMapGraphicsView(QGraphicsView):
 
     def focusOn(self, x, y):
         self.centerOn(x, y)
-        #self.current_item = self.itemAt(x+20, y+20)
-        #self.currentObjectSignal.emit(*self.current_item.map_object.getMapInfo())
 
 
 

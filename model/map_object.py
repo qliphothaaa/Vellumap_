@@ -26,21 +26,22 @@ class MapObject(DataAccess):
             self.id = int(self.accessDatabaseforId(self.table_name))
             self.accessDataBase(self.generateSqlForAddDiscription())
 
-    def getTypeName(self):
-        return self.object_type_name
     
 
-    def generateGraphic(self, object_type):
-        self.grMapObject = QMapGraphicsObject(self, *(object_type.getAttribute()))
+    def generateGraphic(self, color, shape, width, height):
+        self.grMapObject = QMapGraphicsObject(self, color, shape, width, height)
+        self.width = width
+        self.height = height
 
         
-    def getMapInfo(self): #rename
+    def getObjectInfo(self): #rename
         if DEBUG: print('OBJECT: get object info')
-        id = self.getId()
+        id = self.id
         name = self.object_name
         type_name = self.object_type_name
         width = str(self.width)
         height = str(self.height)
+        print(width)
         position = self.getPosition()
         description = self.description
         return (id, name, type_name, width, height, *position, description)
@@ -52,14 +53,11 @@ class MapObject(DataAccess):
         self.grMapObject.setHeight(height)
 
 
-    def setSize(self, width, height):
-        self.width = width
-        self.height = height
 
 
     def remove(self):
         if DEBUG: print('OBJECT: remove object it self')
-        self.grMapObject = None
+        #self.grMapObject = None
         self.accessDataBase(self.generateSqlForDelete())
         self.accessDataBase(self.generateSqlForDeleteDescription())
 
@@ -71,33 +69,27 @@ class MapObject(DataAccess):
     def getPosition(self):
         return (self.x, self.y)
 
-    def updatePositionTodatabase(self, x, y):
-        if DEBUG: print('OBJECT: update position of object')
-        self.accessDataBase(self.generateSqlForUpdatePosition(x,y))
 
     def setPosition(self, x, y):
         self.x = x
         self.y = y
         self.grMapObject.setPos(x, y)
 
-    def setName(self, name):
+    def updatePositionToDatabase(self, x, y):
+        if DEBUG: print('OBJECT: update position of object')
+        self.accessDataBase(self.generateSqlForUpdatePosition(x,y))
+
+    def updateNameToDatabase(self, name):
         if DEBUG: print('OBJECT: new name to the object:(%s)'%name)
         self.accessDataBase(self.generateSqlForRename(name))
         self.object_name = name
 
-    def setDescription(self, description_text):
+    def updateDescriptionToDatabase(self, description_text):
         self.accessDataBase(self.generateSqlForChangeDescription(description_text))
         self.description = description_text
 
-    def getName(self):
-        if DEBUG: print('OBJECT: get name of object')
-        return self.object_name
 
-    def setId(self, object_id):
-        self.id = object_id
 
-    def getId(self):
-        return self.id
 
     def generateSqlForRename(self, name):
         if DEBUG: print('OBJECT: connect to database, op:update Name:%s'%name)
@@ -118,8 +110,6 @@ class MapObject(DataAccess):
         sql = "insert into ObjectDescription values (%d, '%s');" % (self.id, self.description)
         return sql
         
-
-
     def generateSqlForDelete(self):
         if DEBUG: print('OBJECT: connect to database, op:delete object')
         sql = "Delete from ObjectGraphic where(id = '%s');" % self.id

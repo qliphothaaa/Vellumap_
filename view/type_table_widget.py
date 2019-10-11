@@ -5,14 +5,14 @@ from PyQt5.QtSql import *
 from view.add_type_dialog import AddTypeDialog
 from view.update_type_dialog import UpdateTypeDialog
 
-class MapTypeViewerWidget(QWidget):
+class TypeTableWidget(QWidget):
     RefreshSignal = pyqtSignal()
     DeleteSignal = pyqtSignal(str)
     AddSignal = pyqtSignal(str)
     UpdateSignal = pyqtSignal(str)
-    ResetModeSignal = pyqtSignal(str)
+    ResetModeSignal = pyqtSignal()
     def __init__(self, mapName, parent=None):
-        super(MapTypeViewerWidget,self).__init__(parent,Qt.Window)
+        super(TypeTableWidget,self).__init__(parent,Qt.Window)
         self.setWindowTitle('type table')
         self.tableView = None
         self.mapName=mapName
@@ -66,6 +66,7 @@ class MapTypeViewerWidget(QWidget):
         updateTypeDialog.update_success_signal.connect(self.UpdateSignal)
         updateTypeDialog.show()
         updateTypeDialog.exec_()
+        self.ResetModeSignal.emit()
         self.viewType()
 
     def addTypeButtonClicked(self):
@@ -73,13 +74,14 @@ class MapTypeViewerWidget(QWidget):
         addTypeDialog.add_success_signal.connect(self.AddSignal)
         addTypeDialog.show()
         addTypeDialog.exec_()
+        self.ResetModeSignal.emit()
         self.viewType()
 
     def deleteTypeButtonClicked(self):
         if self.model:
             self.DeleteSignal.emit(self.model.record(self.tableView.currentIndex().row()).value('name'))
             self.model.removeRow(self.tableView.currentIndex().row())
-        self.ResetModeSignal.emit(self.model.record(self.tableView.currentIndex().row()).value('name'))
+        self.ResetModeSignal.emit()
         self.viewType()
         
 

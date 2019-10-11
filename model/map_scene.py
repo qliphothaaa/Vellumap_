@@ -19,8 +19,6 @@ class Scene(DataAccess):
         self.objects = []
 
         self.map_name = map_name
-        self.scene_width = 15000
-        self.scene_height = 15000
         self.to_create = ''
         self.initUI()
         
@@ -28,14 +26,10 @@ class Scene(DataAccess):
     def initUI(self):
         if DEBUG: print('SCENE:init gr_scene')
         self.gr_scene = QMapGraphicsScene(self)
-        self.gr_scene.setGrScene(self.scene_width, self.scene_height)
+        self.gr_scene.setGrScene(15000, 15000)
 
 
-        self.clearObjects()
-        self.clearTypes()
         self.loadBackground('yiji.jpg', 10)
-        self.loadType()
-        self.loadObject()
 
     def setTempTypeName(self, type_name):
         if (self.to_create == type_name):
@@ -46,12 +40,18 @@ class Scene(DataAccess):
     def loadBackground(self, pic_name, rate):
         if (pic_name is not ''):
             self.clearObjects()
+            self.clearTypes()
             mapBackground = MapBackground(pic_name, rate)
             self.mapBackgroundGraphic = QMapGraphicsBackground(mapBackground.getPathName(), mapBackground.getSize())
             self.gr_scene.addItem(self.mapBackgroundGraphic)
-            self.loadObject
+            self.loadType()
+            self.loadObject()
+
+
     def loadBackgroundFromDatabase(self):
-        pass
+        model = self.viewData('Background')
+        pixmap_name = model.record(0).value('name')
+        pixmap = model.record(0).value('pic')
 
     def addObjectConnection(self, obj):
         self.objects.append(obj)
@@ -68,22 +68,22 @@ class Scene(DataAccess):
     def getObjectById(self, object_id):
         if DEBUG: print('SCENE:find object by id')
         for item in self.objects:
-            if item.getId() == object_id:
+            if item.id == object_id:
                 return item
         
     def getTypeByName(self, type_name):
         if DEBUG: print('SCENE:find type by name')
-        for item in self.object_types:
-            if item.getName() == type_name:
-                return item
+        for object_type in self.object_types:
+            if object_type.type_name == type_name:
+                return object_type
         
 
     def removeObjectById(self, object_id):
         if DEBUG: print('SCENE:remove object it self')
         map_object = self.getObjectById(object_id)
-        object_type = self.getTypeByName(map_object.getTypeName())
+        object_type = self.getTypeByName(map_object.object_type_name)
 
-        object_type.removeMapObjectConnection(map_object.getId())
+        object_type.removeMapObjectConnection(map_object.id)
         self.removeObjectConnection(map_object)
         self.gr_scene.removeItem(map_object.grMapObject) 
         map_object.remove()  #map_object remove from db
@@ -92,11 +92,11 @@ class Scene(DataAccess):
     def removeTypeByName(self, type_name):
         if DEBUG: print('SCENE:remove type it self')
         object_type = self.getTypeByName(type_name)
-        objects_list = object_type.getObjects()[:]
+        objects_list = object_type.objects[:]
         for object_id in objects_list:
             self.removeObjectById(object_id)
         self.removeTypeConnection(object_type)
-        object_type.remove()
+        object_type = None
                 
 
 
@@ -124,8 +124,9 @@ class Scene(DataAccess):
             object_type = self.getTypeByName(object_type_name)
 
             mapObject = MapObject(self.map_name, object_type_name, object_name,False, description)
-            mapObject.generateGraphic(object_type)
-            mapObject.setId(object_id)
+            object_type_data = object_type.getAttribute()
+            mapObject.generateGraphic(*object_type_data)
+            mapObject.id = object_id
             object_type.addMapObjectConnection(object_id)
             self.addObjectConnection(mapObject)
 
@@ -168,25 +169,25 @@ class Scene(DataAccess):
                 databaseRecord = model.record(i)
                 object_type.update(databaseRecord.value('name'), databaseRecord.value('shape'), databaseRecord.value('color'), databaseRecord.value('width'), databaseRecord.value('height'))
                 for obj in self.objects:
-                    if obj.getTypeName() == type_name:
+                    if obj.object_type_name == type_name:
                         obj.updateGr(*(object_type.getAttribute()))
 
 
     def renameObject(self, id, newName):
         for i in self.objects:
-            if i.getId() == id:
-                i.setName(newName)
+            if i.id == id:
+                i.updateNameToDatabase(newName)
 
     def changeDescriptionObject(self, id, description):
         for i in self.objects:
-            if i.getId() == id:
-                i.setDescription(description)
+            if i.id == id:
+                i.updateDescriptionToDatabase(description)
 
 
     def getTypeNameList(self):
         list = []
         for object_type in self.object_types:
-            list.append(object_type.getName())
+            list.append(object_type.type_name)
         return list
 
     def convertRealPosToMapPos(self, width, height, real_x, real_y):
@@ -201,18 +202,21 @@ class Scene(DataAccess):
 
     def createNewObject(self, real_x, real_y):
         if (self.to_create != ''):
-            ObjectType = self.getTypeByName(self.to_create)
+            object_type = self.getTypeByName(self.to_create)
         else:
             return 0
-        width, height = ObjectType.getSize()
+        width = object_type.width 
+        height = object_type.height
+        print(width)
         map_x, map_y = self.convertRealPosToMapPos(width, height, real_x, real_y)
-        if (isinstance(ObjectType, type(None))):
+        if (isinstance(object_type, type(None))):
             pass
         else:
-            mapObject = MapObject(self.map_name, ObjectType.getName(), ObjectType.object_name_base+'_unnamed') 
-            mapObject.generateGraphic(ObjectType)
+            mapObject = MapObject(self.map_name, object_type.type_name, object_type.object_name_base+'_unnamed') 
+            object_type_data =  object_type.getAttribute()
+            mapObject.generateGraphic(*object_type_data)
             self.addObjectConnection(mapObject)
-            ObjectType.addMapObjectConnection(mapObject.getId())
+            object_type.addMapObjectConnection(mapObject.id)
             mapObject.setPosition(map_x, map_y)
-            mapObject.updatePositionTodatabase(map_x, map_y)
+            mapObject.updatePositionToDatabase(map_x, map_y)
             self.gr_scene.addItem(mapObject.grMapObject)

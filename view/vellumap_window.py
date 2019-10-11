@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import *
-from view.vellumap_edit_widget import MapEditorWidget
+from view.main_widget import MainWidget
 from view.open_map_dialog import OpenMapDialog
 import sys
 import re
@@ -11,24 +11,21 @@ class VellumapWindow(QMainWindow):
         self.is_open = False
         self.filename = 'None'
         self.onFileOpen()
-        #self.initUI()
 
-    def __str__(self):
-        return 'main Window'
 
     def initUI(self):
         #create menubar
-        menubar = self.menuBar()
+        Menubar = self.menuBar()
 
         #add action to menuBar
-        fileMenu = menubar.addMenu('File')
+        fileMenu = Menubar.addMenu('File')
         fileMenu.addAction(self.createAct('Open file', 'Ctrl+O', 'Open file', self.onFileOpen))
         fileMenu.addSeparator()
         fileMenu.addAction(self.createAct('Export to 2D', 'Ctrl+S', 'Save map in pic', self.onFileSave2D))
         fileMenu.addAction(self.createAct('Export to 3D', 'Ctrl+Shift+S', 'Save map in obj', self.onFileSave3D))
         fileMenu.addSeparator()
         fileMenu.addAction(self.createAct('Exit', 'Ctrl+Q', 'Exit application', self.close))
-        editMenu = menubar.addMenu('Edit')
+        editMenu = Menubar.addMenu('Edit')
         editMenu.addAction(self.createAct('Delete', 'Backspace', 'delete object', self.onEditDelete))
 
 
@@ -36,8 +33,8 @@ class VellumapWindow(QMainWindow):
 #check the database
 
 #generate GUI
-        mapEditor = MapEditorWidget(self.filename)
-        self.setCentralWidget(mapEditor)
+        mainEditor = MainWidget(self.filename)
+        self.setCentralWidget(mainEditor)
         
         self.status_mouse_pos = QLabel('')
         self.statusBar().addPermanentWidget(self.status_mouse_pos)
@@ -45,31 +42,31 @@ class VellumapWindow(QMainWindow):
         #connect signal with function
 
         #signal in view widget
-        mapEditor.view.scenePosChanged.connect(self.onScenePosChanged)
-        mapEditor.view.currentObjectSignal.connect(mapEditor.objectInfo.setInfo)
-        mapEditor.view.BackSpaceSignal.connect(mapEditor.scene.removeObjectById)
-        mapEditor.view.BackSpaceSignal.connect(mapEditor.objectTable.searchButtonClicked)
-        mapEditor.view.CreateObjectSignal.connect(mapEditor.scene.createNewObject)
+        mainEditor.view.ScenePosSignal.connect(self.onScenePosChanged)
+        mainEditor.view.CurrentObjectSignal.connect(mainEditor.objectInfo.setInfo)
+        mainEditor.view.BackSpaceSignal.connect(mainEditor.scene.removeObjectById)
+        mainEditor.view.BackSpaceSignal.connect(mainEditor.objectTable.searchButtonClicked)
+        mainEditor.view.CreateObjectSignal.connect(mainEditor.scene.createNewObject)
 
         #signal in type table widget
-        mapEditor.typeTable.RefreshSignal.connect(mapEditor.buttonGroup.clearButtons)
-        mapEditor.typeTable.RefreshSignal.connect(mapEditor.reloadTypeButtonSub)
-        mapEditor.typeTable.DeleteSignal.connect(mapEditor.scene.removeTypeByName)
-        mapEditor.typeTable.AddSignal.connect(mapEditor.scene.loadNewType)
-        mapEditor.typeTable.UpdateSignal.connect(mapEditor.scene.updateType)
-        mapEditor.typeTable.ResetModeSignal.connect(mapEditor.buttonGroup.changeButtonColor)
+        mainEditor.typeTable.RefreshSignal.connect(mainEditor.buttonGroup.clearButtons)
+        mainEditor.typeTable.RefreshSignal.connect(mainEditor.reloadTypeButtonSub)
+        mainEditor.typeTable.DeleteSignal.connect(mainEditor.scene.removeTypeByName)
+        mainEditor.typeTable.AddSignal.connect(mainEditor.scene.loadNewType)
+        mainEditor.typeTable.UpdateSignal.connect(mainEditor.scene.updateType)
+        mainEditor.typeTable.ResetModeSignal.connect(mainEditor.buttonGroup.resetRecent)
 
         #signal in object table widget
-        mapEditor.objectTable.DeleteSignal.connect(mapEditor.scene.removeObjectById)
-        mapEditor.objectTable.FocusSignal.connect(mapEditor.view.focusOn)
+        mainEditor.objectTable.DeleteSignal.connect(mainEditor.scene.removeObjectById)
+        mainEditor.objectTable.FocusSignal.connect(mainEditor.view.focusOn)
 
         #signal in object information widget
-        mapEditor.objectInfo.ChangeObjectNameSignal.connect(mapEditor.scene.renameObject)
-        mapEditor.objectInfo.ChangeObjectDescriptionSignal.connect(mapEditor.scene.changeDescriptionObject)
+        mainEditor.objectInfo.ChangeObjectNameSignal.connect(mainEditor.scene.renameObject)
+        mainEditor.objectInfo.ChangeObjectDescriptionSignal.connect(mainEditor.scene.changeDescriptionObject)
 
-        #signal in  main widget
-        mapEditor.setTempTypeNameSignal.connect(mapEditor.scene.setTempTypeName)
-        mapEditor.ChangeModeSignal.connect(mapEditor.view.changeMode)
+        #signal in main widget
+        mainEditor.setTempTypeNameSignal.connect(mainEditor.scene.setTempTypeName)
+        mainEditor.ChangeModeSignal.connect(mainEditor.view.changeMode)
         
 
         #finish generate GUI

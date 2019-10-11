@@ -19,4 +19,8 @@ size real default 1.0);
 CREATE TABLE ObjectDescription(
 id integer not null,
 Description varchar(100) default 'None' );
+
+CREATE TABLE Background(
+name varchar(10) not null,
+pic bytea default '' );
 COMMIT;

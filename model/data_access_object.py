@@ -3,11 +3,11 @@ import sys
 DEBUG = False
 class DataAccess():
     def __init__(self):
+        self.map_name = ''
         pass
 
     #read database return model
     def viewData(self, table_name):
-        if DEBUG: print('try to access database, R')
         if QSqlDatabase.contains('qt_sql_default_connection'):
             db = QSqlDatabase.database('qt_sql_default_connection')
         else:
@@ -21,7 +21,6 @@ class DataAccess():
 
     #operation to change database
     def accessDataBase(self,sql):
-        if DEBUG: print('try to access database, CUD')
         if QSqlDatabase.contains('qt_sql_default_connection'):
             db = QSqlDatabase.database('qt_sql_default_connection')
         else:

@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 import re
 
 
-class ObjectMapInfoWidget(QWidget):
+class ObjectInfoWidget(QWidget):
     ChangeObjectNameSignal = pyqtSignal(int,str)
     ChangeObjectDescriptionSignal = pyqtSignal(int, str)
     def __init__(self, parent=None):
@@ -35,7 +35,7 @@ class ObjectMapInfoWidget(QWidget):
         self.object_height = QLabel('')
         self.object_x = QLabel('')
         self.object_y = QLabel('')
-        self.object_size = QLabel('')
+        #self.object_size = QLabel('')
 
         #crate editor
         self.nameLineEdit = QLineEdit()
@@ -109,6 +109,6 @@ class ObjectMapInfoWidget(QWidget):
 if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)
-    mainWindwo = ObjectMapInfoWidget()
+    mainWindwo = ObjectInfoWidget()
     mainWindwo.show()
     sys.exit(app.exec_())
