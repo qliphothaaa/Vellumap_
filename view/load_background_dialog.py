@@ -7,13 +7,14 @@ import re
 
 class LoadBackgroundDialog(QDialog):
     LoadBackgroundSignal = pyqtSignal(str, int)
+
     def __init__(self, parent=None):
         super(LoadBackgroundDialog, self).__init__(parent)
         
         self.namelabel = QLabel('name:')
         self.sizeLabel = QLabel('size:')
         self.backgroundNameEdit = QLineEdit()
-        self.sizeEdit = QLineEdit()
+        self.sizeEdit = QLineEdit('1')
         self.button1 = QPushButton("Open Existing Map")
         self.button1.clicked.connect(self.clickButton)
         
@@ -26,5 +27,5 @@ class LoadBackgroundDialog(QDialog):
 
 
     def clickButton(self):
-        self.LoadBackgroundSignal.emit(self.backgroundNameEdit.text(), int(self.sizeEdit.text()))
+        self.LoadBackgroundSignal.emit(self.backgroundNameEdit.text()+'.jpg', int(self.sizeEdit.text()))
         
