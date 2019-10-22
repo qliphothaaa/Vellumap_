@@ -6,19 +6,22 @@ import math
 DEBUG =True
 #Graphics object of map object
 class QMapGraphicsBackground(QGraphicsPixmapItem):
-    def __init__(self, path, size, parent=None):
+    def __init__(self, background, parent=None):
         super().__init__(parent)
-
-        self.size = size
-        self.path = path
+        self.object_id = -1
+        self.size = background.size
+        self.path = background.path_name
+        self.background = background
         background_pic = QPixmap(self.path)
         scaled = background_pic.scaled(self.size, Qt.IgnoreAspectRatio,Qt.SmoothTransformation)
-        #scaled.fill(Qt.transparent)
         self.setPixmap(scaled) 
-        self.setPos(-self.size.width()/2,-self.size.height()/2)
+        self.setPosition()
 
     def setSize(self, size):
         self.size = size
+
+    def setPosition(self):
+        self.setPos(self.background.x - self.size.width()/2, self.background.y - self.size.height()/2)
 
 
 

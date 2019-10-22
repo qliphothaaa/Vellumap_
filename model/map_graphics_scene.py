@@ -10,14 +10,12 @@ class QMapGraphicsScene(QGraphicsScene):
         self.scene = scene
         self.gridSize = 20
         self._color_background = QColor('#393939')
-        #self._color_background = QColor('#000000')
-        self._color_light = QColor('#2f2f2f')
-        self._color_dark = QColor('#292929')
-
-        self._pen_light = QPen(self._color_light)
-        self._pen_light.setWidth(1)
-        self._pen_dark = QPen(self._color_dark)
-        self._pen_dark.setWidth(2)
+        #self._color_light = QColor('#2f2f2f')
+        #self._color_dark = QColor('#292929')
+        #self._pen_light = QPen(self._color_light)
+        #self._pen_light.setWidth(1)
+        #self._pen_dark = QPen(self._color_dark)
+        #self._pen_dark.setWidth(2)
 
         self.setBackgroundBrush(self._color_background)
 
@@ -29,6 +27,7 @@ class QMapGraphicsScene(QGraphicsScene):
     def drawBackground(self, painter, rect):
         super().drawBackground(painter, rect)
 
+        '''
         left = int(math.floor(rect.left()))
         right = int(math.ceil(rect.right()))
         top = int(math.floor(rect.top()))
@@ -50,6 +49,7 @@ class QMapGraphicsScene(QGraphicsScene):
         painter.drawLines(*lines_light)
         painter.setPen(self._pen_dark)
         painter.drawLines(*lines_dark)
+        '''
         
 
         

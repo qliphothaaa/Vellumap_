@@ -17,9 +17,6 @@ class TypePushButton(QPushButton):
         self.color_changed = False
         self.setMinimumSize(self.button_size)
 
-    def __str__(self):
-        return self.title
-
 
     def mousePressEvent(self,e):
         if DEBUG: print('BUTTON: button pressed, create Object')

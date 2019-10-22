@@ -1,17 +1,17 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PyQt5.QtSql import *
-
 
 class UpdateTypeDialog(QDialog):
     update_success_signal = pyqtSignal(str)
+    UpdateTypeSignal = pyqtSignal(str, str, str, float, float)
 
-    def __init__(self,mapName, parent=None):
+    def __init__(self, mapName, type_list, parent=None):
         super(UpdateTypeDialog, self).__init__(parent)
+        self.parent = parent
         self.mapName = mapName
+        self.type_list = type_list
         self.initUI()
-        
         self.setWindowModality(Qt.WindowModal)
         self.setWindowTitle('update Type')
 
@@ -42,7 +42,10 @@ class UpdateTypeDialog(QDialog):
         self.nameEdit.setMaxLength(10)
         self.colorEdit.setMaxLength(20)
         self.widthEdit.setMaxLength(7)
-        self.widthEdit.setMaxLength(7)
+        self.heightEdit.setMaxLength(7)
+
+        self.widthEdit.setValidator(QDoubleValidator(0, 10000, 1))
+        self.heightEdit.setValidator(QDoubleValidator(0, 10000, 1))
 
         self.layout.addRow('',self.titlelabel)
         self.layout.addRow(self.nameLabel, self.nameEdit)
@@ -68,6 +71,7 @@ class UpdateTypeDialog(QDialog):
         self.widthEdit.setFont(font)
         self.heightEdit.setFont(font)
 
+
         font.setPixelSize(16)
         self.colorButton.setFont(font)
         self.colorButton.setFixedHeight(32)
@@ -88,53 +92,41 @@ class UpdateTypeDialog(QDialog):
         self.cancelTypeButton.clicked.connect(self.close)
         self.nameEdit.textChanged.connect(self.typeNameChanged)
         self.colorButton.clicked.connect(self.showColorDialog)
+        self.disableEdit()
     
     def typeNameChanged(self):
         name = self.nameEdit.text()
+        full_name = 'type'+name
         if(name == ""):
-            self.graphciComboBox.clear()
-            self.colorEdit.clear()
-            self.widthEdit.clear()
-            self.heightEdit.clear()
-        if QSqlDatabase.contains('qt_sql_default_connection'):
-            db = QSqlDatabase.database('qt_sql_default_connection')
+            self.clearEdit()
+            self.disableEdit()
+        elif full_name in self.type_list:
+            index = self.type_list.index(full_name)
+            i = self.graphciComboBox.findText(self.parent.model.record(index).value('shape'), Qt.MatchFixedString)
+            if i >= 0:
+                self.graphciComboBox.setCurrentIndex(i)
+            self.colorEdit.setText(self.parent.model.record(index).value('color'))
+            self.widthEdit.setText(str(self.parent.model.record(index).value('width')))
+            self.heightEdit.setText(str(self.parent.model.record(index).value('height')))
+            self.enableEdit()
+
         else:
-            db = QSqlDatabase.addDatabase("QSQLITE")
-            db.setDatabaseName('./db/%s.db' % self.mapName)
-            db.open()
-        query = QSqlQuery()
-        sql = "select * from type where Name = 'type%s'" % (name)
-        query.exec_(sql)
-        if(query.next()):
-            index = self.graphciComboBox.findText(query.value(1), Qt.MatchFixedString)
-            if index >= 0:
-                self.graphciComboBox.setCurrentIndex(index)
-            self.colorEdit.setText(query.value(2))
-            self.widthEdit.setText(str(query.value(3)))
-            self.heightEdit.setText(str(query.value(4)))
-        return
+            self.clearEdit()
+            self.disableEdit()
+
 
     def confirmTypeButtonClicked(self):
-        name = self.nameEdit.text()
+        name = 'type' + self.nameEdit.text()
         shape = self.graphciComboBox.currentText()
         color = self.colorEdit.text()
-        width = self.widthEdit.text()
-        height = self.heightEdit.text()
-        if QSqlDatabase.contains('qt_sql_default_connection'):
-            db = QSqlDatabase.database('qt_sql_default_connection')
-        else:
-            db = QSqlDatabase.addDatabase("QSQLITE")
-            db.setDatabaseName('./db/%s.db' % self.mapName)
-            db.open()
-        query = QSqlQuery()
-        sql = "update type set Shape = '%s', Color = '%s', width = '%s', height = '%s' where Name = 'type%s'" % (shape, color, width, height, name)
-        query.exec_(sql)
-        try: 
-            db.commit()
-        except:
-            print("SQL error:", sys.exc_info()[0])
-        print(QMessageBox.information(self, 'info', 'success' , QMessageBox.Yes, QMessageBox.Yes))
-        self.update_success_signal.emit('type'+name)
+        width = float(self.widthEdit.text())
+        height = float(self.heightEdit.text())
+
+
+        self.UpdateTypeSignal.emit(name, shape, color, width, height)
+
+        QMessageBox.information(self, 'info', 'success' , QMessageBox.Yes, QMessageBox.Yes)
+        #self.update_success_signal.emit(name)
         #self.clearEdit()
         self.close()
         
@@ -144,7 +136,25 @@ class UpdateTypeDialog(QDialog):
             self.colorEdit.setText(get_color.name())
 
     def clearEdit(self):
-        self.nameEdit.clear()
+        self.graphciComboBox.setCurrentIndex(-1)
         self.colorEdit.clear()
         self.widthEdit.clear()
         self.heightEdit.clear()
+
+    def enableEdit(self):
+        self.colorEdit.setDisabled(False)
+        self.graphciComboBox.setDisabled(False)
+        self.widthEdit.setDisabled(False)
+        self.heightEdit.setDisabled(False)
+        self.colorButton.setDisabled(False)
+        self.confirmTypeButton.setDisabled(False)
+
+    def disableEdit(self):
+        self.colorEdit.setDisabled(True)
+        self.graphciComboBox.setDisabled(True)
+        self.widthEdit.setDisabled(True)
+        self.heightEdit.setDisabled(True)
+        self.colorButton.setDisabled(True)
+        self.confirmTypeButton.setDisabled(True)
+
+

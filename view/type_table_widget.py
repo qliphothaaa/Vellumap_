@@ -8,14 +8,15 @@ from view.update_type_dialog import UpdateTypeDialog
 class TypeTableWidget(QWidget):
     RefreshSignal = pyqtSignal()
     DeleteSignal = pyqtSignal(str)
-    AddSignal = pyqtSignal(str)
-    UpdateSignal = pyqtSignal(str)
+    AddSignal = pyqtSignal(str, str, str, float, float)
+    UpdateSignal = pyqtSignal(str, str, str, float, float)
     ResetModeSignal = pyqtSignal()
     def __init__(self, mapName, parent=None):
         super(TypeTableWidget,self).__init__(parent,Qt.Window)
         self.setWindowTitle('type table')
         self.tableView = None
         self.mapName=mapName
+        self.type_list = []
         
         self.initUI()
 
@@ -47,6 +48,8 @@ class TypeTableWidget(QWidget):
         self.groupBox_layout.addWidget(self.deleteButton)
         self.viewType()
 
+        
+
     def viewType(self):
         if QSqlDatabase.contains('qt_sql_default_connection'):
             db = QSqlDatabase.database('qt_sql_default_connection')
@@ -54,24 +57,26 @@ class TypeTableWidget(QWidget):
             db = QSqlDatabase.addDatabase("QSQLITE")
             db.setDatabaseName('./db/%s.db' % self.mapName)
             db.open()
-
         self.model = QSqlTableModel()
         self.tableView.setModel(self.model)
         self.model.setTable('Type')
         self.model.select()
+        self.type_list.clear()
+        for row in range(self.model.rowCount()):
+            self.type_list.append(self.model.record(row).value('name'))
         self.RefreshSignal.emit()
 
     def updateTypeButtonClicked(self):
-        updateTypeDialog = UpdateTypeDialog(self.mapName, self)
-        updateTypeDialog.update_success_signal.connect(self.UpdateSignal)
+        updateTypeDialog = UpdateTypeDialog(self.mapName,self.type_list, self)
+        updateTypeDialog.UpdateTypeSignal.connect(self.UpdateSignal)
         updateTypeDialog.show()
         updateTypeDialog.exec_()
         self.ResetModeSignal.emit()
         self.viewType()
 
     def addTypeButtonClicked(self):
-        addTypeDialog = AddTypeDialog(self.mapName,self)
-        addTypeDialog.add_success_signal.connect(self.AddSignal)
+        addTypeDialog = AddTypeDialog(self.mapName, self.type_list, self)
+        addTypeDialog.AddTypeSignal.connect(self.AddSignal)
         addTypeDialog.show()
         addTypeDialog.exec_()
         self.ResetModeSignal.emit()
@@ -80,7 +85,7 @@ class TypeTableWidget(QWidget):
     def deleteTypeButtonClicked(self):
         if self.model:
             self.DeleteSignal.emit(self.model.record(self.tableView.currentIndex().row()).value('name'))
-            self.model.removeRow(self.tableView.currentIndex().row())
+            #self.model.removeRow(self.tableView.currentIndex().row())
         self.ResetModeSignal.emit()
         self.viewType()
         

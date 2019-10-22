@@ -13,14 +13,16 @@ id integer primary key autoincrement,
 Name varchar(30) not null,
 X real default 0.0,
 Y real default 0.0,
-Type varchar(10) not null,
-size real default 1.0);
+Type varchar(10) not null);
 
 CREATE TABLE ObjectDescription(
 id integer not null,
 Description varchar(100) default 'None' );
 
 CREATE TABLE Background(
-name varchar(10) not null,
-pic bytea default '' );
+Name varchar(10) not null,
+X real default 0.0,
+Y real default 0.0,
+size_rate real default 1.0);
+
 COMMIT;

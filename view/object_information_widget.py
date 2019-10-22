@@ -64,14 +64,14 @@ class ObjectInfoWidget(QWidget):
         self.layout.addItem(spacerItem)
         
 
-    def setInfo(self,id, name, type_name, width, height, x, y, description):
+    def setInfo(self,id, name, type_name, x, y, description, width, height):
         if (id+1):
             type_name = re.sub('^type', '', type_name)
             self.object_id.setText(str(id))
             self.object_name.setText(name)
             self.object_type.setText(type_name)
-            self.object_width.setText(width)
-            self.object_height.setText(height)
+            self.object_width.setText(str(width))
+            self.object_height.setText(str(height))
             self.object_x.setText(str(x))
             self.object_y.setText(str(y))
             self.descriptionEdit.setText(description)

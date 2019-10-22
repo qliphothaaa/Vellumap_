@@ -7,7 +7,7 @@ DEBUG = False
 
 class ObjectTableWidget(QWidget):
     DeleteSignal = pyqtSignal(int)
-    FocusSignal = pyqtSignal(float, float)
+    FocusSignal = pyqtSignal(int, float, float)
     def __init__(self,mapName, parent=None):
         super(ObjectTableWidget,self).__init__(parent, Qt.Window)
         self.setWindowTitle('Object table')
@@ -234,7 +234,7 @@ class ObjectTableWidget(QWidget):
 
     def focusButtonClicked(self):
         r = self.tableView.currentIndex().row()
-        self.FocusSignal.emit(self.queryModel.record(r).value('x'), self.queryModel.record(r).value('y'))
+        self.FocusSignal.emit(self.queryModel.record(r).value('id'), self.queryModel.record(r).value('x'), self.queryModel.record(r).value('y'))
 
     def changeFocusButton(self):
         r = self.tableView.currentIndex().row()

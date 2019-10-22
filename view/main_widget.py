@@ -2,12 +2,13 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from model.map_graphics_view import QMapGraphicsView
-from model.map_scene import Scene
+from model.new_map_scene import Scene
 from view.type_table_widget import TypeTableWidget
 from view.object_information_widget import ObjectInfoWidget
 from view.object_table_widget import ObjectTableWidget
 from view.type_button_group_widget import TypeButtonGroupWidget
 from view.load_background_dialog import LoadBackgroundDialog
+from view.type_checkbutton_group_widget import TypeCheckbuttonGroupWidget
 
 DEBUG = False
 #main widget for map editor
@@ -34,6 +35,7 @@ class MainWidget(QWidget):
         self.layout_button = QVBoxLayout() #layout for button
 
         self.buttonGroup = TypeButtonGroupWidget()
+        self.checkButtonGroup = TypeCheckbuttonGroupWidget()
 
         self.setLayout(self.layout_main)
         self.layout_main.addLayout(self.layout)
@@ -69,9 +71,11 @@ class MainWidget(QWidget):
     def loadView(self):
         if DEBUG: print('MAPWIDGET: start load graphic')
         self.view = QMapGraphicsView(self.scene.gr_scene, self)
+        self.checkButtonGroup.addButtonFromList(self.scene.getTypeNameList())
         self.pushButton = QPushButton('Import picture')
         self.pushButton.setFixedWidth(300)
         self.pushButton.clicked.connect(self.showLoadBackground)
+        self.layout_view.addWidget(self.checkButtonGroup)
         self.layout_view.addWidget(self.view)
         self.layout_view.addWidget(self.pushButton)
         self.layout.addLayout(self.layout_view)
@@ -86,6 +90,7 @@ class MainWidget(QWidget):
 
     def reloadTypeButtonSub(self):
         self.buttonGroup.addButtonFromList(self.scene.getTypeNameList())
+        self.checkButtonGroup.addButtonFromList(self.scene.getTypeNameList())
         self.buttonGroup.ChangeModeSignal.connect(self.ChangeModeSignal)
 
 

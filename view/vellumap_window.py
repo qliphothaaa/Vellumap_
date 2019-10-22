@@ -44,28 +44,38 @@ class VellumapWindow(QMainWindow):
         #signal in view widget
         mainEditor.view.ScenePosSignal.connect(self.onScenePosChanged)
         mainEditor.view.CurrentObjectSignal.connect(mainEditor.objectInfo.setInfo)
-        mainEditor.view.BackSpaceSignal.connect(mainEditor.scene.removeObjectById)
+        mainEditor.view.BackSpaceSignal.connect(mainEditor.scene.removeObject)
         mainEditor.view.BackSpaceSignal.connect(mainEditor.objectTable.searchButtonClicked)
         mainEditor.view.CreateObjectSignal.connect(mainEditor.scene.createNewObject)
+        mainEditor.view.UpdateObjectPosSignal.connect(mainEditor.scene.updatePosition)
 
         #signal in type table widget
         mainEditor.typeTable.RefreshSignal.connect(mainEditor.buttonGroup.clearButtons)
+        mainEditor.typeTable.RefreshSignal.connect(mainEditor.checkButtonGroup.clearButtons)
         mainEditor.typeTable.RefreshSignal.connect(mainEditor.reloadTypeButtonSub)
-        mainEditor.typeTable.DeleteSignal.connect(mainEditor.scene.removeTypeByName)
-        mainEditor.typeTable.AddSignal.connect(mainEditor.scene.loadNewType)
+
+        #c
+        mainEditor.typeTable.DeleteSignal.connect(mainEditor.scene.removeType)
+        mainEditor.typeTable.AddSignal.connect(mainEditor.scene.createNewType)
         mainEditor.typeTable.UpdateSignal.connect(mainEditor.scene.updateType)
+        #c
         mainEditor.typeTable.ResetModeSignal.connect(mainEditor.buttonGroup.resetRecent)
 
+        #signal in checkbutton group
+        mainEditor.checkButtonGroup.FilterSignal.connect(mainEditor.scene.filterGraphicsByType)
+        mainEditor.checkButtonGroup.ShowAllSignal.connect(mainEditor.view.showAll)
+        mainEditor.checkButtonGroup.HideAllSignal.connect(mainEditor.view.hideAll)
+
         #signal in object table widget
-        mainEditor.objectTable.DeleteSignal.connect(mainEditor.scene.removeObjectById)
+        mainEditor.objectTable.DeleteSignal.connect(mainEditor.scene.removeObject)
         mainEditor.objectTable.FocusSignal.connect(mainEditor.view.focusOn)
 
         #signal in object information widget
         mainEditor.objectInfo.ChangeObjectNameSignal.connect(mainEditor.scene.renameObject)
-        mainEditor.objectInfo.ChangeObjectDescriptionSignal.connect(mainEditor.scene.changeDescriptionObject)
+        mainEditor.objectInfo.ChangeObjectDescriptionSignal.connect(mainEditor.scene.changeDescription)
 
         #signal in main widget
-        mainEditor.setTempTypeNameSignal.connect(mainEditor.scene.setTempTypeName)
+        mainEditor.setTempTypeNameSignal.connect(mainEditor.view.setTempTypeName)
         mainEditor.ChangeModeSignal.connect(mainEditor.view.changeMode)
         
 

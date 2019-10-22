@@ -1,15 +1,16 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from PyQt5.QtSql import *
-
 
 class AddTypeDialog(QDialog):
     add_success_signal = pyqtSignal(str)
+    AddTypeSignal = pyqtSignal(str, str, str, float, float)
 
-    def __init__(self,mapName, parent=None):
+    def __init__(self, mapName, type_list, parent=None):
         super(AddTypeDialog, self).__init__(parent)
+        self.parent = parent
         self.mapName = mapName
+        self.type_list = type_list
         self.initUI()
         self.setWindowModality(Qt.WindowModal)
         self.setWindowTitle('add Type')
@@ -42,6 +43,9 @@ class AddTypeDialog(QDialog):
         self.colorEdit.setMaxLength(20)
         self.widthEdit.setMaxLength(7)
         self.widthEdit.setMaxLength(7)
+
+        self.widthEdit.setValidator(QDoubleValidator(0, 10000, 1))
+        self.heightEdit.setValidator(QDoubleValidator(0, 10000, 1))
 
         self.layout.addRow('',self.titleLabel)
         self.layout.addRow(self.nameLabel, self.nameEdit)
@@ -92,37 +96,27 @@ class AddTypeDialog(QDialog):
         name = self.nameEdit.text()
         shape = self.graphciComboBox.currentText()
         color = self.colorEdit.text()
-        width = self.widthEdit.text()
-        height = self.heightEdit.text()
+        width = float(self.widthEdit.text())
+        height = float(self.heightEdit.text())
+        full_name = 'type' + name
 
         if ( name == '' or shape == '' or color =='' or width == '' or height == ''):
-            print(QMessageBox.warning(self, 'warning', 'empty input' , QMessageBox.Yes, QMessageBox.Yes))
+            QMessageBox.warning(self, 'warning', 'empty input' , QMessageBox.Yes, QMessageBox.Yes)
             return
         else:
-            if QSqlDatabase.contains('qt_sql_default_connection'):
-                db = QSqlDatabase.database('qt_sql_default_connection')
-            else:
-                db = QSqlDatabase.addDatabase("QSQLITE")
-                db.setDatabaseName('./db/%s.db' % self.mapName)
-                db.open()
-            query = QSqlQuery()
-            sql = "select * from type where Name = '%s'" % ('type'+name)
-            query.exec_(sql)
-            if (query.next()):
-                print(QMessageBox.warning(self, 'warning', 'exised!' , QMessageBox.Yes, QMessageBox.Yes))
+            if full_name in self.type_list:
+                QMessageBox.warning(self, 'warning', 'exised!' , QMessageBox.Yes, QMessageBox.Yes)
                 return
-
             else:
+                '''
                 sql = "insert into type values('type%s','%s','%s','%s','%s')" % (name, shape, color, width, height)
                 query.exec_(sql)
-                try: 
-                    db.commit()
-                except:
-                    print("SQL error:", sys.exc_info()[0])
-                print(QMessageBox.information(self, 'info', 'success' , QMessageBox.Yes, QMessageBox.Yes))
-                self.add_success_signal.emit('type'+name)
+                '''
+                self.AddTypeSignal.emit(full_name, shape, color, width, height)
+                self.add_success_signal.emit(full_name)
+                QMessageBox.information(self, 'info', 'success' , QMessageBox.Yes, QMessageBox.Yes)
                 self.close()
-                self.clearEdit()
+                #self.clearEdit()
             return
 
     def showColorDialog(self):
