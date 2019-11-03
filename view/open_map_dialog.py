@@ -20,7 +20,7 @@ class OpenMapDialog(QDialog):
         self.button2 = QPushButton("Create New Map")
         self.button1.clicked.connect(self.openFileDialog)
         self.button2.clicked.connect(self.createNewMap)
-        self.mapNameEdit = QLineEdit('newMap')
+        self.mapNameEdit = QLineEdit('')
         self.layout = QFormLayout()
         self.setLayout(self.layout)
 
@@ -34,7 +34,6 @@ class OpenMapDialog(QDialog):
         filter = "database (*.db)"
         filename, _ = QFileDialog.getOpenFileName(None, "Open File", "./db/", filter)
         if filename:
-            #print(filename)
             filename = re.split('/', filename)[-1]#get the last name on path
             filename = filename[:-3]#delete the ".db"
             self.fileNameSignal.emit(filename)

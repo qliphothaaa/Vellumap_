@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from model.map_graphics_view import QMapGraphicsView
-from model.new_map_scene import Scene
+from model.graphics_view import QMapGraphicsView
+from model.scene import Scene
 from view.type_table_widget import TypeTableWidget
 from view.object_information_widget import ObjectInfoWidget
 from view.object_table_widget import ObjectTableWidget
@@ -15,6 +15,8 @@ DEBUG = False
 class MainWidget(QWidget):
     setTempTypeNameSignal = pyqtSignal(str)
     ChangeModeSignal = pyqtSignal(str)
+    ErrorInputSignal = pyqtSignal(str)
+    RemoveBackgroundSignal = pyqtSignal()
     def __init__(self, mapName, parent=None):
         super().__init__(parent)
         self.mapName = mapName
@@ -111,8 +113,6 @@ class MainWidget(QWidget):
         self.layout.addLayout(self.layout_button)
 
 
-
-
     #show the type table
     def showTypeTable(self):
         if DEBUG: print('MAPWIDGET: open type table')
@@ -123,14 +123,14 @@ class MainWidget(QWidget):
         self.objectTable.show()
 
     def showLoadBackground(self):
-        loadBackgroundDialog = LoadBackgroundDialog(self)
-        loadBackgroundDialog.LoadBackgroundSignal.connect(self.scene.loadBackground)
+        loadBackgroundDialog = LoadBackgroundDialog(self.mapName, self)
+        loadBackgroundDialog.LoadBackgroundSignal.connect(self.scene.importBackground)
+        loadBackgroundDialog.ErrorInputSignal.connect(self.ErrorInputSignal)
+        loadBackgroundDialog.RemoveBackgroundSignal.connect(self.RemoveBackgroundSignal)
         loadBackgroundDialog.show()
         loadBackgroundDialog.exec_()
         #loadBackgroundDialog.LoadBackgroundSignal.emit('img.jpg', 10)
  
-        
-
 
     #load style sheet from qss
     def loadStylesheet(self, filename):

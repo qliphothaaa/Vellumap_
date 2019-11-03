@@ -53,6 +53,10 @@ class TypeTableWidget(QWidget):
     def viewType(self):
         if QSqlDatabase.contains('qt_sql_default_connection'):
             db = QSqlDatabase.database('qt_sql_default_connection')
+            if db.databaseName() != self.mapName:
+                db.close()
+                db.setDatabaseName('./db/%s.db' % self.mapName)
+                db.open()
         else:
             db = QSqlDatabase.addDatabase("QSQLITE")
             db.setDatabaseName('./db/%s.db' % self.mapName)
@@ -67,7 +71,7 @@ class TypeTableWidget(QWidget):
         self.RefreshSignal.emit()
 
     def updateTypeButtonClicked(self):
-        updateTypeDialog = UpdateTypeDialog(self.mapName,self.type_list, self)
+        updateTypeDialog = UpdateTypeDialog(self.type_list, self)
         updateTypeDialog.UpdateTypeSignal.connect(self.UpdateSignal)
         updateTypeDialog.show()
         updateTypeDialog.exec_()
@@ -75,7 +79,7 @@ class TypeTableWidget(QWidget):
         self.viewType()
 
     def addTypeButtonClicked(self):
-        addTypeDialog = AddTypeDialog(self.mapName, self.type_list, self)
+        addTypeDialog = AddTypeDialog(self.type_list, self)
         addTypeDialog.AddTypeSignal.connect(self.AddSignal)
         addTypeDialog.show()
         addTypeDialog.exec_()
@@ -84,11 +88,15 @@ class TypeTableWidget(QWidget):
 
     def deleteTypeButtonClicked(self):
         if self.model:
-            self.DeleteSignal.emit(self.model.record(self.tableView.currentIndex().row()).value('name'))
-            #self.model.removeRow(self.tableView.currentIndex().row())
-        self.ResetModeSignal.emit()
-        self.viewType()
-        
+            message_text = 'delete「%s」? this operation will delete all object belong to this type' %((self.model.record(self.tableView.currentIndex().row()).value('name')))
+            message = QMessageBox.question(self, 'question message', message_text, QMessageBox.Yes, QMessageBox.No)
+            if message == QMessageBox.Yes:
+                self.DeleteSignal.emit(self.model.record(self.tableView.currentIndex().row()).value('name'))
+                #self.model.removeRow(self.tableView.currentIndex().row())
+                self.ResetModeSignal.emit()
+                self.viewType()
+
+
 
 if __name__ == '__main__':
     import sys

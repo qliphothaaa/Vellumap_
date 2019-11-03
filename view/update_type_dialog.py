@@ -6,10 +6,9 @@ class UpdateTypeDialog(QDialog):
     update_success_signal = pyqtSignal(str)
     UpdateTypeSignal = pyqtSignal(str, str, str, float, float)
 
-    def __init__(self, mapName, type_list, parent=None):
+    def __init__(self, type_list, parent=None):
         super(UpdateTypeDialog, self).__init__(parent)
         self.parent = parent
-        self.mapName = mapName
         self.type_list = type_list
         self.initUI()
         self.setWindowModality(Qt.WindowModal)
@@ -116,18 +115,18 @@ class UpdateTypeDialog(QDialog):
 
 
     def confirmTypeButtonClicked(self):
+        if ( self.nameEdit.text() == '' or self.graphciComboBox.currentText() == '' or self.colorEdit.text() =='' or self.widthEdit.text() == '' or self.heightEdit.text() == ''):
+            QMessageBox.warning(self, 'warning', 'empty input' , QMessageBox.Yes, QMessageBox.Yes)
+            return
         name = 'type' + self.nameEdit.text()
         shape = self.graphciComboBox.currentText()
         color = self.colorEdit.text()
         width = float(self.widthEdit.text())
         height = float(self.heightEdit.text())
 
-
         self.UpdateTypeSignal.emit(name, shape, color, width, height)
 
         QMessageBox.information(self, 'info', 'success' , QMessageBox.Yes, QMessageBox.Yes)
-        #self.update_success_signal.emit(name)
-        #self.clearEdit()
         self.close()
         
     def showColorDialog(self):

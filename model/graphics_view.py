@@ -1,14 +1,14 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from model.new_map_object_graphics import QMapObjectGraphics
+from model.object_graphics import QMapObjectGraphics
 
 DEBUG = True
 
 #class that contain the graphics
 class QMapGraphicsView(QGraphicsView):
     ScenePosSignal = pyqtSignal(int, int)
-    UpdateObjectPosSignal = pyqtSignal(int, int, int)
+    UpdateObjectPosSignal = pyqtSignal(int, float, float)
     CreateObjectSignal = pyqtSignal(str, int, int)
     CurrentObjectSignal = pyqtSignal(int, str, str, int, int, str, float, float)#id, name, type, x, y, des, width, height
     BackSpaceSignal = pyqtSignal(int)
@@ -106,9 +106,12 @@ class QMapGraphicsView(QGraphicsView):
         return obj
 
     def deleteSelectedItem(self):
-        for item in self.grScene.selectedItems():
-            if isinstance(item, QMapObjectGraphics):
-                self.BackSpaceSignal.emit(item.object_id)
+        message_text = 'delete select object?' 
+        message = QMessageBox.question(self, 'question message', message_text, QMessageBox.Yes, QMessageBox.No)
+        if message == QMessageBox.Yes:
+            for item in self.grScene.selectedItems():
+                if isinstance(item, QMapObjectGraphics):
+                    self.BackSpaceSignal.emit(item.object_id)
 
 
     def addToTop(self):
@@ -142,12 +145,13 @@ class QMapGraphicsView(QGraphicsView):
             if not (clamped or self.zoomClamp is False):
                 self.scale(self.zoomFactor, self.zoomFactor)
 
-    def focusOn(self,object_id, x, y):
+    def focusOn(self,object_id):
         width = -1
         height = -1
         for item in self.grScene.items():
             if item.object_id == object_id:
                 width, height = item.getSize()
+                x, y = item.pos().x(), item.pos().y()
                 item.setSelected(True)
                 self.CurrentObjectSignal.emit(*item.getObjectInfo())
             else:

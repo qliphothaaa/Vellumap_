@@ -1,7 +1,7 @@
 import re
-from model.new_map_object import MapObject
+from model.map_object import MapObject
 from model.data_access_object import DataAccess
-from model.map_background import MapBackground
+from model.background import MapBackground
 
 class ObjectsManagement(DataAccess):
     def __init__(self, map_name):
@@ -29,28 +29,42 @@ class ObjectsManagement(DataAccess):
         background_model = self.viewData('background')
         for i in range(len(background_model)):
             pic_name = background_model[i][0]
-            rate = background_model[i][3]
             x = background_model[i][1]
             y = background_model[i][2]
+            rate = background_model[i][3]
             self.map_background = MapBackground( pic_name, rate, x, y)
 
-
-
+            
 
     def renameObject(self, object_id, new_name):
-        targetObject = self.map_objects[object_id]
+        if not isinstance(new_name, str):
+            raise TypeError("the name should be str")
+        if new_name is '':
+            raise ValueError("name is empty")
+        if len(new_name) > 10:
+            raise ValueError("name should be less then 10 char")
+        targetObject = self.getObjectById(object_id)
         targetObject.object_name = new_name
         self.accessDataBase(targetObject.generateSqlForRename())
 
     def changeDescription(self, object_id, description):
-        targetObject = self.map_objects[object_id]
+        if not isinstance(description, str):
+            raise TypeError("the name should be str")
+        if description is '':
+            raise ValueError("description is empty")
+        if len(description) > 100:
+            raise ValueError("description should be less then 100 char")
+        targetObject = self.getObjectById(object_id)
         targetObject.description = description
         self.accessDataBase(targetObject.generateSqlForChangeDescription())
 
     def updatePosition(self, object_id, x, y):
-        targetObject = self.map_objects[object_id]
-        targetObject.x = x
-        targetObject.y = y
+        if not isinstance(x,int) and not isinstance(y,int):
+            if not isinstance(x, float) and not isinstance(y, float):
+                raise ValueError("position should be int or float")
+        targetObject = self.getObjectById(object_id)
+        targetObject.x = float(x)
+        targetObject.y = float(y)
         self.accessDataBase(targetObject.generateSqlForUpdatePosition())
 
     def createNewObject(self, type_name, x, y):
@@ -63,19 +77,19 @@ class ObjectsManagement(DataAccess):
         self.map_objects[object_id] = mapObject
         return object_id
 
+
     def addBackground(self, pic_name, rate, x=0, y=0):
-        if (self.map_background is None):
-            self.map_background = MapBackground( pic_name, rate, x, y)
-            self.accessDataBase(self.map_background.generateSqlForAdd())
+        if not self.map_background is None:
+            self.removeBackground()
+        self.map_background = MapBackground( pic_name, rate, x, y)
+        self.accessDataBase(self.map_background.generateSqlForAdd())
 
     def removeBackground(self):
         self.accessDataBase(self.map_background.generateSqlForDelete())
         self.map_background = None
 
-        
-
     def removeObjectById(self, object_id):
-        targetObject = self.map_objects[object_id]
+        targetObject = self.getObjectById(object_id)
         type_name = targetObject.object_type_name
         self.accessDataBase(targetObject.generateSqlForDelete())
         self.accessDataBase(targetObject.generateSqlForDeleteDescription())
@@ -87,6 +101,10 @@ class ObjectsManagement(DataAccess):
         self.map_background = None
 
     def getObjectById(self, object_id):
+        if not isinstance(object_id, int):
+            raise TypeError("the id should be int")
+        if not object_id in self.map_objects:
+            raise KeyError("can't find id")
         return self.map_objects[object_id]
 
 

@@ -6,7 +6,6 @@ Shape char(10) not null,
 Color char(20) not null, 
 Width real default 0.0,
 Height real default 0.0);
-INSERT INTO Type VALUES('typetest','ell','green',100.0,100.0);
 
 CREATE TABLE ObjectGraphic(
 id integer primary key autoincrement,

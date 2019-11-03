@@ -8,14 +8,19 @@ DEBUG =True
 class QMapGraphicsBackground(QGraphicsPixmapItem):
     def __init__(self, background, parent=None):
         super().__init__(parent)
-        self.object_id = -1
-        self.size = background.size
-        self.path = background.path_name
         self.background = background
-        background_pic = QPixmap(self.path)
-        scaled = background_pic.scaled(self.size, Qt.IgnoreAspectRatio,Qt.SmoothTransformation)
-        self.setPixmap(scaled) 
+        self.object_id = -1
+        self.setPixmap(self.generatePixmap()) 
         self.setPosition()
+
+    def generatePixmap(self):
+        self.path = self.background.path_name
+        reader = QImageReader(self.path)
+        self.size = reader.size() * self.background.rate
+        background_pic = QPixmap(self.path)
+        scaled_pixmap = background_pic.scaled(self.size, Qt.IgnoreAspectRatio,Qt.SmoothTransformation)
+        return scaled_pixmap
+
 
     def setSize(self, size):
         self.size = size

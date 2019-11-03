@@ -3,13 +3,11 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 class AddTypeDialog(QDialog):
-    add_success_signal = pyqtSignal(str)
     AddTypeSignal = pyqtSignal(str, str, str, float, float)
 
-    def __init__(self, mapName, type_list, parent=None):
+    def __init__(self, type_list, parent=None):
         super(AddTypeDialog, self).__init__(parent)
         self.parent = parent
-        self.mapName = mapName
         self.type_list = type_list
         self.initUI()
         self.setWindowModality(Qt.WindowModal)
@@ -32,12 +30,12 @@ class AddTypeDialog(QDialog):
         self.confirmTypeButton = QPushButton(' confirm ')
         self.cancelTypeButton = QPushButton(' cancel ')
 
-        self.nameEdit = QLineEdit('test')
+        self.nameEdit = QLineEdit('')
         self.graphciComboBox = QComboBox()
         self.graphciComboBox.addItems(Graphics)
-        self.colorEdit = QLineEdit('green')
-        self.widthEdit = QLineEdit('100')
-        self.heightEdit = QLineEdit('100')
+        self.colorEdit = QLineEdit('')
+        self.widthEdit = QLineEdit('')
+        self.heightEdit = QLineEdit('')
 
         self.nameEdit.setMaxLength(10)
         self.colorEdit.setMaxLength(20)
@@ -56,7 +54,6 @@ class AddTypeDialog(QDialog):
         self.layout.addRow(self.heightLabel,self.heightEdit)
         self.layout.addRow('', self.confirmTypeButton)
         self.layout.addRow('', self.cancelTypeButton)
-        #self.layout.addRow('', self.colorButton)
 
         font = QFont()
         font.setPixelSize(20)
@@ -93,6 +90,9 @@ class AddTypeDialog(QDialog):
         self.colorButton.clicked.connect(self.showColorDialog)
     
     def confirmTypeButtonClicked(self):
+        if ( self.nameEdit.text() == '' or self.graphciComboBox.currentText() == '' or self.colorEdit.text() =='' or self.widthEdit.text() == '' or self.heightEdit.text() == ''):
+            QMessageBox.warning(self, 'warning', 'empty input' , QMessageBox.Yes, QMessageBox.Yes)
+            return
         name = self.nameEdit.text()
         shape = self.graphciComboBox.currentText()
         color = self.colorEdit.text()
@@ -100,24 +100,12 @@ class AddTypeDialog(QDialog):
         height = float(self.heightEdit.text())
         full_name = 'type' + name
 
-        if ( name == '' or shape == '' or color =='' or width == '' or height == ''):
-            QMessageBox.warning(self, 'warning', 'empty input' , QMessageBox.Yes, QMessageBox.Yes)
-            return
+        if full_name in self.type_list:
+            QMessageBox.warning(self, 'warning', 'exised!' , QMessageBox.Yes, QMessageBox.Yes)
         else:
-            if full_name in self.type_list:
-                QMessageBox.warning(self, 'warning', 'exised!' , QMessageBox.Yes, QMessageBox.Yes)
-                return
-            else:
-                '''
-                sql = "insert into type values('type%s','%s','%s','%s','%s')" % (name, shape, color, width, height)
-                query.exec_(sql)
-                '''
-                self.AddTypeSignal.emit(full_name, shape, color, width, height)
-                self.add_success_signal.emit(full_name)
-                QMessageBox.information(self, 'info', 'success' , QMessageBox.Yes, QMessageBox.Yes)
-                self.close()
-                #self.clearEdit()
-            return
+            self.AddTypeSignal.emit(full_name, shape, color, width, height)
+            QMessageBox.information(self, 'info', 'success' , QMessageBox.Yes, QMessageBox.Yes)
+            self.close()
 
     def showColorDialog(self):
         get_color = QColorDialog.getColor()
@@ -129,10 +117,3 @@ class AddTypeDialog(QDialog):
         self.colorEdit.clear()
         self.widthEdit.clear()
         self.heightEdit.clear()
-
-        
-
-
-        
-
-        

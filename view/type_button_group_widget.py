@@ -29,7 +29,6 @@ class TypeButtonGroupWidget(QWidget):
 
     def clearButtons(self):
         for i in reversed(range(self.layout_button.count())):
-            #self.ChangeColorSignal.disconnect(self.layout_button.itemAt(i).widget().checkPermission)
             self.layout_button.itemAt(i).widget().deleteLater()
             self.button_list = []
 
@@ -57,27 +56,6 @@ class TypeButtonGroupWidget(QWidget):
         self.ChangeModeSignal.emit('select')
         self.recent_button_name = ''
         self.SetCurrentTypeNameSignal.emit('')
-
-
-        '''
-        if (button_title == self.recent_button_name):
-            self.ChangeColorSignal.emit(True,button_title)
-            self.ChangeModeSignal.emit('select')
-            self.recent_button_name = ''
-            self.SetCurrentTypeNameSignal.emit('')
-        else:
-            if (self.recent_button_name == ''):
-                self.ChangeColorSignal.emit(True,button_title)
-                self.ChangeModeSignal.emit('create')
-                self.SetCurrentTypeNameSignal.emit(button_title)
-                self.recent_button_name = button_title
-
-            elif (self.recent_button_name is not button_title):
-                self.ChangeColorSignal.emit(True,button_title)
-                self.ChangeColorSignal.emit(True,self.recent_button_name)
-                self.SetCurrentTypeNameSignal.emit(button_title)
-                self.recent_button_name = button_title
-        '''
 
 
 if __name__ == "__main__":

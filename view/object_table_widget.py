@@ -7,7 +7,7 @@ DEBUG = False
 
 class ObjectTableWidget(QWidget):
     DeleteSignal = pyqtSignal(int)
-    FocusSignal = pyqtSignal(int, float, float)
+    FocusSignal = pyqtSignal(int)
     def __init__(self,mapName, parent=None):
         super(ObjectTableWidget,self).__init__(parent, Qt.Window)
         self.setWindowTitle('Object table')
@@ -80,9 +80,17 @@ class ObjectTableWidget(QWidget):
         self.Hlayout2.addWidget(widget)
 
         #init table
-        self.db = QSqlDatabase.addDatabase("QSQLITE")
-        self.db.setDatabaseName('./db/%s.db'% self.mapName)
-        self.db.open()
+        if QSqlDatabase.contains('qt_sql_default_connection'):
+            db = QSqlDatabase.database('qt_sql_default_connection')
+            if db.databaseName() != self.mapName:
+                db.close()
+                #db = QSqlDatabase.addDatabase("QSQLITE")
+                db.setDatabaseName('./db/%s.db' % self.mapName)
+                db.open()
+        else:
+            db = QSqlDatabase.addDatabase("QSQLITE")
+            db.setDatabaseName('./db/%s.db' % self.mapName)
+            db.open()
         self.tableView = QTableView()
         self.tableView.horizontalHeader().setStretchLastSection(True)
         self.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -170,14 +178,8 @@ class ObjectTableWidget(QWidget):
             queryCondition = ("select * from ObjectGraphic where %s like '____%s' order by %s"%(conditionChoice, s, conditionChoice))
         if (conditionChoice == 'Name'):
             queryCondition = ("select * from ObjectGraphic where %s like '%s' order by %s"%(conditionChoice, s, conditionChoice))
-
         if (conditionChoice == 'description'):
             queryCondition = "select id from ObjectDescription where Description like '%s' order by %s"%( s,  conditionChoice)
-            '''
-            self.queryModel.setQuery(queryCondition)
-            queryCondition = ("select * from ObjectGraphic where %s like '%s' order by %s"%(conditionChoice, s, conditionChoice))
-            '''
-        
 
         self.queryModel.setQuery(queryCondition)
         self.totalRecord = self.queryModel.rowCount()
@@ -229,12 +231,16 @@ class ObjectTableWidget(QWidget):
     def deleteButtonClicked(self):
         r = self.tableView.currentIndex().row()
         if(r is not -1):
-            self.DeleteSignal.emit(self.queryModel.record(r).value('id'))
-            self.searchButtonClicked()
+            message_text = 'delete object %s (id:%s)?' %(self.queryModel.record(r).value('name'), self.queryModel.record(r).value('id'))
+            message = QMessageBox.question(self, 'question message', message_text, QMessageBox.Yes, QMessageBox.No)
+            if message == QMessageBox.Yes:
+                self.DeleteSignal.emit(self.queryModel.record(r).value('id'))
+                self.searchButtonClicked()
 
     def focusButtonClicked(self):
         r = self.tableView.currentIndex().row()
-        self.FocusSignal.emit(self.queryModel.record(r).value('id'), self.queryModel.record(r).value('x'), self.queryModel.record(r).value('y'))
+        if (self.queryModel.record(r).value('id') is not None):
+            self.FocusSignal.emit(self.queryModel.record(r).value('id'))
 
     def changeFocusButton(self):
         r = self.tableView.currentIndex().row()
