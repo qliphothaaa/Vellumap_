@@ -108,8 +108,8 @@ class TestScene(unittest.TestCase):
         object_type_data = self.scene.types_management.getTypeAttributeByName('type2')
         obj = self.scene.object_management.getObjectById(object_id)
         self.assertEqual(obj.object_type_name, 'type2')
-        self.assertEqual(obj.x, 23-(object_type_data[2]/2))
-        self.assertEqual(obj.y, 67-(object_type_data[3]/2))
+        self.assertEqual(obj.x, 23)
+        self.assertEqual(obj.y, 67)
         self.assertTrue(object_id in self.scene.types_management.getObjectSetByName('type2'))
         self.assertTrue(object_id in self.scene.graphics_management.graphics)
 

@@ -38,6 +38,20 @@ class QMapObjectGraphics(QGraphicsItem):
     def getObjectInfo(self):
         return (*self.map_object.getObjectInfo(), self.width, self.height)
 
+    def renewPosition(self):
+        x  = self.map_object.getPosition()[0]
+        y  = self.map_object.getPosition()[1]
+        x = x - self.width/2
+        y = y - self.height/2
+        self.setPos(x, y)
+
+    def getCentrelPos(self):
+        x = self.scenePos().x() + self.width/2
+        y = self.scenePos().y() + self.height/2
+        return (x, y)
+
+
+
     def boundingRect(self):
         return QRectF(
             0,

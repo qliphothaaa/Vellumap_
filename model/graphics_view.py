@@ -91,7 +91,7 @@ class QMapGraphicsView(QGraphicsView):
                 if isinstance(item, QMapObjectGraphics):
                     #item.map_object.renewPosition()
                     #item.map_object.updatePositionToDatabase(*item.map_object.getPosition())
-                    self.UpdateObjectPosSignal.emit(item.object_id, item.scenePos().x(), item.scenePos().y())
+                    self.UpdateObjectPosSignal.emit(item.object_id, *item.getCentrelPos())
             if isinstance(self.current_item, QMapObjectGraphics):
                 self.CurrentObjectSignal.emit(*self.current_item.getObjectInfo())
                 pass

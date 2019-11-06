@@ -7,7 +7,11 @@ class GraphicsManagement():
 
     def generateGraphics(self, map_object, color, shape, width, height):
         grMapObject = QMapObjectGraphics(map_object, color, shape, width, height)
-        grMapObject.setPos(*map_object.getPosition())
+        x =  map_object.getPosition()[0]
+        y =  map_object.getPosition()[1]
+        x = x - width/2
+        y = y - height/2
+        grMapObject.setPos(x, y)
         self.graphics[map_object.object_id] = grMapObject
 
     def getGraphics(self, object_id):
@@ -30,6 +34,7 @@ class GraphicsManagement():
         target_graphic.setShape(shape)
         target_graphic.setWidth(width)
         target_graphic.setHeight(height)
+        target_graphic.renewPosition()
 
     def hideGraphics(self, object_id_set):
         if not isinstance(object_id_set, set):
