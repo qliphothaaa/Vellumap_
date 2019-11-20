@@ -35,6 +35,7 @@ class GraphicsManagement():
         target_graphic.setWidth(width)
         target_graphic.setHeight(height)
         target_graphic.renewPosition()
+        target_graphic.redarwTitle()
 
     def hideGraphics(self, object_id_set):
         if not isinstance(object_id_set, set):

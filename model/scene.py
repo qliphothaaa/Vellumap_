@@ -62,12 +62,6 @@ class Scene():
 
     def createNewObject(self, type_name, x, y):
         object_type_data = self.types_management.getTypeAttributeByName(type_name)
-        '''
-        width = object_type_data[2]
-        height = object_type_data[3]
-        x = x - width/2
-        y = y - height/2
-        '''
         object_id = self.object_management.createNewObject(type_name, float(x), float(y))
         self.types_management.addObjectConnection( type_name, object_id)
         map_object = self.object_management.getObjectById(object_id)

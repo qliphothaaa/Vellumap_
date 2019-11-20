@@ -7,9 +7,9 @@ class QMapObjectGraphics(QGraphicsItem):
     def __init__(self, map_object, color, shape, width, height, parent=None):
         super().__init__(parent)
         #self._color = Qt.white
-        self._pen_defalut_color = QPen(Qt.black)
-        self._pen_selected = QPen(Qt.white)
-        self._pen_selected.setWidth(5)
+        self._pen_defalut_color = QPen(Qt.NoPen)
+        self._pen_selected = QPen(Qt.black)
+        self._pen_selected.setWidth(3)
         self._pen_defalut_color.setWidth(3)
         self.map_object = map_object
         self.object_id = map_object.object_id
@@ -18,6 +18,7 @@ class QMapObjectGraphics(QGraphicsItem):
         self.width = width
         self.height = height
         self.shape = shape
+        self.initTitle()
         self.initUI()
 
     def setShape(self, shape):
@@ -60,12 +61,31 @@ class QMapObjectGraphics(QGraphicsItem):
             self.height
         ).normalized()
 
+    def initTitle(self):
+        self.title_item = QGraphicsTextItem(self)
+        self.title_item.setDefaultTextColor(Qt.black)
+        self.title_item.setPlainText(str(self.object_id))
+        title_font = QFont("", self.width/4)
+        self.title_item.setFont(title_font)
+        self.title_item.setTextWidth(self.width)
+        self.title_item.setPos(self.width/4, self.height/3.5)
+        self.title_item.adjustSize()
+
+    def redarwTitle(self):
+        title_font = QFont("", self.width/4)
+        self.title_item.setFont(title_font)
+        self.title_item.setTextWidth(self.width)
+        self.title_item.setPos(self.width/4, self.height/3.5)
+        self.title_item.adjustSize()
+
+        
     def initUI(self):
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setFlag(QGraphicsItem.ItemIsMovable)
 
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        #autline
         path_outline = QPainterPath()
         if self.shape == 'rect':
             path_outline.addRect(0,0,self.width,self.height)

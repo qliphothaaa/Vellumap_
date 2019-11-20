@@ -20,7 +20,7 @@ class OpenMapDialog(QDialog):
         self.button2 = QPushButton("Create New Map")
         self.button1.clicked.connect(self.openFileDialog)
         self.button2.clicked.connect(self.createNewMap)
-        self.mapNameEdit = QLineEdit('')
+        self.mapNameEdit = QLineEdit('遺跡')
         self.layout = QFormLayout()
         self.setLayout(self.layout)
 

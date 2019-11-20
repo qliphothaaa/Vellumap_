@@ -75,11 +75,9 @@ class QMapGraphicsView(QGraphicsView):
             self.current_item = self.getItemAtClicked(event)
             if isinstance(self.current_item, QMapObjectGraphics):
                 self.CurrentObjectSignal.emit(*self.current_item.getObjectInfo())
-                
                 self.addToTop()
             else:
                 self.CurrentObjectSignal.emit(-1,'','','','','',0.0,0.0)
-                pass
         elif (self.mode == 'create'):
             self.CreateObjectSignal.emit(self.temp_type_name, int(self.mapToScene(event.pos()).x()), int(self.mapToScene(event.pos()).y()))
 
@@ -89,20 +87,18 @@ class QMapGraphicsView(QGraphicsView):
         if (self.mode == 'select'):
             for item in self.grScene.selectedItems():
                 if isinstance(item, QMapObjectGraphics):
-                    #item.map_object.renewPosition()
-                    #item.map_object.updatePositionToDatabase(*item.map_object.getPosition())
                     self.UpdateObjectPosSignal.emit(item.object_id, *item.getCentrelPos())
             if isinstance(self.current_item, QMapObjectGraphics):
                 self.CurrentObjectSignal.emit(*self.current_item.getObjectInfo())
-                pass
             else:
                 self.CurrentObjectSignal.emit(-1,'','','','','',0.0,0.0)
-                pass
         super().mouseReleaseEvent(event)
 
     def getItemAtClicked(self, event):
         pos = event.pos()
         obj = self.itemAt(pos)
+        if isinstance(obj.parentItem(), QMapObjectGraphics):
+            obj = obj.parentItem()
         return obj
 
     def deleteSelectedItem(self):

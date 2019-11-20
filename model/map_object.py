@@ -4,6 +4,8 @@ class MapObject():
         self.object_name = object_name
         self.object_type_name = object_type_name
 
+
+
         self.x = x
         self.y = y
         self.description = description
