@@ -1,6 +1,0 @@
-/db/
-test/*.py
-*.pyc
-*.swp
-/__pycache__/
-.DS_Store
