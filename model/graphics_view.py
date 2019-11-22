@@ -145,7 +145,7 @@ class QMapGraphicsView(QGraphicsView):
         width = -1
         height = -1
         for item in self.grScene.items():
-            if item.object_id == object_id:
+            if isinstance(item, QMapObjectGraphics) and item.object_id == object_id:
                 width, height = item.getSize()
                 x, y = item.pos().x(), item.pos().y()
                 item.setSelected(True)
@@ -166,9 +166,12 @@ class QMapGraphicsView(QGraphicsView):
 
     def hideAll(self):
         for item in self.grScene.items():
-            item.hide()
+            if isinstance(item, QMapObjectGraphics):
+                item.hide()
+            '''
             if item.object_id == -1:
                 item.show()
+            '''
 
 
 

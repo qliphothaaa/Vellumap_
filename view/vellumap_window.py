@@ -15,24 +15,14 @@ class VellumapWindow(QMainWindow):
 
     def initUI(self):
         #create menubar
-        Menubar = self.menuBar()
+        #Menubar = self.menuBar()
 
         #add action to menuBar
-        fileMenu = Menubar.addMenu('File')
-        fileMenu.addAction(self.createAct('Open file', 'Ctrl+O', 'Open file', self.onFileOpen))
-        fileMenu.addSeparator()
-        fileMenu.addAction(self.createAct('Export to 2D', 'Ctrl+S', 'Save map in pic', self.onFileSave2D))
-        fileMenu.addAction(self.createAct('Export to 3D', 'Ctrl+Shift+S', 'Save map in obj', self.onFileSave3D))
-        fileMenu.addSeparator()
-        fileMenu.addAction(self.createAct('Exit', 'Ctrl+Q', 'Exit application', self.close))
-        editMenu = Menubar.addMenu('Edit')
-        editMenu.addAction(self.createAct('Delete', 'Backspace', 'delete object', self.onEditDelete))
-
+        self.initMenu()
 
         #generate GUI
         self.mainEditor = MainWidget(self.filename)
         self.setCentralWidget(self.mainEditor)
-        
         self.status_mouse_pos = QLabel('')
         self.statusBar().addPermanentWidget(self.status_mouse_pos)
 
@@ -84,8 +74,19 @@ class VellumapWindow(QMainWindow):
         self.show()
         self.is_open = True
 
+    def initMenu(self):
+        fileMenu = self.menuBar().addMenu('File')
+        fileMenu.addAction(self.createAct('Open file', 'Ctrl+O', 'Open file', self.onFileOpen))
+        fileMenu.addSeparator()
+        fileMenu.addAction(self.createAct('Export to 2D', 'Ctrl+S', 'Save map in pic', self.onFileSave2D))
+        fileMenu.addAction(self.createAct('About', 'Ctrl+A', 'about', self.about))
+        fileMenu.addSeparator()
+        fileMenu.addAction(self.createAct('Exit', 'Ctrl+Q', 'Exit application', self.close))
+        editMenu = self.menuBar().addMenu('Edit')
+        editMenu.addAction(self.createAct('Delete', 'Backspace', 'delete object', self.onEditDelete))
 
-
+    def about(self):
+        QMessageBox.about(self, "About Vellumap", "The vellumap is a desktop application for making map using Qt")
 
     def onScenePosChanged(self, x, y):
         self.status_mouse_pos.setText('Scene Pos: [%d, %d]' % (x, y))
@@ -98,9 +99,10 @@ class VellumapWindow(QMainWindow):
         act.triggered.connect(callback)
         return act
 
+    '''
     def disconntect(self):
         self.mainEditor.typeTable.DeleteSignal.disconnect(self.mainEditor.scene.removeType)
-
+    '''
 
     def onFileOpen(self):
         openfileDialog = OpenMapDialog(self)
@@ -123,9 +125,6 @@ class VellumapWindow(QMainWindow):
         print('Save to picture')
         #not implement yet
 
-    def onFileSave3D(self):
-        print('save to 3D ojbect')
-        #not implement yet
 
     def onEditDelete(self):
         self.centralWidget().view.deleteSelectedItem()
