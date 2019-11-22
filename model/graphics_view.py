@@ -57,8 +57,12 @@ class QMapGraphicsView(QGraphicsView):
             self.zoomIn()
         elif event.key() == Qt.Key_Down:
             self.zoomOut()
-        elif event.key() == Qt.Key_S:
-            self.showAll()
+            '''
+            elif event.key() == Qt.Key_S:
+                self.showAll()
+            '''
+        elif event.key() == Qt.Key_Backspace:
+            self.deleteSelectedItem()
         else:
             super().keyPressEvent(event)
 

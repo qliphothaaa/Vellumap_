@@ -8,6 +8,7 @@ from model.background import MapBackground
 class Scene():
     def __init__(self, map_name):
         super().__init__()
+        self.mapName = map_name
 
         self.object_management = ObjectsManagement(map_name)
         self.types_management = TypesManagement(map_name)
@@ -110,4 +111,17 @@ class Scene():
 
     def createNewType(self, type_name, shape, color, width, height):
         self.types_management.createType(type_name, shape, color, width, height)
+
+
+    def saveToDB(self):
+        print("save to database")
+        print(self.mapName)
+
+    def saveAsJson(self):
+        print("save as json")
+        print(self.mapName)
+
+    def saveAsImg(self):
+        print("save as img")
+        print(self.mapName)
 

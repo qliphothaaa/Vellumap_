@@ -63,6 +63,7 @@ class QMapObjectGraphics(QGraphicsItem):
 
     def initTitle(self):
         self.title_item = QGraphicsTextItem(self)
+        self.title_item.object_id = -2
         self.title_item.setDefaultTextColor(Qt.black)
         self.title_item.setPlainText(str(self.object_id))
         title_font = QFont("", self.width/4)

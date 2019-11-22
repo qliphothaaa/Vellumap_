@@ -63,8 +63,8 @@ class TestScene(unittest.TestCase):
     def test_loadGraphics(self):
         item_id_list = []
         for item in self.scene.gr_scene.items():
-            item_id_list.append(item.object_id)
-        item_id_list.remove(-1)
+            if item.object_id > 0:
+                item_id_list.append(item.object_id)
         for object_id in item_id_list:
             self.assertTrue(object_id in self.scene.object_management.map_objects)
             self.assertTrue(object_id in self.scene.graphics_management.graphics)
@@ -88,7 +88,9 @@ class TestScene(unittest.TestCase):
         item_id_list = []
         for item in self.scene.gr_scene.items():
             item_id_list.append(item.object_id)
-        self.assertEqual(item_id_list, [self.id2, -1])
+        item_id_list.remove(-1)
+        item_id_list.remove(-2)
+        self.assertEqual(item_id_list, [self.id2])
         self.assertEqual(self.db.viewDataAll('objectgraphic'),[(self.id2, 'test2', 320, 302, 'type1')])
         self.assertEqual(self.db.viewData('type', 'name', 'test1', 'objectgraphic'), [])
         self.assertEqual(self.db.viewData('Description', 'id', self.id2, 'ObjectDescription'), 'test2Description')

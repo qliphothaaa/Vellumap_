@@ -24,6 +24,11 @@ class MainWidget(QWidget):
         #self.loadStylesheet(self.stylesheet_filename)
         self.initUI()
 
+    '''
+    def __del__(self):
+        print("finish main table work")
+    '''
+
 
     def initUI(self):
         self.layout_main = QVBoxLayout()
@@ -138,5 +143,6 @@ class MainWidget(QWidget):
         file = QFile(filename)
         stylesheet = file.readAll()
         QApplication.instance().setStyleSheet(str(stylesheet, encoding='utf-8'))
+
 
 

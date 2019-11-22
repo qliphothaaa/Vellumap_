@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 from view.main_widget import MainWidget
 from view.open_map_dialog import OpenMapDialog
 import sys
@@ -6,6 +7,9 @@ import re
 
 #The main window of application
 class VellumapWindow(QMainWindow):
+    SaveAsJsonSignal = pyqtSignal()
+    SaveToDBSignal = pyqtSignal()
+    SaveAsImg = pyqtSignal()
     def __init__(self):
         super().__init__()
         self.is_open = False
@@ -27,6 +31,10 @@ class VellumapWindow(QMainWindow):
         self.statusBar().addPermanentWidget(self.status_mouse_pos)
 
         #connect signal with function
+
+        self.SaveAsJsonSignal.connect(self.mainEditor.scene.saveAsJson)
+        self.SaveToDBSignal.connect(self.mainEditor.scene.saveToDB)
+        self.SaveAsImg.connect(self.mainEditor.scene.saveAsImg)
 
         #signal in view widget
         self.mainEditor.view.ScenePosSignal.connect(self.onScenePosChanged)
@@ -81,12 +89,16 @@ class VellumapWindow(QMainWindow):
         fileMenu = self.menuBar().addMenu('File')
         fileMenu.addAction(self.createAct('Open file', 'Ctrl+O', 'Open file', self.onFileOpen))
         fileMenu.addSeparator()
-        fileMenu.addAction(self.createAct('Export to 2D', 'Ctrl+S', 'Save map in pic', self.onFileSave2D))
+
+        fileMenu.addAction(self.createAct('Save', 'Ctrl+S', 'Save map', self.onFileSaveDB))
+        fileMenu.addAction(self.createAct('Export to Json', 'Ctrl+J', 'Save map by Json', self.onFileSaveJson))
+        fileMenu.addAction(self.createAct('Export to img', 'Ctrl+I', 'Save map in jpg', self.onFileSaveImg))
+
         fileMenu.addAction(self.createAct('About', 'Ctrl+A', 'about', self.about))
         fileMenu.addSeparator()
         fileMenu.addAction(self.createAct('Exit', 'Ctrl+Q', 'Exit application', self.close))
         editMenu = self.menuBar().addMenu('Edit')
-        editMenu.addAction(self.createAct('Delete', 'Backspace', 'delete object', self.onEditDelete))
+        #editMenu.addAction(self.createAct('Delete', 'D', 'delete object', self.onEditDelete))
 
 
     def onScenePosChanged(self, x, y):
@@ -119,11 +131,17 @@ class VellumapWindow(QMainWindow):
             self.initUI()
 
 
+    def onFileSaveDB(self):
+        self.SaveToDBSignal.emit()
+        #print('Save to picture')
 
-    def onFileSave2D(self):
-        print(self.filename)
-        print('Save to picture')
-        #not implement yet
+    def onFileSaveJson(self):
+        self.SaveAsJsonSignal.emit()
+        #print('Save to json')
+
+    def onFileSaveImg(self):
+        self.SaveAsImg.emit()
+        #print('Save to picture')
 
     def onEditDelete(self):
         pass
