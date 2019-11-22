@@ -97,7 +97,7 @@ class QMapGraphicsView(QGraphicsView):
     def getItemAtClicked(self, event):
         pos = event.pos()
         obj = self.itemAt(pos)
-        if isinstance(obj.parentItem(), QMapObjectGraphics):
+        if obj and isinstance(obj.parentItem(), QMapObjectGraphics):
             obj = obj.parentItem()
         return obj
 

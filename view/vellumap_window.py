@@ -74,6 +74,9 @@ class VellumapWindow(QMainWindow):
         self.show()
         self.is_open = True
 
+    def setFilename(self, name):
+        self.filename = name
+
     def initMenu(self):
         fileMenu = self.menuBar().addMenu('File')
         fileMenu.addAction(self.createAct('Open file', 'Ctrl+O', 'Open file', self.onFileOpen))
@@ -85,8 +88,6 @@ class VellumapWindow(QMainWindow):
         editMenu = self.menuBar().addMenu('Edit')
         editMenu.addAction(self.createAct('Delete', 'Backspace', 'delete object', self.onEditDelete))
 
-    def about(self):
-        QMessageBox.about(self, "About Vellumap", "The vellumap is a desktop application for making map using Qt")
 
     def onScenePosChanged(self, x, y):
         self.status_mouse_pos.setText('Scene Pos: [%d, %d]' % (x, y))
@@ -117,17 +118,19 @@ class VellumapWindow(QMainWindow):
         if(old_name != self.filename):
             self.initUI()
 
-    def setFilename(self, name):
-        self.filename = name
+
 
     def onFileSave2D(self):
         print(self.filename)
         print('Save to picture')
         #not implement yet
 
-
     def onEditDelete(self):
-        self.centralWidget().view.deleteSelectedItem()
+        pass
+        #self.centralWidget().view.deleteSelectedItem()
+
+    def about(self):
+        QMessageBox.about(self, "About Vellumap", "The vellumap is a desktop application for making map using Qt")
 
     def openErrorDialog(self, message):
             message = QMessageBox.warning(self, 'warning message', message, QMessageBox.Yes)
