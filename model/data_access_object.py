@@ -2,42 +2,50 @@
 import sys
 import sqlite3
 DEBUG = False
-class DataAccess():
+class DataAccess(object):
     def __init__(self):
-        self.map_name = ''
+        self.id = id(self)
 
     #read database return model
 
     def viewData(self, table_name):
         conn = sqlite3.connect('./db/%s.db' % self.map_name)
         cur = conn.cursor()
-        sql = "select * from %s" % (table_name)
-        cur.execute(sql)
-        result = cur.fetchall()
+        result = ''
 
-        conn.commit()
+        try:
+            sql = "select * from %s" % (table_name)
+            cur.execute(sql)
+            result = cur.fetchall()
+            conn.commit()
+        except sqlite3.Error as e:
+            print(e)
+            print('fail to access database, rollback now')
+            conn.rollback()
+        cur.close()
         conn.close()
         return result
 
 
-    def accessDataBase(self, sql):
+    def accessDataBase(self, sql, attr):
         conn = sqlite3.connect('./db/%s.db' % self.map_name)
         cur = conn.cursor()
-        cur.execute(sql)
-        conn.commit()
+        try:
+            cur.execute(sql, attr)
+            conn.commit()
+        except sqlite3.Error as e:
+            print(e)
+            print('fail to access database, rollback now')
+            conn.rollback()
+        cur.close()
         conn.close()
 
+    def serialize(self):
+        raise NotImplemented()
 
 
-    def accessDatabaseforId(self, table_name):
-        conn = sqlite3.connect('./db/%s.db' % self.map_name)
-        cur = conn.cursor()
-        sql = "select seq from sqlite_sequence where name='%s'" % table_name
-        cur.execute(sql)
-        result = cur.fetchall()
-        conn.commit()
-        conn.close()
-        return result[0][0]
+    def deserialize(self, data, hashmap={}):
+        raise NotImplemented()
 
 
 

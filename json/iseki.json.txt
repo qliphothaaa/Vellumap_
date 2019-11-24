@@ -1,0 +1,125 @@
+{
+    "object_types": [
+        {
+            "name": "typeplant",
+            "color": "#fc3927",
+            "shape": "ell",
+            "width": 50.0,
+            "height": 50.0
+        },
+        {
+            "name": "typemine",
+            "color": "#1c1c1c",
+            "shape": "ell",
+            "width": 60.0,
+            "height": 60.0
+        }
+    ],
+    "background": {
+        "pic_name": "map7.jpg",
+        "rate": 1.0,
+        "x": 0.0,
+        "y": 0.0
+    },
+    "map_objects": [
+        {
+            "id": 4718194640,
+            "object_id": 1,
+            "name": "asdfasfa",
+            "type": "typeplant",
+            "x": 118.0,
+            "y": -47.0,
+            "description": "asdfsdfdsf"
+        },
+        {
+            "id": 4718194576,
+            "object_id": 2,
+            "name": "plant_unnamed",
+            "type": "typeplant",
+            "x": 43.0,
+            "y": -229.0,
+            "description": "nothing"
+        },
+        {
+            "id": 4718198928,
+            "object_id": 3,
+            "name": "3haoad",
+            "type": "typeplant",
+            "x": -107.0,
+            "y": -19.0,
+            "description": "3333333sdf"
+        },
+        {
+            "id": 4718198992,
+            "object_id": 4,
+            "name": "plant_unnamed",
+            "type": "typeplant",
+            "x": 127.0,
+            "y": 56.0,
+            "description": "nothing"
+        },
+        {
+            "id": 4718198864,
+            "object_id": 5,
+            "name": "plant_unnamed",
+            "type": "typeplant",
+            "x": 127.0,
+            "y": 105.0,
+            "description": "nothing"
+        },
+        {
+            "id": 4718200400,
+            "object_id": 6,
+            "name": "plant_unnamed",
+            "type": "typeplant",
+            "x": 1.0,
+            "y": 130.0,
+            "description": "nothing"
+        },
+        {
+            "id": 4718200464,
+            "object_id": 7,
+            "name": "plant_unnamed",
+            "type": "typeplant",
+            "x": -8.0,
+            "y": 39.0,
+            "description": "nothing"
+        },
+        {
+            "id": 4742450576,
+            "object_id": 8,
+            "name": "mine_unnamed",
+            "type": "typemine",
+            "x": -124.0,
+            "y": -178.0,
+            "description": "nothing"
+        },
+        {
+            "id": 4742450768,
+            "object_id": 9,
+            "name": "mine_unnamed",
+            "type": "typemine",
+            "x": 43.0,
+            "y": -171.0,
+            "description": "nothing"
+        },
+        {
+            "id": 4742450960,
+            "object_id": 10,
+            "name": "mine_unnamed",
+            "type": "typemine",
+            "x": 21.0,
+            "y": -74.0,
+            "description": "nothing"
+        },
+        {
+            "id": 4742451152,
+            "object_id": 11,
+            "name": "mine_unnamed",
+            "type": "typemine",
+            "x": -112.0,
+            "y": 134.0,
+            "description": "nothing"
+        }
+    ]
+}

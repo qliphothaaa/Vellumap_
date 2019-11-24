@@ -1,10 +1,18 @@
 from model.object_type import ObjectType
 from model.data_access_object import DataAccess
+from collections import OrderedDict
+import copy
 
 class TypesManagement(DataAccess):
     def __init__(self, map_name):
+        super().__init__()
         self.map_object_types = {}
         self.map_name = map_name
+
+        self.deleted_types = []
+        self.updated_type_names = set()
+        self.added_type_names = set()
+
         self.loadTypes()
 
     def loadTypes(self):
@@ -21,8 +29,16 @@ class TypesManagement(DataAccess):
     def removeTypeByName(self, type_name):
         targetType = self.getTypeByName(type_name)
         remove_set = targetType.getObjectIdSet()
-        self.accessDataBase(targetType.generateSqlForDelete())
+        #self.accessDataBase(targetType.generateSqlForDelete())
+
+        self.deleted_types.append(copy.deepcopy(self.map_object_types[type_name]))
         del self.map_object_types[type_name]
+
+        if type_name in self.added_type_names:
+            self.added_type_names.remove(type_name)
+        elif type_name in self.updated_type_names:
+            self.updated_type_names.remove(type_name)
+
         return remove_set
 
     def getObjectSetByName(self, type_name):
@@ -36,7 +52,8 @@ class TypesManagement(DataAccess):
         if not shape in ('rect', 'tri', 'ell'):
             raise ValueError('bad shape')
         self.map_object_types[type_name] = ObjectType(type_name, color, shape, width, height)
-        self.accessDataBase(self.map_object_types[type_name].generateSqlForAdd())
+        #self.accessDataBase(self.map_object_types[type_name].generateSqlForAdd())
+        self.added_type_names.add(type_name)
 
     def updateType(self, type_name, shape, color, width, height): 
         if not shape in ('rect', 'tri', 'ell'):
@@ -44,7 +61,9 @@ class TypesManagement(DataAccess):
         targetType = self.getTypeByName(type_name)
         targetType.update(color, shape, width, height)
         update_set = targetType.getObjectIdSet()
-        self.accessDataBase(targetType.generateSqlForUpdate())
+        #self.accessDataBase(targetType.generateSqlForUpdate())
+        self.updated_type_names.add(type_name)
+        
         return update_set
 
 
@@ -78,4 +97,28 @@ class TypesManagement(DataAccess):
         targetType = self.map_object_types[type_name]
         return targetType
 
+    def saveToDB(self):
+        for type_name in self.added_type_names:
+            target_type = self.getTypeByName(type_name)
+            self.accessDataBase(target_type.generateSqlForAdd())
 
+        for type_name in self.updated_type_names:
+            target_type = self.getTypeByName(type_name)
+            self.accessDataBase(target_type.generateSqlForUpdate())
+
+        for type_ in self.deleted_types:
+            self.accessDataBase(type_.generateSqlForDelete())
+            del type_
+
+        self.deleted_types.clear()
+        self.updated_type_names.clear()
+        self.added_type_names.clear()
+
+    def collectData(self):
+        types = []
+        for object_type in self.map_object_types.values():
+            types.append(object_type.serialize())
+
+        return OrderedDict([
+                ('object_types', types)
+            ])

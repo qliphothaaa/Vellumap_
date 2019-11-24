@@ -49,11 +49,7 @@ class LoadBackgroundDialog(QDialog):
 
 
     def importBackground(self):
-        try:
-            self.LoadBackgroundSignal.emit(self.backgroundNameEdit.text(),float(self.xEdit.text()),float(self.yEdit.text()) ,float(self.sizeEdit.text()))
-            self.setEdit()
-        except(ValueError) as e:
-            self.ErrorInputSignal.emit('input should not be empty')
+        self.LoadBackgroundSignal.emit(self.backgroundNameEdit.text(),float(self.xEdit.text()),float(self.yEdit.text()) ,float(self.sizeEdit.text()))
 
     def removeBackground(self):
         self.RemoveBackgroundSignal.emit()
@@ -64,6 +60,9 @@ class LoadBackgroundDialog(QDialog):
         if filename:
             filename = re.split('/', filename)[-1]#get the last name on path
             self.backgroundNameEdit.setText(filename)
+        self.xEdit.setText('0.0')
+        self.yEdit.setText('0.0')
+        self.sizeEdit.setText('1.0')
 
 
     def setEdit(self):
@@ -77,6 +76,7 @@ class LoadBackgroundDialog(QDialog):
             db = QSqlDatabase.addDatabase("QSQLITE")
             db.setDatabaseName('./db/%s.db' % self.mapName)
             db.open()
+
         self.model = QSqlTableModel()
         self.model.setTable('background')
         self.model.select()

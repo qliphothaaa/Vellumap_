@@ -1,5 +1,9 @@
-class ObjectType():
+from model.data_serialize_object import DataSerialize
+from collections import OrderedDict
+
+class ObjectType(DataSerialize):
     def __init__(self, type_name, color, shape, width, height):
+        super().__init__()
         self.type_name = type_name
         self.color = color
         self.shape = shape
@@ -88,3 +92,16 @@ class ObjectType():
     def generateSqlForDelete(self):
         sql = "Delete from type where (name = '%s')" % self.type_name
         return sql
+
+    def serialize(self):
+        return OrderedDict([
+                ('name', self.type_name),
+                ('color', self.color),
+                ('shape', self.shape),
+                ('width', self.width),
+                ('height', self.height),
+            ])
+
+
+    def deserialize(self, data, hashmap={}):
+        raise NotImplemented()

@@ -92,9 +92,11 @@ class ObjectInfoWidget(QWidget):
 
     def changeName(self):
         new_name =  self.nameLineEdit.text()
+        '''
         if len(new_name)>=10:
             message = QMessageBox.warning(self, 'wrong input', 'the name should less then 10', QMessageBox.Yes)
             return
+        '''
         if (self.object_id.text() is not '' and new_name is not ''):
             target_id = int(self.object_id.text())
             self.ChangeObjectNameSignal.emit(target_id,new_name)

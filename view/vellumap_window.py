@@ -74,10 +74,13 @@ class VellumapWindow(QMainWindow):
         self.mainEditor.ChangeModeSignal.connect(self.mainEditor.view.changeMode)
         self.mainEditor.ErrorInputSignal.connect(self.openErrorDialog)
         self.mainEditor.RemoveBackgroundSignal.connect(self.mainEditor.scene.removeBackground)
+
+        #singal in scene
+        self.mainEditor.scene.ErrorSignal.connect(self.openErrorDialog)
         
 
         #finish generate GUI
-        self.setGeometry(0,0,1200,800)
+        self.setGeometry(300,300,1200,800)
         self.setWindowTitle('Vellumap - %s'% self.filename)
         self.show()
         self.is_open = True
@@ -133,6 +136,9 @@ class VellumapWindow(QMainWindow):
 
     def onFileSaveDB(self):
         self.SaveToDBSignal.emit()
+            
+
+        
         #print('Save to picture')
 
     def onFileSaveJson(self):
@@ -150,7 +156,7 @@ class VellumapWindow(QMainWindow):
     def about(self):
         QMessageBox.about(self, "About Vellumap", "The vellumap is a desktop application for making map using Qt")
 
-    def openErrorDialog(self, message):
-            message = QMessageBox.warning(self, 'warning message', message, QMessageBox.Yes)
+    def openErrorDialog(self, text):
+            message = QMessageBox.warning(self, 'warning message', text, QMessageBox.Yes)
 
 

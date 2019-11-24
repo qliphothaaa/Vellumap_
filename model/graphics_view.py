@@ -58,7 +58,7 @@ class QMapGraphicsView(QGraphicsView):
         elif event.key() == Qt.Key_Down:
             self.zoomOut()
             '''
-            elif event.key() == Qt.Key_S:
+            elif event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
                 self.showAll()
             '''
         elif event.key() == Qt.Key_Backspace:

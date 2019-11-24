@@ -1,10 +1,12 @@
-class MapObject():
+from model.data_serialize_object import DataSerialize
+from collections import OrderedDict
+
+class MapObject(DataSerialize):
     def __init__(self, object_id, object_name, object_type_name, x, y, description='nothing'):
+        super().__init__()
         self.object_id = object_id
         self.object_name = object_name
         self.object_type_name = object_type_name
-
-
 
         self.x = x
         self.y = y
@@ -71,6 +73,8 @@ class MapObject():
         description = self.description
         return (object_id, name, type_name, x, y, description)
 
+
+
     def generateSqlForRename(self):
         sql = "Update ObjectGraphic set Name = '%s' where (id = %d);" % (self.object_name, self.object_id)
         return sql
@@ -84,7 +88,7 @@ class MapObject():
         return sql
 
     def generateSqlForAdd(self):
-        sql = "insert into ObjectGraphic values (null, '%s', %e, %e, '%s');" % (self.object_name, self.x, self.y, self.object_type_name)
+        sql = "insert into ObjectGraphic values (%d, '%s', %e, %e, '%s');" % (self.object_id, self.object_name, self.x, self.y, self.object_type_name)
         return sql
 
     def generateSqlForAddDiscription(self):
@@ -99,6 +103,20 @@ class MapObject():
         sql = "Delete from ObjectDescription where(id = %d);" % self.object_id
         return sql
 
+    def serialize(self):
+        return OrderedDict([
+                ('id', self.id),
+                ('object_id', self.object_id),
+                ('name', self.object_name),
+                ('type', self.object_type_name),
+                ('x', self.x),
+                ('y', self.y),
+                ('description', self.description)
+            ])
+
+
+    def deserialize(self, data, hashmap={}):
+        raise NotImplemented()
 
     
 

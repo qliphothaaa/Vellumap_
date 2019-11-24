@@ -1,3 +1,6 @@
+from model.data_serialize_object import DataSerialize
+from collections import OrderedDict
+
 #the main object for map object
 class MapBackground():
     def __init__(self, pic_name, rate=1.0, x = 0, y = 0):
@@ -54,8 +57,21 @@ class MapBackground():
         return sql
 
     def generateSqlForDelete(self):
-        sql = "Delete from background where(name = '%s');" % self.pic_name
+        #sql = "Delete from background where(name = '%s');" % self.pic_name
+        sql = "Delete from background ;"
         return sql
+
+    def serialize(self):
+        return OrderedDict([
+                    ('pic_name', self.pic_name),
+                    ('rate', self.rate),
+                    ('x', self.x),
+                    ('y', self.y)
+                    ])
+
+
+    def deserialize(self, data, hashmap={}):
+        raise NotImplemented()
 
 
 
