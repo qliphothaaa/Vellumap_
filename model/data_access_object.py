@@ -27,11 +27,14 @@ class DataAccess(object):
         return result
 
 
-    def accessDataBase(self, sql, attr):
+    def accessDataBase(self, sql, attr=None):
         conn = sqlite3.connect('./db/%s.db' % self.map_name)
         cur = conn.cursor()
         try:
-            cur.execute(sql, attr)
+            if attr:
+                cur.execute(sql, attr)
+            else:
+                cur.execute(sql)
             conn.commit()
         except sqlite3.Error as e:
             print(e)

@@ -100,14 +100,14 @@ class TypesManagement(DataAccess):
     def saveToDB(self):
         for type_name in self.added_type_names:
             target_type = self.getTypeByName(type_name)
-            self.accessDataBase(target_type.generateSqlForAdd())
+            self.accessDataBase(*target_type.generateSqlForAdd())
 
         for type_name in self.updated_type_names:
             target_type = self.getTypeByName(type_name)
-            self.accessDataBase(target_type.generateSqlForUpdate())
+            self.accessDataBase(*target_type.generateSqlForUpdate())
 
         for type_ in self.deleted_types:
-            self.accessDataBase(type_.generateSqlForDelete())
+            self.accessDataBase(*type_.generateSqlForDelete())
             del type_
 
         self.deleted_types.clear()

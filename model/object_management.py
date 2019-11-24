@@ -137,23 +137,23 @@ class ObjectsManagement(DataAccess):
     def saveToDB(self):
         for object_id in self.add_id:
             target_object = self.getObjectById(object_id)
-            self.accessDataBase(target_object.generateSqlForAdd())
-            self.accessDataBase(target_object.generateSqlForAddDiscription())
+            self.accessDataBase(*target_object.generateSqlForAdd())
+            self.accessDataBase(*target_object.generateSqlForAddDiscription())
 
         for object_id in self.update_id:
             target_object = self.getObjectById(object_id)
-            self.accessDataBase(target_object.generateSqlForUpdatePosition())
-            self.accessDataBase(target_object.generateSqlForChangeDescription())
-            self.accessDataBase(target_object.generateSqlForRename())
+            self.accessDataBase(*target_object.generateSqlForUpdatePosition())
+            self.accessDataBase(*target_object.generateSqlForChangeDescription())
+            self.accessDataBase(*target_object.generateSqlForRename())
 
         for map_object in self.deleted_objects:
-            self.accessDataBase(map_object.generateSqlForDelete())
-            self.accessDataBase(map_object.generateSqlForDeleteDescription())
+            self.accessDataBase(*map_object.generateSqlForDelete())
+            self.accessDataBase(*map_object.generateSqlForDeleteDescription())
 
         if self.map_background:
             self.accessDataBase(self.map_background.generateSqlForDelete())
-            self.accessDataBase(self.map_background.generateSqlForAdd())
-            self.accessDataBase(self.map_background.generateSqlForUpdate())
+            self.accessDataBase(*self.map_background.generateSqlForAdd())
+            self.accessDataBase(*self.map_background.generateSqlForUpdate())
         else:
             if self.deleted_background:
                 self.accessDataBase(self.deleted_background.generateSqlForDelete())

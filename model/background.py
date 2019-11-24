@@ -49,12 +49,12 @@ class MapBackground():
 
 
     def generateSqlForAdd(self):
-        sql = "insert into background values ('%s',%e, %e, %e);" % (self.pic_name, self.x, self.y, self.rate)
-        return sql
+        sql = "insert into background values (?, ?, ?, ?);"  
+        return (sql,(self.pic_name, self.x, self.y, self.rate))
 
     def generateSqlForUpdate(self):
-        sql = "Update background set x = %e, y = %e, size_rate = %e where (name = '%s');" % (self.x, self.y, self.rate, self.pic_name)
-        return sql
+        sql = "Update background set x = ?, y = ?, size_rate = ? where (name = ?);"  
+        return (sql,(self.x, self.y, self.rate, self.pic_name))
 
     def generateSqlForDelete(self):
         #sql = "Delete from background where(name = '%s');" % self.pic_name

@@ -76,32 +76,32 @@ class MapObject(DataSerialize):
 
 
     def generateSqlForRename(self):
-        sql = "Update ObjectGraphic set Name = '%s' where (id = %d);" % (self.object_name, self.object_id)
-        return sql
+        sql = "Update ObjectGraphic set Name = ? where (id = ?);" 
+        return (sql, (self.object_name, self.object_id))
 
     def generateSqlForChangeDescription(self):
-        sql = "Update ObjectDescription set Description = '%s' where (id = %d);" % (self.description, self.object_id)
-        return sql
+        sql = "Update ObjectDescription set Description = ? where (id = ?);"  
+        return (sql,(self.description, self.object_id))
 
     def generateSqlForUpdatePosition(self):
-        sql = "Update ObjectGraphic set X = %e, y = %e where (id = %d);" % (self.x, self.y, self.object_id)
-        return sql
+        sql = "Update ObjectGraphic set x = ?, y = ? where (id = ?);"  
+        return (sql,(self.x, self.y, self.object_id))
 
     def generateSqlForAdd(self):
-        sql = "insert into ObjectGraphic values (%d, '%s', %e, %e, '%s');" % (self.object_id, self.object_name, self.x, self.y, self.object_type_name)
-        return sql
+        sql = "insert into ObjectGraphic values (?, ?, ?, ?, ?);"  
+        return (sql,(self.object_id, self.object_name, self.x, self.y, self.object_type_name))
 
     def generateSqlForAddDiscription(self):
-        sql = "insert into ObjectDescription values (%d, '%s');" % (self.object_id, self.description)
-        return sql
+        sql = "insert into ObjectDescription values (?, ?);"  
+        return (sql,(self.object_id, self.description))
 
     def generateSqlForDelete(self):
-        sql = "Delete from ObjectGraphic where(id = %d);" % self.object_id
-        return sql
+        sql = "Delete from ObjectGraphic where(id = ?);"  
+        return (sql, (self.object_id,))
 
     def generateSqlForDeleteDescription(self):
-        sql = "Delete from ObjectDescription where(id = %d);" % self.object_id
-        return sql
+        sql = "Delete from ObjectDescription where(id = ?);"  
+        return (sql,(self.object_id,))
 
     def serialize(self):
         return OrderedDict([

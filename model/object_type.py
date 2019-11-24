@@ -82,16 +82,16 @@ class ObjectType(DataSerialize):
             raise TypeError("id should be int")
 
     def generateSqlForAdd(self):
-        sql = "insert into type values('%s', '%s', '%s', '%s', '%s')" % (self.type_name, self.shape, self.color, self.width, self.height)
-        return sql
+        sql = "insert into type values(?, ?, ?, ?, ?)" 
+        return (sql,(self.type_name, self.shape, self.color, self.width, self.height))
 
     def generateSqlForUpdate(self):
-        sql = "Update type set Shape = '%s', color = '%s', width = '%s', height = '%s' where name ='%s'" % (self.shape, self.color, self.width, self.height, self.type_name)
-        return sql
+        sql = "Update type set Shape = ?, color = ?, width = ?, height = ? where name = ?"  
+        return (sql, (self.shape, self.color, self.width, self.height, self.type_name))
 
     def generateSqlForDelete(self):
-        sql = "Delete from type where (name = '%s')" % self.type_name
-        return sql
+        sql = "Delete from type where (name = ?)"  
+        return (sql, self.type_name)
 
     def serialize(self):
         return OrderedDict([
