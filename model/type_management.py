@@ -122,3 +122,6 @@ class TypesManagement(DataAccess):
         return OrderedDict([
                 ('object_types', types)
             ])
+
+    def loadJsonFile(self):
+        pass

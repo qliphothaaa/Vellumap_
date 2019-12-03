@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.Qt import *
+from model.change_pic import strToImage
 import math
 DEBUG =True
 #Graphics object of map object
@@ -14,7 +15,7 @@ class QMapGraphicsBackground(QGraphicsPixmapItem):
         self.setPosition()
 
     def generatePixmap(self):
-        self.path = self.background.path_name
+        self.path = strToImage(self.background.pic_str, self.background.pic_name)
         reader = QImageReader(self.path)
         self.size = reader.size() * self.background.rate
         background_pic = QPixmap(self.path)
@@ -27,9 +28,3 @@ class QMapGraphicsBackground(QGraphicsPixmapItem):
 
     def setPosition(self):
         self.setPos(self.background.x - self.size.width()/2, self.background.y - self.size.height()/2)
-
-
-
-
-
-    

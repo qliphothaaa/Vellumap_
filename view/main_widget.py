@@ -1,7 +1,10 @@
+import sys
+import re
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from model.graphics_view import QMapGraphicsView
+from model.graphics_view2 import QMapGraphicsView
 from model.scene import Scene
 from view.type_table_widget import TypeTableWidget
 from view.object_information_widget import ObjectInfoWidget
@@ -17,12 +20,19 @@ class MainWidget(QWidget):
     ChangeModeSignal = pyqtSignal(str)
     ErrorInputSignal = pyqtSignal(str)
     RemoveBackgroundSignal = pyqtSignal()
-    def __init__(self, mapName, parent=None):
+    def __init__(self, map_path, parent=None):
         super().__init__(parent)
-        self.mapName = mapName
+        self.mapName = re.split('\.', map_path)[-2]
+        self.mapExtension = re.split('\.', map_path)[-1]
         #self.stylesheet_filename = 'ass/mapstyle.qss'
         #self.loadStylesheet(self.stylesheet_filename)
-        self.initUI()
+        if self.mapExtension == 'json':
+            self.initViewUI()
+        elif self.mapExtension == 'db':
+            self.initEditUI()
+        else:
+            message = QMessageBox.warning(self, 'warning', 'The file cannot be open in vellumap', QMessageBox.Yes, QMessageBox.Yes)
+            sys.exit()
 
     '''
     def __del__(self):
@@ -30,7 +40,7 @@ class MainWidget(QWidget):
     '''
 
 
-    def initUI(self):
+    def initEditUI(self):
         self.layout_main = QVBoxLayout()
 
         self.layout = QHBoxLayout()#main layout 
@@ -42,6 +52,7 @@ class MainWidget(QWidget):
         self.layout_button = QVBoxLayout() #layout for button
 
         self.buttonGroup = TypeButtonGroupWidget()
+        print('init button group')
         self.checkButtonGroup = TypeCheckbuttonGroupWidget()
 
         self.setLayout(self.layout_main)
@@ -62,6 +73,43 @@ class MainWidget(QWidget):
         self.loadView()
         self.loadTypeButtonSub()
         self.loadTypeButton()
+
+    def initViewUI(self):
+        self.layout_main = QVBoxLayout()
+
+        self.layout = QHBoxLayout()#main layout 
+        self.layout_view = QVBoxLayout() #layout for view
+        self.layout.setContentsMargins(0,0,0,0) 
+
+        self.layout_info = QVBoxLayout() #layout for infomation
+
+        self.layout_button = QVBoxLayout() #layout for button
+
+        self.buttonGroup = TypeButtonGroupWidget()
+        print('init button group')
+        self.checkButtonGroup = TypeCheckbuttonGroupWidget()
+
+        self.setLayout(self.layout_main)
+        self.layout_main.addLayout(self.layout)
+
+        self.showObjectTable_button = QPushButton('object table')
+        self.showObjectTable_button.clicked.connect(self.showObjectTable)
+        
+
+        #create graphic scene
+        self.scene = Scene(self.mapName)
+        self.typeTable = TypeTableWidget(self.mapName)
+        self.objectTable = ObjectTableWidget(self.mapName)
+
+
+        #load sub widgets
+        self.loadInfo()
+        self.loadView()
+        '''
+        self.loadTypeButtonSub()
+        self.loadTypeButton()
+        '''
+        
         
 
     def loadInfo(self):

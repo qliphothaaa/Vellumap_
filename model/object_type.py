@@ -11,13 +11,14 @@ class ObjectType(DataSerialize):
         self.height = height
         self.objects_id_set = set()
 
+    ###############################getter and setter
     @property
     def color(self):
         return self._color
     @color.setter
     def color(self, value):
         if not isinstance(value, str):
-            raise TypeError('the color should be string')
+            raise TypeError('color should be string(input:%s)'%value)
         self._color = value
 
     @property
@@ -26,7 +27,7 @@ class ObjectType(DataSerialize):
     @shape.setter
     def shape(self, value):
         if not isinstance(value, str):
-            raise TypeError('the shape should be string')
+            raise TypeError('shape should be string(input:%s)'%value)
         self._shape = value
 
     @property
@@ -36,9 +37,9 @@ class ObjectType(DataSerialize):
     def width(self, value):
         if not isinstance(value, int):
             if not isinstance(value,float):
-                raise TypeError('the width should be int or float')
+                raise TypeError('width should be int or float(input:%s)'%value)
         if value <= 0:
-            raise ValueError ("bad value")
+            raise ValueError ("width should bigger then 0(input:%s)"%value)
         self._width = value
 
     @property
@@ -48,13 +49,14 @@ class ObjectType(DataSerialize):
     def height(self, value):
         if not isinstance(value, int):
             if not isinstance(value,float):
-                raise TypeError('the height should be int or float')
+                raise TypeError('height should be int or float(input:%s)'%value)
         if value <= 0:
-            raise ValueError("bad value")
+            raise ValueError("height should bigger then 0(input:%s)"%value)
         self._height = value
 
 
 
+    ################method
     def getAttribute(self):
         return (self.color, self.shape, self.width, self.height)
     

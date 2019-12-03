@@ -11,8 +11,6 @@ class QMapGraphicsView(QGraphicsView):
     CreateObjectSignal = pyqtSignal(str, int, int)
     CurrentObjectSignal = pyqtSignal(int, str, str, int, int, str, float, float)#id, name, type, x, y, des, width, height
     BackSpaceSignal = pyqtSignal(int)
-    
-
     def __init__(self, grScene, parent=None):
         super().__init__(parent)
         self.current_item = None
@@ -22,7 +20,7 @@ class QMapGraphicsView(QGraphicsView):
         self.setScene(self.grScene)
 
         self.mode = 'select'
-        self.temp_type_name = ''
+        #self.temp_type_name = ''
 
         self.zoomInFactor = 1.25
         self.zoomOutFactor = 1 / self.zoomInFactor
@@ -41,7 +39,6 @@ class QMapGraphicsView(QGraphicsView):
         self.setMouseTracking(True)
         #self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setDragMode(QGraphicsView.RubberBandDrag)
-        #self.setDragMode(QGraphicsView.NoDrag)
 
     def mouseMoveEvent(self, event):
         self.last_scene_mouse_position = self.mapToScene(event.pos())
@@ -56,12 +53,6 @@ class QMapGraphicsView(QGraphicsView):
             self.zoomIn()
         elif event.key() == Qt.Key_Down:
             self.zoomOut()
-            '''
-            elif event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
-                self.showAll()
-            '''
-        elif event.key() == Qt.Key_Backspace:
-            self.deleteSelectedItem()
         else:
             super().keyPressEvent(event)
 
@@ -82,15 +73,19 @@ class QMapGraphicsView(QGraphicsView):
             else:
                 self.CurrentObjectSignal.emit(-1,'','','','','',0.0,0.0)
         elif (self.mode == 'create'):
-            self.CreateObjectSignal.emit(self.temp_type_name, int(self.mapToScene(event.pos()).x()), int(self.mapToScene(event.pos()).y()))
+            pass
+            #self.CreateObjectSignal.emit(self.temp_type_name, int(self.mapToScene(event.pos()).x()), int(self.mapToScene(event.pos()).y()))
 
         super().mousePressEvent(event)
 
     def leftMouseButtonRelease(self, event):
         if (self.mode == 'select'):
+            '''
             for item in self.grScene.selectedItems():
                 if isinstance(item, QMapObjectGraphics):
-                    self.UpdateObjectPosSignal.emit(item.object_id, *item.getCentrelPos())
+                    pass
+                    #self.UpdateObjectPosSignal.emit(item.object_id, *item.getCentrelPos())
+            '''
             if isinstance(self.current_item, QMapObjectGraphics):
                 self.CurrentObjectSignal.emit(*self.current_item.getObjectInfo())
             else:
@@ -104,6 +99,7 @@ class QMapGraphicsView(QGraphicsView):
             obj = obj.parentItem()
         return obj
 
+    '''
     def deleteSelectedItem(self):
         message_text = 'delete select object?' 
         message = QMessageBox.question(self, 'question message', message_text, QMessageBox.Yes, QMessageBox.No)
@@ -111,6 +107,7 @@ class QMapGraphicsView(QGraphicsView):
             for item in self.grScene.selectedItems():
                 if isinstance(item, QMapObjectGraphics):
                     self.BackSpaceSignal.emit(item.object_id)
+    '''
 
 
     def addToTop(self):
@@ -171,10 +168,6 @@ class QMapGraphicsView(QGraphicsView):
         for item in self.grScene.items():
             if isinstance(item, QMapObjectGraphics):
                 item.hide()
-            '''
-            if item.object_id == -1:
-                item.show()
-            '''
 
 
 

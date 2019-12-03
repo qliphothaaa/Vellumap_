@@ -8,20 +8,21 @@ Width real default 0.0,
 Height real default 0.0);
 
 CREATE TABLE ObjectGraphic(
-id integer primary key autoincrement,
+id integer unique not null,
 Name varchar(30) not null,
 X real default 0.0,
 Y real default 0.0,
 Type varchar(10) not null);
 
 CREATE TABLE ObjectDescription(
-id integer not null,
+id integer unique not null,
 Description varchar(100) default 'None' );
 
 CREATE TABLE Background(
 Name varchar(10) not null,
 X real default 0.0,
 Y real default 0.0,
-size_rate real default 1.0);
+size_rate real default 1.0,
+pic_str blob not null);
 
 COMMIT;

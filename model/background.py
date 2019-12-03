@@ -1,4 +1,5 @@
 from model.data_serialize_object import DataSerialize
+from model.change_pic import imageToStr
 from collections import OrderedDict
 
 #the main object for map object
@@ -9,7 +10,9 @@ class MapBackground():
         self.x = x
         self.y = y
         self.path_name = './pic/' + self.pic_name
+        self.pic_str = imageToStr(self.path_name)
 
+    ###############################getter and setter
     @property
     def pic_name(self):
         return self._pic_name
@@ -48,9 +51,10 @@ class MapBackground():
 
 
 
+    ################method
     def generateSqlForAdd(self):
-        sql = "insert into background values (?, ?, ?, ?);"  
-        return (sql,(self.pic_name, self.x, self.y, self.rate))
+        sql = "insert into background values (?, ?, ?, ?, ?);"  
+        return (sql,(self.pic_name, self.x, self.y, self.rate, self.pic_str))
 
     def generateSqlForUpdate(self):
         sql = "Update background set x = ?, y = ?, size_rate = ? where (name = ?);"  
@@ -66,7 +70,8 @@ class MapBackground():
                     ('pic_name', self.pic_name),
                     ('rate', self.rate),
                     ('x', self.x),
-                    ('y', self.y)
+                    ('y', self.y),
+                    ('pic_str', self.pic_str)
                     ])
 
 

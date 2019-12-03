@@ -92,7 +92,6 @@ class TypeTableWidget(QWidget):
             message = QMessageBox.question(self, 'question message', message_text, QMessageBox.Yes, QMessageBox.No)
             if message == QMessageBox.Yes:
                 self.DeleteSignal.emit(self.model.record(self.tableView.currentIndex().row()).value('name'))
-                #self.model.removeRow(self.tableView.currentIndex().row())
                 self.ResetModeSignal.emit()
                 self.viewType()
 

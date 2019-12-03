@@ -13,7 +13,7 @@ class VellumapWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.is_open = False
-        self.filename = 'None'
+        self.filepath = 'None'
         self.onFileOpen()
 
 
@@ -25,7 +25,8 @@ class VellumapWindow(QMainWindow):
         self.initMenu()
 
         #generate GUI
-        self.mainEditor = MainWidget(self.filename)
+
+        self.mainEditor = MainWidget(self.filepath)
         self.setCentralWidget(self.mainEditor)
         self.status_mouse_pos = QLabel('')
         self.statusBar().addPermanentWidget(self.status_mouse_pos)
@@ -80,13 +81,19 @@ class VellumapWindow(QMainWindow):
         
 
         #finish generate GUI
-        self.setGeometry(300,300,1200,800)
-        self.setWindowTitle('Vellumap - %s'% self.filename)
+        self.setGeometry(150,150,1200,800)
+        fileex = re.split('\.', self.filepath)[-1]
+        filename = re.split('\.', self.filepath)[-2]
+
+        if fileex == 'json':
+            self.setWindowTitle('Vellumap View- %s'% filename)
+        else:
+            self.setWindowTitle('Vellumap Edit - %s'% filename)
         self.show()
         self.is_open = True
 
-    def setFilename(self, name):
-        self.filename = name
+    def setFilename(self, path):
+        self.filepath = path
 
     def initMenu(self):
         fileMenu = self.menuBar().addMenu('File')
@@ -123,21 +130,20 @@ class VellumapWindow(QMainWindow):
     def onFileOpen(self):
         openfileDialog = OpenMapDialog(self)
         openfileDialog.fileNameSignal.connect(self.setFilename)
-        old_name = self.filename
+        old_name = self.filepath
         if (self.is_open):
             pass
         else:
             openfileDialog.exitSignal.connect(sys.exit)
         openfileDialog.show()
         openfileDialog.exec_()
-        if(old_name != self.filename):
+        if(old_name != self.filepath):
             self.initUI()
 
 
     def onFileSaveDB(self):
         self.SaveToDBSignal.emit()
             
-
         
         #print('Save to picture')
 

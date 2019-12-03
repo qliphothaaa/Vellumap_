@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 import math
 
 class QMapObjectGraphics(QGraphicsItem):
-    def __init__(self, map_object, color, shape, width, height, parent=None):
+    def __init__(self, map_object, color, shape, width, height, editmode=False, parent=None):
         super().__init__(parent)
         #self._color = Qt.white
         self._pen_defalut_color = QPen(Qt.NoPen)
@@ -13,6 +13,7 @@ class QMapObjectGraphics(QGraphicsItem):
         self._pen_defalut_color.setWidth(3)
         self.map_object = map_object
         self.object_id = map_object.object_id
+        self.editmode = editmode
 
         self._brush = QBrush(QColor(color))
         self.width = width
@@ -82,7 +83,8 @@ class QMapObjectGraphics(QGraphicsItem):
         
     def initUI(self):
         self.setFlag(QGraphicsItem.ItemIsSelectable)
-        self.setFlag(QGraphicsItem.ItemIsMovable)
+        if self.editmode:
+            self.setFlag(QGraphicsItem.ItemIsMovable)
 
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):

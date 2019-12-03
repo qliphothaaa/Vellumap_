@@ -18,8 +18,10 @@ class OpenMapDialog(QDialog):
         self.label2 = QLabel('Or find an existing map')
         self.button1 = QPushButton("Open Existing Map")
         self.button2 = QPushButton("Create New Map")
-        self.button1.clicked.connect(self.openFileDialog)
+        self.button3 = QPushButton("Open Map in View mode")
+        self.button1.clicked.connect(self.openEditMode)
         self.button2.clicked.connect(self.createNewMap)
+        self.button3.clicked.connect(self.openViewMode)
         self.mapNameEdit = QLineEdit('iseki')
         self.layout = QFormLayout()
         self.setLayout(self.layout)
@@ -28,17 +30,31 @@ class OpenMapDialog(QDialog):
         self.layout.addRow(self.mapNameEdit,self.button2)
         self.layout.addRow(self.label2)
         self.layout.addRow(self.button1)
+        self.layout.addRow(self.button3)
 
 
-    def openFileDialog(self):
+    def openEditMode(self):
         filter = "database (*.db)"
         filename, _ = QFileDialog.getOpenFileName(None, "Open File", "./db/", filter)
         if filename:
             filename = re.split('/', filename)[-1]#get the last name on path
-            filename = filename[:-3]#delete the ".db"
+            #filename = filename[:-3]#delete the ".db"
+            #filename = re.split('\.', filename)[-2]
             self.fileNameSignal.emit(filename)
             self.setNameFinished = True
             self.close()
+
+    def openViewMode(self):
+        filter = "JSON (*.json)"
+        filename, _ = QFileDialog.getOpenFileName(None, "Open File", "./json/", filter)
+        if filename:
+            filename = re.split('/', filename)[-1]#get the last name on path
+            #filename = filename[:-5]#delete the ".db"
+            #filename = re.split('\.', filename)[-2]
+            self.fileNameSignal.emit(filename)
+            self.setNameFinished = True
+            self.close()
+
 
     def createNewMap(self):
         filename = self.mapNameEdit.text()
@@ -56,7 +72,7 @@ class OpenMapDialog(QDialog):
         else:
             self.createDatabase(filename)
 
-        self.fileNameSignal.emit(filename)
+        self.fileNameSignal.emit(filename+'.db')
         self.setNameFinished = True
         self.close()
 
@@ -69,11 +85,11 @@ class OpenMapDialog(QDialog):
         sqlfile = open('view/vellumap.sql', 'r').read()
         try:
             conn = sqlite3.connect(filePath)
+            c = conn.cursor()
+            c.executescript(sqlfile)
         except Error as e:
             print(e)
         finally:
-            c = conn.cursor()
-            c.executescript(sqlfile)
             conn.commit()
             conn.close()
 

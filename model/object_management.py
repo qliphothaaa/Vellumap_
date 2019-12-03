@@ -1,9 +1,10 @@
 import re
 import copy
-from model.map_object import MapObject
-from model.data_access_object import DataAccess
-from model.background import MapBackground
 from collections import OrderedDict
+from model.data_access_object import DataAccess
+
+from model.map_object import MapObject
+from model.background import MapBackground
 
 class ObjectsManagement(DataAccess):
     def __init__(self, map_name):
@@ -51,7 +52,7 @@ class ObjectsManagement(DataAccess):
 
     def renameObject(self, object_id, new_name):
         if not isinstance(new_name, str):
-            raise TypeError("the name should be str")
+            raise TypeError("name should be str(input:%s"%new_name)
         if new_name is '':
             raise ValueError("name is empty")
         if len(new_name) > 10:
@@ -66,8 +67,10 @@ class ObjectsManagement(DataAccess):
     def changeDescription(self, object_id, description):
         if not isinstance(description, str):
             raise TypeError("the name should be str")
+        '''
         if description is '':
             raise ValueError("description is empty")
+        '''
         if len(description) > 100:
             raise ValueError("description should be less then 100 char")
         targetObject = self.getObjectById(object_id)
@@ -78,7 +81,7 @@ class ObjectsManagement(DataAccess):
     def updatePosition(self, object_id, x, y):
         if not isinstance(x,int) and not isinstance(y,int):
             if not isinstance(x, float) and not isinstance(y, float):
-                raise ValueError("position should be int or float")
+                raise ValueError("position should be int or float(input:%s,%s)"% x, y)
         targetObject = self.getObjectById(object_id)
         targetObject.x = float(x)
         targetObject.y = float(y)
@@ -86,6 +89,8 @@ class ObjectsManagement(DataAccess):
         #self.accessDataBase(targetObject.generateSqlForUpdatePosition())
 
     def createNewObject(self, type_name, x, y):
+        if not type_name.startswith('type'):
+            raise ValueError('type format wrong')
         object_name = re.sub('^type','',type_name) + '_unnamed'
         mapObject = MapObject(self.max_id+1, object_name, type_name, x, y)
 
@@ -102,7 +107,7 @@ class ObjectsManagement(DataAccess):
 
 
     def addBackground(self, pic_name, rate, x=0, y=0):
-        if not self.map_background is None:
+        if self.map_background:
             self.removeBackground()
         self.map_background = MapBackground( pic_name, rate, x, y)
 
@@ -119,7 +124,7 @@ class ObjectsManagement(DataAccess):
 
         if object_id in self.add_id:
             self.add_id.remove(object_id)
-        elif object_id in self.update_id:
+        if object_id in self.update_id:
             self.update_id.remove(object_id)
         return type_name
 
@@ -129,12 +134,20 @@ class ObjectsManagement(DataAccess):
 
     def getObjectById(self, object_id):
         if not isinstance(object_id, int):
-            raise TypeError("the id should be int")
+            raise TypeError("id should be int(input:%s)"%object_id)
         if not object_id in self.map_objects:
-            raise KeyError("can't find id")
+            raise KeyError("can't find id %d"% object_id)
         return self.map_objects[object_id]
 
     def saveToDB(self):
+        '''
+        print("update: ", end='')
+        print(self.update_id)
+        print("add: ", end='')
+        print(self.add_id)
+        print("delete: ", end='')
+        print(self.deleted_objects)
+        '''
         for object_id in self.add_id:
             target_object = self.getObjectById(object_id)
             self.accessDataBase(*target_object.generateSqlForAdd())
@@ -153,7 +166,7 @@ class ObjectsManagement(DataAccess):
         if self.map_background:
             self.accessDataBase(self.map_background.generateSqlForDelete())
             self.accessDataBase(*self.map_background.generateSqlForAdd())
-            self.accessDataBase(*self.map_background.generateSqlForUpdate())
+            #self.accessDataBase(*self.map_background.generateSqlForUpdate())
         else:
             if self.deleted_background:
                 self.accessDataBase(self.deleted_background.generateSqlForDelete())
@@ -180,5 +193,10 @@ class ObjectsManagement(DataAccess):
                 ('background', background_data),
                 ('map_objects', objects)
             ])
+
+    def loadJsonFile(self):
+        pass
+
+   
 
 

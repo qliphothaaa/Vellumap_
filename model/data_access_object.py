@@ -43,12 +43,6 @@ class DataAccess(object):
         cur.close()
         conn.close()
 
-    def serialize(self):
-        raise NotImplemented()
-
-
-    def deserialize(self, data, hashmap={}):
-        raise NotImplemented()
 
 
 

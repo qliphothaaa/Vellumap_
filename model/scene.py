@@ -20,7 +20,7 @@ class Scene(QObject):
         self.types_management = TypesManagement(map_name)
         self.graphics_management = GraphicsManagement()
 
-        self.max_id = self.object_management.max_id
+        #self.max_id = self.object_management.max_id
         self.initUI()
 
 
@@ -61,11 +61,12 @@ class Scene(QObject):
 
         for object_id in self.graphics_management.graphics:
             self.gr_scene.addItem(self.graphics_management.graphics[object_id])
+        #print(self.graphics_management.graphics)
 
     @debug
     def loadBackgroundGraphics(self):
         self.gr_scene.clearBackground()
-        if (self.object_management.map_background):
+        if self.object_management.map_background:
             mb = self.object_management.map_background
             mbg = QMapGraphicsBackground(mb)
             self.gr_scene.addBackgroundItem(mbg)

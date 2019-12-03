@@ -22,6 +22,7 @@ CREATE TABLE Background(
 Name varchar(10) not null,
 X real default 0.0,
 Y real default 0.0,
-size_rate real default 1.0);
+size_rate real default 1.0,
+pic_str blob not null);
 
 COMMIT;
