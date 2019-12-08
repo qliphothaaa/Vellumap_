@@ -2,7 +2,7 @@ from model.data_serialize_object import DataSerialize
 from collections import OrderedDict
 
 class ObjectType(DataSerialize):
-    def __init__(self, type_name, color, shape, width, height):
+    def __init__(self, type_name='', color='', shape='', width=1, height=1):
         super().__init__()
         self.type_name = type_name
         self.color = color
@@ -12,6 +12,7 @@ class ObjectType(DataSerialize):
         self.objects_id_set = set()
 
     ###############################getter and setter
+
     @property
     def color(self):
         return self._color
@@ -54,9 +55,8 @@ class ObjectType(DataSerialize):
             raise ValueError("height should bigger then 0(input:%s)"%value)
         self._height = value
 
-
-
     ################method
+
     def getAttribute(self):
         return (self.color, self.shape, self.width, self.height)
     
@@ -83,6 +83,8 @@ class ObjectType(DataSerialize):
         else:
             raise TypeError("id should be int")
 
+    ################method sql
+
     def generateSqlForAdd(self):
         sql = "insert into type values(?, ?, ?, ?, ?)" 
         return (sql,(self.type_name, self.shape, self.color, self.width, self.height))
@@ -95,6 +97,8 @@ class ObjectType(DataSerialize):
         sql = "Delete from type where (name = ?)"  
         return (sql, self.type_name)
 
+    ################method serialize
+
     def serialize(self):
         return OrderedDict([
                 ('name', self.type_name),
@@ -105,5 +109,11 @@ class ObjectType(DataSerialize):
             ])
 
 
-    def deserialize(self, data, hashmap={}):
-        raise NotImplemented()
+    def deserialize(self, data):
+        self.type_name = data['name']
+        self.color = data['color']
+        self.shape = data['shape']
+        self.width = data['width']
+        self.height = data['height']
+
+    ################end

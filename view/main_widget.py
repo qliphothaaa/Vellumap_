@@ -4,10 +4,11 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from model.graphics_view import QMapGraphicsView
-from model.graphics_view2 import QMapGraphicsView
+from model.graphics_view2 import QMapGraphicsView2
 from model.scene import Scene
 from view.type_table_widget import TypeTableWidget
 from view.object_information_widget import ObjectInfoWidget
+from view.object_information_view_widget import ObjectInfoViewWidget
 from view.object_table_widget import ObjectTableWidget
 from view.type_button_group_widget import TypeButtonGroupWidget
 from view.load_background_dialog import LoadBackgroundDialog
@@ -22,22 +23,20 @@ class MainWidget(QWidget):
     RemoveBackgroundSignal = pyqtSignal()
     def __init__(self, map_path, parent=None):
         super().__init__(parent)
-        self.mapName = re.split('\.', map_path)[-2]
+        #self.mapName = re.split('\.', map_path)[-2]
+        self.mapName = map_path
         self.mapExtension = re.split('\.', map_path)[-1]
         #self.stylesheet_filename = 'ass/mapstyle.qss'
         #self.loadStylesheet(self.stylesheet_filename)
+        #self.initWidgets()
         if self.mapExtension == 'json':
             self.initViewUI()
         elif self.mapExtension == 'db':
             self.initEditUI()
         else:
-            message = QMessageBox.warning(self, 'warning', 'The file cannot be open in vellumap', QMessageBox.Yes, QMessageBox.Yes)
+            message = QMessageBox.warning(self, 'warning', 'This file cannot be open in vellumap', QMessageBox.Yes, QMessageBox.Yes)
             sys.exit()
 
-    '''
-    def __del__(self):
-        print("finish main table work")
-    '''
 
 
     def initEditUI(self):
@@ -52,7 +51,6 @@ class MainWidget(QWidget):
         self.layout_button = QVBoxLayout() #layout for button
 
         self.buttonGroup = TypeButtonGroupWidget()
-        print('init button group')
         self.checkButtonGroup = TypeCheckbuttonGroupWidget()
 
         self.setLayout(self.layout_main)
@@ -66,13 +64,20 @@ class MainWidget(QWidget):
         self.scene = Scene(self.mapName)
         self.typeTable = TypeTableWidget(self.mapName)
         self.objectTable = ObjectTableWidget(self.mapName)
+        self.objectInfo = ObjectInfoWidget()
 
 
         #load sub widgets
         self.loadInfo()
-        self.loadView()
+        self.loadView(QMapGraphicsView)
         self.loadTypeButtonSub()
         self.loadTypeButton()
+
+    '''
+    def saveWidget(self):
+        pix=self.scene.graphics_management.background.grab()
+        pix.save("save.png")
+    '''
 
     def initViewUI(self):
         self.layout_main = QVBoxLayout()
@@ -86,7 +91,6 @@ class MainWidget(QWidget):
         self.layout_button = QVBoxLayout() #layout for button
 
         self.buttonGroup = TypeButtonGroupWidget()
-        print('init button group')
         self.checkButtonGroup = TypeCheckbuttonGroupWidget()
 
         self.setLayout(self.layout_main)
@@ -100,39 +104,45 @@ class MainWidget(QWidget):
         self.scene = Scene(self.mapName)
         self.typeTable = TypeTableWidget(self.mapName)
         self.objectTable = ObjectTableWidget(self.mapName)
+        self.objectInfo = ObjectInfoViewWidget()
 
 
         #load sub widgets
-        self.loadInfo()
-        self.loadView()
+        self.loadViewInfo()
+        self.loadView(QMapGraphicsView2)
         '''
         self.loadTypeButtonSub()
         self.loadTypeButton()
         '''
-        
+
+    def loadViewInfo(self):
+        spacerItem = QSpacerItem(0,0,QSizePolicy.Minimum,QSizePolicy.Expanding)
+        self.layout_info.addWidget(self.objectInfo)
+        self.layout_info.addItem(spacerItem)
+        self.layout.addLayout(self.layout_info)
+
         
 
     def loadInfo(self):
         if DEBUG: print('MAPWIDGET: start load object information widget')
-        self.objectInfo = ObjectInfoWidget()
+        self.pushButton = QPushButton('Import picture')
+        #self.pushButton.setFixedWidth(300)
+        self.pushButton.clicked.connect(self.showLoadBackground)
         spacerItem = QSpacerItem(0,0,QSizePolicy.Minimum,QSizePolicy.Expanding)
         self.layout_info.addWidget(self.objectInfo)
         self.layout_info.addItem(spacerItem)
         self.layout.addLayout(self.layout_info)
         self.layout_info.addWidget(self.showObjectTable_button)
+        self.layout_info.addWidget(self.pushButton)
 
 
     #load View
-    def loadView(self):
+    def loadView(self,viewMethod):
         if DEBUG: print('MAPWIDGET: start load graphic')
-        self.view = QMapGraphicsView(self.scene.gr_scene, self)
+        self.view = viewMethod(self.scene.gr_scene, self)
         self.checkButtonGroup.addButtonFromList(self.scene.getTypeNameList())
-        self.pushButton = QPushButton('Import picture')
-        self.pushButton.setFixedWidth(300)
-        self.pushButton.clicked.connect(self.showLoadBackground)
         self.layout_view.addWidget(self.checkButtonGroup)
         self.layout_view.addWidget(self.view)
-        self.layout_view.addWidget(self.pushButton)
         self.layout.addLayout(self.layout_view)
 
 

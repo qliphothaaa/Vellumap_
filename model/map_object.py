@@ -2,7 +2,7 @@ from model.data_serialize_object import DataSerialize
 from collections import OrderedDict
 
 class MapObject(DataSerialize):
-    def __init__(self, object_id, object_name, object_type_name, x, y, description='nothing'):
+    def __init__(self, object_id, object_name='', object_type_name='', x=0.0, y=0.0, description='nothing'):
         super().__init__()
         self.object_id = object_id
         self.object_name = object_name
@@ -11,6 +11,8 @@ class MapObject(DataSerialize):
         self.x = x
         self.y = y
         self.description = description
+
+    ###############################getter and setter
 
     @property
     def description(self):
@@ -47,6 +49,7 @@ class MapObject(DataSerialize):
     @x.setter
     def x(self, value):
         if not isinstance(value, float):
+            print(value)
             raise TypeError('the x should be float')
         self._x = value
 
@@ -59,7 +62,7 @@ class MapObject(DataSerialize):
             raise TypeError('the y should be float or float')
         self._y = value
 
-
+    ################method
 
     def getPosition(self):
         return (self.x, self.y)
@@ -73,7 +76,7 @@ class MapObject(DataSerialize):
         description = self.description
         return (object_id, name, type_name, x, y, description)
 
-
+    ################method sql
 
     def generateSqlForRename(self):
         sql = "Update ObjectGraphic set Name = ? where (id = ?);" 
@@ -103,9 +106,10 @@ class MapObject(DataSerialize):
         sql = "Delete from ObjectDescription where(id = ?);"  
         return (sql,(self.object_id,))
 
+    ################method serialize
+
     def serialize(self):
         return OrderedDict([
-                ('id', self.id),
                 ('object_id', self.object_id),
                 ('name', self.object_name),
                 ('type', self.object_type_name),
@@ -115,9 +119,11 @@ class MapObject(DataSerialize):
             ])
 
 
-    def deserialize(self, data, hashmap={}):
-        raise NotImplemented()
+    def deserialize(self, data):
+        self.object_name = data['name']
+        self.object_type_name = data['type']
+        self.x = data['x']
+        self.y = data['y']
+        self.description = data['description']
 
-    
-
-        
+    ################end

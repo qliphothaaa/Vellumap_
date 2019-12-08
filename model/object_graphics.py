@@ -4,18 +4,19 @@ from PyQt5.QtCore import *
 import math
 
 class QMapObjectGraphics(QGraphicsItem):
-    def __init__(self, map_object, color, shape, width, height, editmode=False, parent=None):
+    def __init__(self, map_object, color, shape, width, height, editmode, parent=None):
         super().__init__(parent)
         #self._color = Qt.white
-        self._pen_defalut_color = QPen(Qt.NoPen)
+        self.pen_defalut_color = QPen(Qt.NoPen)
         self._pen_selected = QPen(Qt.black)
         self._pen_selected.setWidth(3)
-        self._pen_defalut_color.setWidth(3)
+        self.pen_defalut_color.setWidth(3)
         self.map_object = map_object
         self.object_id = map_object.object_id
         self.editmode = editmode
+        self.show_bool = True
 
-        self._brush = QBrush(QColor(color))
+        self.brush = QBrush(QColor(color))
         self.width = width
         self.height = height
         self.shape = shape
@@ -26,7 +27,7 @@ class QMapObjectGraphics(QGraphicsItem):
         self.shape = shape
 
     def setColor(self, color):
-        self._brush = QBrush(QColor(color))
+        self.brush = QBrush(QColor(color))
 
     def setWidth(self,width):
         self.width = width
@@ -67,15 +68,15 @@ class QMapObjectGraphics(QGraphicsItem):
         self.title_item.object_id = -2
         self.title_item.setDefaultTextColor(Qt.black)
         self.title_item.setPlainText(str(self.object_id))
-        title_font = QFont("", self.width/4)
-        self.title_item.setFont(title_font)
+        self.title_font = QFont("", self.width/3)
+        self.title_item.setFont(self.title_font)
         self.title_item.setTextWidth(self.width)
         self.title_item.setPos(self.width/4, self.height/3.5)
         self.title_item.adjustSize()
 
     def redarwTitle(self):
-        title_font = QFont("", self.width/4)
-        self.title_item.setFont(title_font)
+        self.title_font = QFont("", self.width/4)
+        self.title_item.setFont(self.title_font)
         self.title_item.setTextWidth(self.width)
         self.title_item.setPos(self.width/4, self.height/3.5)
         self.title_item.adjustSize()
@@ -97,10 +98,11 @@ class QMapObjectGraphics(QGraphicsItem):
         elif self.shape == 'tri':
             myPolygon = QPolygonF([
             QPoint(0.5*self.width,0), 
-            QPoint(0,0.5*math.sqrt(3)*self.width),
-            QPoint(self.width,0.5*math.sqrt(3)*self.width)])
+            QPoint(0,self.height),
+            QPoint(self.width,self.height)])
+            
             path_outline.addPolygon(myPolygon)
 
-        painter.setPen(self._pen_defalut_color if not self.isSelected() else self._pen_selected)
-        painter.setBrush(self._brush)
+        painter.setPen(self.pen_defalut_color if not self.isSelected() else self._pen_selected)
+        painter.setBrush(self.brush)
         painter.drawPath(path_outline.simplified())

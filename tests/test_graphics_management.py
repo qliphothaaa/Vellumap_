@@ -16,7 +16,7 @@ class TestGraphicsManagement(unittest.TestCase):
 
     def test_generateGraphics(self):
         self.assertEqual(len(self.graphics_management.graphics),0)
-        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20)
+        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20, True)
         self.assertEqual(len(self.graphics_management.graphics), 1)
         self.assertTrue(3 in self.graphics_management.graphics)
         self.assertEqual(self.graphics_management.graphics[3].shape, 'tri')
@@ -25,7 +25,7 @@ class TestGraphicsManagement(unittest.TestCase):
             
 
     def test_getGraphics(self):
-        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20)
+        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20, True)
         #TC1
         self.assertNotEqual(self.graphics_management.getGraphics(3), None)
         self.assertEqual(self.graphics_management.getGraphics(3).shape, 'tri')
@@ -36,7 +36,7 @@ class TestGraphicsManagement(unittest.TestCase):
 
 
     def test_removeGraphics(self):
-        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20)
+        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20, True)
         self.assertTrue(3 in self.graphics_management.graphics)
         #TC1
         self.graphics_management.removeGraphics(3)
@@ -47,7 +47,7 @@ class TestGraphicsManagement(unittest.TestCase):
             self.graphics_management.removeGraphics(4)
 
     def test_updateGraphics(self):
-        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20)
+        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20, True)
         #TC1
         self.graphics_management.updateGraphics(3, 'black', 'rec', 10, 40)
         self.assertEqual(self.graphics_management.getGraphics(3).shape, 'rec')
@@ -59,7 +59,7 @@ class TestGraphicsManagement(unittest.TestCase):
 
     def test_hideGraphics(self):
         #TC1
-        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20)
+        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20, True)
         self.assertTrue(self.graphics_management.getGraphics(3).isVisible())
         self.graphics_management.hideGraphics({3})
         self.assertFalse(self.graphics_management.getGraphics(3).isVisible())
@@ -75,7 +75,7 @@ class TestGraphicsManagement(unittest.TestCase):
 
     def test_showGraphics(self):
         #TC1
-        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20)
+        self.graphics_management.generateGraphics(self.map_object1, 'red', 'tri', 20, 20, True)
         self.assertTrue(self.graphics_management.getGraphics(3).isVisible())
         self.graphics_management.hideGraphics({3})
         self.assertFalse(self.graphics_management.getGraphics(3).isVisible())
@@ -91,5 +91,6 @@ class TestGraphicsManagement(unittest.TestCase):
             self.graphics_management.hideGraphics({1})
 if __name__ == '__main__':
     unittest.main()
+
 
 

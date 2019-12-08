@@ -1,29 +1,34 @@
 from model.object_type import ObjectType
 from model.data_access_object import DataAccess
 from collections import OrderedDict
-import copy
+import copy,re, json
 
 class TypesManagement(DataAccess):
     def __init__(self, map_name):
         super().__init__()
         self.map_object_types = {}
         self.map_name = map_name
+        #print("TM: %s" % map_name)
 
         self.deleted_types = []
         self.updated_type_names = set()
         self.added_type_names = set()
 
-        self.loadTypes()
+        mapExtension = re.split('\.', self.map_name)[-1]
+        if mapExtension == "db":
+            self.loadTypes()
+        elif mapExtension == "json":
+            self.loadJsonFile(self.map_name)
 
     def loadTypes(self):
-        types_model = self.viewData('type')
-        for i in range(len(types_model)):
-            name = types_model[i][0]
-            color = types_model[i][2]
-            shape = types_model[i][1]
-            width = float(types_model[i][3])
-            height = float(types_model[i][4])
-            self.map_object_types[name] = ObjectType(name,color,shape,width,height)
+            types_model = self.viewData('type')
+            for i in range(len(types_model)):
+                name = types_model[i][0]
+                color = types_model[i][2]
+                shape = types_model[i][1]
+                width = float(types_model[i][3])
+                height = float(types_model[i][4])
+                self.map_object_types[name] = ObjectType(name,color,shape,width,height)
 
 
     def removeTypeByName(self, type_name):
@@ -123,5 +128,13 @@ class TypesManagement(DataAccess):
                 ('object_types', types)
             ])
 
-    def loadJsonFile(self):
-        pass
+    def loadJsonFile(self, data):
+        with open('./json/'+data, "r") as file:
+            raw_data = file.read()
+            data = json.loads(raw_data, encoding='utf-8')
+            
+            for i in data['object_types']:
+                name = i['name']
+                object_type = ObjectType()
+                object_type.deserialize(i)
+                self.map_object_types[name] = object_type

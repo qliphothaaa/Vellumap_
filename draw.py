@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMenu, QMenuBar, QAction, QFileDialog
-from PyQt5.QtGui import QIcon, QImage, QPainter, QPen, QBrush
+from PyQt5.QtGui import QIcon, QImage, QPainter, QPen, QBrush, QImageReader
 from PyQt5.QtCore import Qt, QPoint
 import sys
  
@@ -12,17 +12,25 @@ class Window(QMainWindow):
         title = "Paint Application"
         top = 400
         left = 400
-        width = 800
-        height = 600
  
         icon = "icons/pain.png"
  
         self.setWindowTitle(title)
-        self.setGeometry(top, left, width, height)
-        self.setWindowIcon(QIcon(icon))
  
-        self.image = QImage(self.size(), QImage.Format_RGB32)
-        self.image.fill(Qt.white)
+        self.path = './pic/full.jpg'
+
+        reader = QImageReader(self.path)
+        self.size = reader.size()
+        print(self.size)
+        self.image = QImage(self.size, QImage.Format_RGB32)
+
+        self.image.load(self.path)
+        #self.image.fill(QPixmap('./pic/full.jpg'))
+        #self.image.setScaledContents(True)
+        self.setGeometry(top, left,self.size.width(), self.size.height())
+
+        painter = QPainter(self.image)
+        painter.drawLine(10, 10, 300, 200)
  
         self.drawing = False
         self.brushSize = 2
@@ -118,7 +126,6 @@ class Window(QMainWindow):
  
  
  
- 
     def save(self):
         filePath, _ = QFileDialog.getSaveFileName(self, "Save Image", "", "PNG(*.png);;JPEG(*.jpg *.jpeg);;All Files(*.*) ")
  
@@ -129,7 +136,7 @@ class Window(QMainWindow):
  
  
     def clear(self):
-        self.image.fill(Qt.white)
+        self.image.load(self.path)
         self.update()
  
  

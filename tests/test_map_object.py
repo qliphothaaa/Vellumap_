@@ -1,16 +1,14 @@
 import unittest
 from model.map_object import MapObject
-from tests.fake_db import FakeDB
-
+from collections import OrderedDict
+#from tests.fake_db import FakeDB
 
 class TestMapObject(unittest.TestCase):
     def setUp(self):
         self.obj1 = MapObject(1, 'test1', 'typetree', 10.0, 10.0, 'aaaa')
-        self.db = FakeDB('test')
 
     def tearDown(self):
-        self.db.clear('objectgraphic')
-        self.db.clear('objectdescription')
+        self.obj1 = MapObject(1, 'test1', 'typetree', 10.0, 10.0, 'aaaa')
 
     def test_getPosition(self):
         self.assertEqual(self.obj1.getPosition(), (10.0, 10.0))
@@ -18,55 +16,45 @@ class TestMapObject(unittest.TestCase):
     def test_getObjectInfo(self):
         self.assertEqual(self.obj1.getObjectInfo(), (1, 'test1', 'typetree', 10, 10, 'aaaa'))
 
-    def test_generateSqlForAdd(self):
-        sql = self.obj1.generateSqlForAdd()
-        self.db.accessDatabase(sql)
-        self.assertEqual(self.db.viewData('type', 'name', 'test1', 'ObjectGraphic'), 'typetree')
-        self.assertAlmostEqual(self.db.viewData('x', 'name', 'test1', 'ObjectGraphic'), 10)
-        self.assertAlmostEqual(self.db.viewData('y', 'name', 'test1', 'ObjectGraphic'), 10)
-        
     def test_generateSqlForRename(self):
-        self.assertEqual(self.obj1.generateSqlForRename(), "Update ObjectGraphic set Name = 'test1' where (id = 1);")
+        self.assertEqual(self.obj1.generateSqlForRename(), ("Update ObjectGraphic set Name = ? where (id = ?);",('test1', 1)))
 
-    def test_generateSqlForAddDiscription(self):
-        sql = self.obj1.generateSqlForAddDiscription()
-        self.assertEqual(self.obj1.generateSqlForAddDiscription(), "insert into ObjectDescription values (1, 'aaaa');")
-        self.db.accessDatabase(sql)
-        self.assertEqual(self.db.viewData('Description', 'id', 1, 'ObjectDescription'), 'aaaa')
-
-            
     def test_generateSqlForChangeDescription(self):
-        self.db.accessDatabase(self.obj1.generateSqlForAddDiscription())
-        self.assertEqual(self.db.viewData('Description', 'id', 1, 'ObjectDescription'), 'aaaa')
-        self.obj1.description = 'asdf'
-        self.db.accessDatabase(self.obj1.generateSqlForChangeDescription())
-        self.assertEqual(self.db.viewData('Description', 'id', 1, 'ObjectDescription'), 'asdf')
+        self.assertEqual(self.obj1.generateSqlForChangeDescription(), ("Update ObjectDescription set Description = ? where (id = ?);",('aaaa', 1)))
 
     def test_generateSqlForUpdatePosition(self):
-        self.db.accessDatabase(self.obj1.generateSqlForAdd())
-        self.assertAlmostEqual(self.db.viewData('x', 'name', 'test1', 'ObjectGraphic'), 10)
-        self.assertAlmostEqual(self.db.viewData('y', 'name', 'test1', 'ObjectGraphic'), 10)
-        self.obj1.object_id = self.db.viewData('id', 'name', 'test1', 'ObjectGraphic')
-        self.obj1.x = 10.0
-        self.obj1.y = 234.0
-        self.db.accessDatabase(self.obj1.generateSqlForUpdatePosition())
-        self.assertAlmostEqual(self.db.viewData('x', 'name', 'test1', 'ObjectGraphic'), 10)
-        self.assertAlmostEqual(self.db.viewData('y', 'name', 'test1', 'ObjectGraphic'), 234)
+        self.assertEqual(self.obj1.generateSqlForUpdatePosition(), ("Update ObjectGraphic set x = ?, y = ? where (id = ?);",(10.0, 10.0, 1)))
+
+    def test_generateSqlForAdd(self):
+        self.assertEqual(self.obj1.generateSqlForAdd(), ("insert into ObjectGraphic values (?, ?, ?, ?, ?);",(1, 'test1', 10.0, 10.0, 'typetree')))
+
+    def test_generateSqlForAddDiscription(self):
+        self.assertEqual(self.obj1.generateSqlForAddDiscription(), ("insert into ObjectDescription values (?, ?);",(1, 'aaaa')))
 
     def test_generateSqlForDelete(self):
-        self.assertEqual(self.obj1.generateSqlForDelete(), "Delete from ObjectGraphic where(id = 1);")
+        self.assertEqual(self.obj1.generateSqlForDelete(), ("Delete from ObjectGraphic where(id = ?);",(1,)))
 
     def test_generateSqlForDeleteDescription(self):
-        self.assertEqual(self.obj1.generateSqlForDeleteDescription(), "Delete from ObjectDescription where(id = 1);")
+        self.assertEqual(self.obj1.generateSqlForDeleteDescription(), ("Delete from ObjectDescription where(id = ?);",(1,)))
+
+    def test_serialize(self):
+        self.assertEqual(self.obj1.serialize(), OrderedDict([('object_id',1),('name','test1'),('type','typetree'),('x',10.0),('y',10.0 ),('description','aaaa')]))
 
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_deserialize(self):
+        self.assertEqual(self.obj1.object_name, 'test1')
+        self.assertEqual(self.obj1.object_type_name, 'typetree')
+        self.assertEqual(self.obj1.x, 10)
+        self.assertEqual(self.obj1.y, 10)
+        self.assertEqual(self.obj1.description, 'aaaa')
 
+        data = {'name':'newname', 'type':'newtype', 'x': 0.0, 'y':0.0, 'description':'bbbb'}
 
+        self.obj1.deserialize(data)
 
-
-
-
-        
+        self.assertEqual(self.obj1.object_name, 'newname')
+        self.assertEqual(self.obj1.object_type_name, 'newtype')
+        self.assertEqual(self.obj1.x, 0.0)
+        self.assertEqual(self.obj1.y, 0.0)
+        self.assertEqual(self.obj1.description, 'bbbb')
 

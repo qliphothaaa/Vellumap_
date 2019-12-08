@@ -38,8 +38,13 @@ class FakeDB():
     def accessDatabase(self, sql):
         conn = sqlite3.connect(self.db_name)
         cur = conn.cursor()
-        cur.execute(sql)
-        conn.commit()
+        try:
+            cur.execute(sql)
+            conn.commit()
+        except sqlite3.Error as e:
+            print(e)
+            print('fail to access database, rollback now')
+            conn.rollback()
         conn.close()
 
 

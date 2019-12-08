@@ -70,11 +70,11 @@ class LoadBackgroundDialog(QDialog):
             db = QSqlDatabase.database('qt_sql_default_connection')
             if db.databaseName() != self.mapName:
                 db.close()
-                db.setDatabaseName('./db/%s.db' % self.mapName)
+                db.setDatabaseName('./db/%s' % self.mapName)
                 db.open()
         else:
             db = QSqlDatabase.addDatabase("QSQLITE")
-            db.setDatabaseName('./db/%s.db' % self.mapName)
+            db.setDatabaseName('./db/%s' % self.mapName)
             db.open()
 
         self.model = QSqlTableModel()
@@ -84,6 +84,7 @@ class LoadBackgroundDialog(QDialog):
         x = self.model.record(0).value('x')
         y = self.model.record(0).value('y')
         size_rate = self.model.record(0).value('size_rate')
+        
 
         self.backgroundNameEdit.setText(pic_name)
         self.xEdit.setText(str(x))

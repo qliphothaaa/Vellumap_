@@ -6,10 +6,9 @@ class DataAccess(object):
     def __init__(self):
         self.id = id(self)
 
-    #read database return model
 
     def viewData(self, table_name):
-        conn = sqlite3.connect('./db/%s.db' % self.map_name)
+        conn = sqlite3.connect('./db/%s' % self.map_name)
         cur = conn.cursor()
         result = ''
 
@@ -28,7 +27,7 @@ class DataAccess(object):
 
 
     def accessDataBase(self, sql, attr=None):
-        conn = sqlite3.connect('./db/%s.db' % self.map_name)
+        conn = sqlite3.connect('./db/%s' % self.map_name)
         cur = conn.cursor()
         try:
             if attr:

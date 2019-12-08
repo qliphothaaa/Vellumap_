@@ -9,11 +9,13 @@ import re
 class VellumapWindow(QMainWindow):
     SaveAsJsonSignal = pyqtSignal()
     SaveToDBSignal = pyqtSignal()
-    SaveAsImg = pyqtSignal()
+    SaveAsImg = pyqtSignal(str)
+    PanSingal = pyqtSignal(bool)
     def __init__(self):
         super().__init__()
         self.is_open = False
         self.filepath = 'None'
+        self.pan = False
         self.onFileOpen()
 
 
@@ -34,8 +36,10 @@ class VellumapWindow(QMainWindow):
         #connect signal with function
 
         self.SaveAsJsonSignal.connect(self.mainEditor.scene.saveAsJson)
+        #self.SaveAsJsonSignal.connect(self.mainEditor.saveWidget)
         self.SaveToDBSignal.connect(self.mainEditor.scene.saveToDB)
         self.SaveAsImg.connect(self.mainEditor.scene.saveAsImg)
+        self.PanSingal.connect(self.mainEditor.view.setPan)
 
         #signal in view widget
         self.mainEditor.view.ScenePosSignal.connect(self.onScenePosChanged)
@@ -81,7 +85,7 @@ class VellumapWindow(QMainWindow):
         
 
         #finish generate GUI
-        self.setGeometry(150,150,1200,800)
+        self.setGeometry(0,0,2000,1000)
         fileex = re.split('\.', self.filepath)[-1]
         filename = re.split('\.', self.filepath)[-2]
 
@@ -103,6 +107,7 @@ class VellumapWindow(QMainWindow):
         fileMenu.addAction(self.createAct('Save', 'Ctrl+S', 'Save map', self.onFileSaveDB))
         fileMenu.addAction(self.createAct('Export to Json', 'Ctrl+J', 'Save map by Json', self.onFileSaveJson))
         fileMenu.addAction(self.createAct('Export to img', 'Ctrl+I', 'Save map in jpg', self.onFileSaveImg))
+        fileMenu.addAction(self.createAct('Pan', 'P', 'draw in viewmode', self.enablePen))
 
         fileMenu.addAction(self.createAct('About', 'Ctrl+A', 'about', self.about))
         fileMenu.addSeparator()
@@ -139,25 +144,38 @@ class VellumapWindow(QMainWindow):
         openfileDialog.exec_()
         if(old_name != self.filepath):
             self.initUI()
+            self.statusBar().showMessage("file %s loaded" % self.filepath)
+
+
 
 
     def onFileSaveDB(self):
         self.SaveToDBSignal.emit()
+        self.statusBar().showMessage("save to database")
             
         
         #print('Save to picture')
 
     def onFileSaveJson(self):
         self.SaveAsJsonSignal.emit()
-        #print('Save to json')
+        self.statusBar().showMessage("save to Json")
 
     def onFileSaveImg(self):
-        self.SaveAsImg.emit()
-        #print('Save to picture')
+        self.SaveAsImg.emit('first_img')
+        self.statusBar().showMessage("save to image")
 
     def onEditDelete(self):
         pass
         #self.centralWidget().view.deleteSelectedItem()
+
+    def enablePen(self):
+        self.pan = not(self.pan)
+        self.PanSingal.emit(self.pan)
+        if self.pan:
+            self.statusBar().showMessage("enable pan")
+        else:   
+            self.statusBar().showMessage("disable pan")
+
 
     def about(self):
         QMessageBox.about(self, "About Vellumap", "The vellumap is a desktop application for making map using Qt")

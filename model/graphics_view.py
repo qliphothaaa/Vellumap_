@@ -34,14 +34,14 @@ class QMapGraphicsView(QGraphicsView):
     def setTempTypeName(self, name):
         self.temp_type_name = name
 
+    def setPan(self, condition):
+        pass
     
     def initUI(self):
         self.setRenderHints(QPainter.Antialiasing| QPainter.HighQualityAntialiasing | QPainter.SmoothPixmapTransform)
         self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         self.setMouseTracking(True)
-        #self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setDragMode(QGraphicsView.RubberBandDrag)
-        #self.setDragMode(QGraphicsView.NoDrag)
 
     def mouseMoveEvent(self, event):
         self.last_scene_mouse_position = self.mapToScene(event.pos())

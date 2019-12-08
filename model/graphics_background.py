@@ -19,8 +19,16 @@ class QMapGraphicsBackground(QGraphicsPixmapItem):
         reader = QImageReader(self.path)
         self.size = reader.size() * self.background.rate
         background_pic = QPixmap(self.path)
-        scaled_pixmap = background_pic.scaled(self.size, Qt.IgnoreAspectRatio,Qt.SmoothTransformation)
-        return scaled_pixmap
+        self.scaled_pixmap = background_pic.scaled(self.size, Qt.IgnoreAspectRatio,Qt.SmoothTransformation)
+        #scaled_pixmap.save('./lj/aanvenrevew.jpg')
+        return self.scaled_pixmap
+
+    def updateBack(self):
+        self.setPixmap(self.scaled_pixmap) 
+
+    def resetBack(self):
+        self.setPixmap(self.generatePixmap())
+
 
 
     def setSize(self, size):
@@ -28,3 +36,4 @@ class QMapGraphicsBackground(QGraphicsPixmapItem):
 
     def setPosition(self):
         self.setPos(self.background.x - self.size.width()/2, self.background.y - self.size.height()/2)
+

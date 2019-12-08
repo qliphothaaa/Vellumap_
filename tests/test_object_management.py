@@ -1,17 +1,18 @@
-import unittest
+import unittest, json
 from model.object_management import ObjectsManagement
+from collections import OrderedDict
 from tests.fake_db import FakeDB
 
 
 class TestObjectManagmeent(unittest.TestCase):
     def setUp(self):
-        Object1 = ( 'obj2', 200, 200,'type1', 'obj2Description')
+        Object1 = (2, 'obj2', 200, 200,'type1', 'obj2Description')
         self.db = FakeDB('test')
-        self.db.accessDatabase("insert into ObjectGraphic values (null, '%s', %s, %s, '%s');"% (*Object1[:4],))
-        self.db.accessDatabase("insert into Background values ('full.jpg', 0.0, 0.0, 5.0)")
-        id1 = self.db.viewData('id', 'name', 'obj2', 'ObjectGraphic')
-        self.db.accessDatabase("insert into ObjectDescription values(%s, '%s')" % (id1, Object1[4]))
-        self.object_management = ObjectsManagement('test')
+        self.db.accessDatabase("insert into ObjectGraphic values (2, 'obj2', 200, 200, 'type1');")
+        self.db.accessDatabase("insert into Background values ('full.jpg', 0.0, 0.0, 5.0,'asdf');")
+        self.db.accessDatabase("insert into ObjectDescription values(2, 'obj2Description');")
+
+        self.object_management = ObjectsManagement('test.db')
 
     def tearDown(self):
         self.db.clear('objectgraphic')
@@ -19,97 +20,90 @@ class TestObjectManagmeent(unittest.TestCase):
         self.db.clear('background')
 
     def test_loadObjects(self):
-        id1 = self.db.viewData('id', 'name', 'obj2', 'ObjectGraphic')
-        self.assertTrue(id1 in self.object_management.map_objects)
-        self.assertEqual(self.object_management.map_objects[id1].object_name , 'obj2')
-        self.assertEqual(self.object_management.map_objects[id1].x ,200)
-        self.assertEqual(self.object_management.map_objects[id1].y ,200)
-        self.assertEqual(self.object_management.map_objects[id1].description ,'obj2Description')
-        self.assertEqual(self.object_management.map_objects[id1].object_type_name,'type1')
+        self.assertTrue(2 in self.object_management.map_objects)
+        self.assertEqual(self.object_management.map_objects[2].object_name , 'obj2')
+        self.assertEqual(self.object_management.map_objects[2].x ,200)
+        self.assertEqual(self.object_management.map_objects[2].y ,200)
+        self.assertEqual(self.object_management.map_objects[2].description ,'obj2Description')
+        self.assertEqual(self.object_management.map_objects[2].object_type_name,'type1')
 
     def test_loadBackground(self):
         self.assertEqual(self.object_management.map_background.pic_name, 'full.jpg');
         self.assertEqual(self.object_management.map_background.x, 0);
         self.assertEqual(self.object_management.map_background.y, 0);
         self.assertEqual(self.object_management.map_background.rate, 5);
+        self.assertEqual(self.object_management.map_background.pic_str, 'asdf');
 
     def test_renameObject(self):
-        id1 = self.db.viewData('id', 'name', 'obj2', 'ObjectGraphic')
-        self.assertEqual(self.object_management.map_objects[id1].object_name, 'obj2')
+        self.assertEqual(self.object_management.map_objects[2].object_name, 'obj2')
         
         #TC1
-        self.object_management.renameObject(id1, 'newname')
-        self.assertEqual(self.object_management.map_objects[id1].object_name, 'newname')
-        self.assertEqual(self.db.viewData('name', 'id', id1, 'objectgraphic'), 'newname')
+        self.object_management.renameObject(2, 'newname')
+        self.assertEqual(self.object_management.map_objects[2].object_name, 'newname')
         #TC2
-        with self.assertRaisesRegex(ValueError, 'name is empty'):
-            self.object_management.renameObject(id1, '')
+        with self.assertRaises(ValueError):
+            self.object_management.renameObject(2, '')
         #TC3
-        with self.assertRaisesRegex(KeyError, "can't find id"):
+        with self.assertRaises(KeyError):
             self.object_management.renameObject(45, 'newname')
         #TC4
-        with self.assertRaisesRegex(TypeError, 'id should be int'):
+        with self.assertRaises(TypeError):
             self.object_management.renameObject('asdf', 'newname')
         #TC5
-        with self.assertRaisesRegex(ValueError, 'name should be less then 10 char'):
-            self.object_management.renameObject(id1, '12345678901')
+        with self.assertRaises(ValueError):
+            self.object_management.renameObject(2, '12345678901')
 
     def test_changeDescription(self):
-        id1 = self.db.viewData('id', 'name', 'obj2', 'ObjectGraphic')
-        self.assertEqual(self.object_management.map_objects[id1].description, 'obj2Description')
+        self.assertEqual(self.object_management.map_objects[2].description, 'obj2Description')
 
         #TC1
-        self.object_management.changeDescription(id1, 'newdescription')
-        self.assertEqual(self.object_management.map_objects[id1].description, 'newdescription')
-        self.assertEqual(self.db.viewData('description', 'id', id1, 'objectdescription'), 'newdescription')
+        self.object_management.changeDescription(2, 'newdescription')
+        self.assertEqual(self.object_management.map_objects[2].description, 'newdescription')
         #TC2
-        with self.assertRaisesRegex(ValueError, 'description is empty'):
-            self.object_management.changeDescription(id1, '')
+        '''
+        with self.assertRaises(ValueError):
+            self.object_management.changeDescription(2, '')
+        '''
         #TC3
-        with self.assertRaisesRegex(KeyError, "can't find id"):
-            self.object_management.changeDescription(3, 'newdescription')
+        with self.assertRaises(KeyError):
+            self.object_management.changeDescription(5, 'newdescription')
         #TC4
-        with self.assertRaisesRegex(TypeError, 'id should be int'):
+        with self.assertRaises(TypeError):
             self.object_management.changeDescription('asdf', 'newdescription')
         #TC5
-        with self.assertRaisesRegex(ValueError, 'description should be less then 100 char'):
-            self.object_management.changeDescription(id1, 'a'*101)
+        with self.assertRaises(ValueError):
+            self.object_management.changeDescription(2, 'a'*101)
 
     def test_updatePosition(self):
-        id1 = self.db.viewData('id', 'name', 'obj2', 'ObjectGraphic')
-        self.assertEqual(self.object_management.map_objects[id1].x, 200.0)
-        self.assertEqual(self.object_management.map_objects[id1].y, 200.0)
+        self.assertEqual(self.object_management.map_objects[2].x, 200.0)
+        self.assertEqual(self.object_management.map_objects[2].y, 200.0)
 
         #TC1
-        self.object_management.updatePosition(id1, 20, 20)
-        self.assertEqual(self.object_management.map_objects[id1].x, 20)
-        self.assertEqual(self.object_management.map_objects[id1].y, 20)
-        self.assertEqual(self.db.viewData('x', 'id',id1, 'objectgraphic'), 20)
-        self.assertEqual(self.db.viewData('y', 'id',id1, 'objectgraphic'), 20)
+        self.object_management.updatePosition(2, 20, 20)
+        self.assertEqual(self.object_management.map_objects[2].x, 20)
+        self.assertEqual(self.object_management.map_objects[2].y, 20)
         #TC2
-        with self.assertRaisesRegex(KeyError, "can't find id"):
-            self.object_management.updatePosition(3, 20, 20)
+        with self.assertRaises(KeyError):
+            self.object_management.updatePosition(5, 20, 20)
         #TC3
-        with self.assertRaisesRegex(TypeError, 'id should be int'):
+        with self.assertRaises(TypeError):
             self.object_management.updatePosition('asdf', 20, 20)
         #TC4
-        with self.assertRaisesRegex(ValueError, 'position should be int or float'):
-            self.object_management.updatePosition(id1, 'asdf', 'asdf')
+        with self.assertRaises(ValueError):
+            self.object_management.updatePosition(2, 'asdf', 'asdf')
 
     def test_createNewObject(self):
-        object_id = self.object_management.createNewObject('type1', 100.0, 100.0)
+        object_id = self.object_management.createNewObject('type1', 20.0, 20.0)
         self.assertTrue(object_id in self.object_management.map_objects)
-        self.assertEqual(self.object_management.map_objects[object_id].x, 100)
-        self.assertEqual(self.object_management.map_objects[object_id].y, 100)
+        self.assertEqual(self.object_management.map_objects[object_id].x, 20)
+        self.assertEqual(self.object_management.map_objects[object_id].y, 20)
         self.assertEqual(self.object_management.map_objects[object_id].object_type_name, 'type1')
         self.assertEqual(self.object_management.map_objects[object_id].object_name, '1_unnamed')
         self.assertEqual(self.object_management.map_objects[object_id].description, 'nothing')
 
-        self.assertEqual(self.db.viewData('x', 'id', object_id, 'objectgraphic') , 100)
-        self.assertEqual(self.db.viewData('y', 'id', object_id, 'objectgraphic') , 100)
-        self.assertEqual(self.db.viewData('type', 'id', object_id, 'objectgraphic') , 'type1')
-        self.assertEqual(self.db.viewData('name', 'id', object_id, 'objectgraphic') , '1_unnamed')
-        self.assertEqual(self.db.viewData('description', 'id', object_id, 'objectdescription') , 'nothing')
+        with self.assertRaises(ValueError):
+            self.object_management.createNewObject('3type1', 20.0, 20.0)
+
 
     def test_addBackground(self):
         data1 = ('img.jpg', 5.0, -1.0, -1.0)
@@ -121,13 +115,13 @@ class TestObjectManagmeent(unittest.TestCase):
         self.assertEqual(self.object_management.map_background.x, -1);
         self.assertEqual(self.object_management.map_background.y, -1);
         self.assertEqual(self.object_management.map_background.rate, 5);
-        with self.assertRaisesRegex(ValueError, 'cannot find the pic'):
+        with self.assertRaises(ValueError):
             self.object_management.addBackground(*data2)
 
-        with self.assertRaisesRegex(TypeError, 'rate should be float'):
+        with self.assertRaises(TypeError):
             self.object_management.addBackground(*data3)
 
-        with self.assertRaisesRegex(TypeError, 'position should be float'):
+        with self.assertRaises(TypeError):
             self.object_management.addBackground(*data4)
         
 
@@ -138,15 +132,14 @@ class TestObjectManagmeent(unittest.TestCase):
 
 
     def test_removeObjectById(self):
-        id1 = self.db.viewData('id', 'name', 'obj2', 'ObjectGraphic')
         self.assertEqual(len(self.object_management.map_objects), 1)
-        type_name = self.object_management.removeObjectById(id1)
-        self.assertFalse(id1 in self.object_management.map_objects)
+        type_name = self.object_management.removeObjectById(2)
+        self.assertFalse(2 in self.object_management.map_objects)
         self.assertEqual(len(self.object_management.map_objects), 0)
 
-        with self.assertRaisesRegex(KeyError, "can't find id"):
-            self.object_management.removeObjectById(3)
-        with self.assertRaisesRegex(TypeError, 'id should be int'):
+        with self.assertRaises(KeyError):
+            self.object_management.removeObjectById(2)
+        with self.assertRaises(TypeError):
             self.object_management.removeObjectById('asf')
 
 
@@ -157,13 +150,60 @@ class TestObjectManagmeent(unittest.TestCase):
         self.assertEqual(self.object_management.map_background, None)
 
     def test_getObjectById(self):
-        id1 = self.db.viewData('id', 'name', 'obj2', 'ObjectGraphic')
 
-        self.assertEqual(self.object_management.getObjectById(id1).object_name, 'obj2')
-        with self.assertRaisesRegex(KeyError, "can't find id"):
-            self.object_management.getObjectById(3)
-        with self.assertRaisesRegex(TypeError, 'id should be int'):
+        self.assertEqual(self.object_management.getObjectById(2).object_name, 'obj2')
+        with self.assertRaises(KeyError):
+            self.object_management.getObjectById(5)
+        with self.assertRaises(TypeError):
             self.object_management.getObjectById('asf')
+
+    def test_saveToDB(self):
+        self.object_management.createNewObject('type1', 20.0, 20.0)
+        self.object_management.saveToDB()
+        self.assertEqual(self.db.viewData('x', 'id', 3, 'objectgraphic'), 20)
+        self.assertEqual(self.db.viewData('y', 'id', 3, 'objectgraphic'), 20)
+        self.assertEqual(self.db.viewData('type', 'id', 3, 'objectgraphic'), 'type1')
+
+    def test_collectData(self):
+
+        objects = OrderedDict([('object_id',2),('name','obj2'),('type','type1'),('x',200.0),('y',200.0 ),('description','obj2Description')])
+        background = OrderedDict([('pic_name','full.jpg'),('rate',5.0),('x',0.0),('y', 0.0),('pic_str', 'asdf')])
+
+        result = OrderedDict([
+            ('map_objects', [objects]),
+            ('background', background)
+            ])
+        self.assertEqual(self.object_management.collectData(), result)
+
+
+    def test_loadJsonFile(self):
+        '''
+        {
+            "map_objects": [
+                {
+                    "object_id": 23,
+                    "name": "asdfasdf",
+                    "type": "typeplant",
+                    "x": 118.0,
+                    "y": 47.0,
+                    "description": "asdfasdfasdf"
+                }
+            ],
+            "background": {
+                "pic_name": "None"
+            }
+        }
+        '''
+
+        self.object_management.loadJsonFile('test.json')
+
+        object_id=23
+        self.assertEqual(self.object_management.map_objects[object_id].x, 118)
+        self.assertEqual(self.object_management.map_objects[object_id].y, 47)
+        self.assertEqual(self.object_management.map_objects[object_id].object_type_name, 'typeplant')
+        self.assertEqual(self.object_management.map_objects[object_id].object_name, 'asdfasdf')
+        self.assertEqual(self.object_management.map_objects[object_id].description, 'asdfasdfasdf')
 
 if __name__ == '__main__':
     unittest.main()
+

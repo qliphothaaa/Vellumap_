@@ -4,13 +4,16 @@ from collections import OrderedDict
 
 #the main object for map object
 class MapBackground():
-    def __init__(self, pic_name, rate=1.0, x = 0, y = 0):
+    def __init__(self, pic_name, rate=1.0, x = 0.0, y = 0.0, pic_str=''):
         self.pic_name = pic_name
         self.rate = rate
         self.x = x
         self.y = y
         self.path_name = './pic/' + self.pic_name
-        self.pic_str = imageToStr(self.path_name)
+        if pic_str =='':
+            self.pic_str = imageToStr(self.path_name)
+        else:
+            self.pic_str = pic_str
 
     ###############################getter and setter
     @property
@@ -51,7 +54,7 @@ class MapBackground():
 
 
 
-    ################method
+    ################method sql
     def generateSqlForAdd(self):
         sql = "insert into background values (?, ?, ?, ?, ?);"  
         return (sql,(self.pic_name, self.x, self.y, self.rate, self.pic_str))
@@ -62,9 +65,11 @@ class MapBackground():
 
     def generateSqlForDelete(self):
         #sql = "Delete from background where(name = '%s');" % self.pic_name
-        sql = "Delete from background ;"
+        sql = "Delete from background;"
         return sql
 
+
+    ################method serialize
     def serialize(self):
         return OrderedDict([
                     ('pic_name', self.pic_name),
@@ -75,9 +80,14 @@ class MapBackground():
                     ])
 
 
-    def deserialize(self, data, hashmap={}):
-        raise NotImplemented()
+    def deserialize(self, data):
+        self.pic_name = data['pic_name']
+        self.rate = data['rate']
+        self.x = data['x']
+        self.y = data['y']
+        self.pic_str = data['pic_str']
 
+    ################end
 
 
 if __name__ == "__main__":

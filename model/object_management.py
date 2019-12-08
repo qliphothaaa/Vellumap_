@@ -1,10 +1,9 @@
-import re
-import copy
 from collections import OrderedDict
 from model.data_access_object import DataAccess
 
 from model.map_object import MapObject
 from model.background import MapBackground
+import copy, re, json
 
 class ObjectsManagement(DataAccess):
     def __init__(self, map_name):
@@ -19,27 +18,31 @@ class ObjectsManagement(DataAccess):
         self.add_id = set()
         #self.delete_id = set()
 
-        self.loadObjects()
-        self.loadBackground()
+        mapExtension = re.split('\.', self.map_name)[-1]
+        if mapExtension == "db":
+            self.loadObjects()
+            self.loadBackground()
+        elif mapExtension == "json":
+            self.loadJsonFile(self.map_name)
 
 
     def loadObjects(self):
-        object_model = self.viewData('ObjectGraphic')
-        description_model = self.viewData('ObjectDescription')
-        for i in range(len(object_model)):
-            object_id = object_model[i][0]
-            if object_id > self.max_id:
-                self.max_id = object_id
-            object_name = object_model[i][1]
-            object_type_name = object_model[i][4]
-            object_x = object_model[i][2]
-            object_y = object_model[i][3]
-            description = description_model[i][1]
-            mapObject = MapObject(object_id, object_name, object_type_name, object_x, object_y, description)
-            self.map_objects[object_id] = mapObject
+
+            object_model = self.viewData('ObjectGraphic')
+            description_model = self.viewData('ObjectDescription')
+            for i in range(len(object_model)):
+                object_id = object_model[i][0]
+                if object_id > self.max_id:
+                    self.max_id = object_id
+                object_name = object_model[i][1]
+                object_type_name = object_model[i][4]
+                object_x = object_model[i][2]
+                object_y = object_model[i][3]
+                description = description_model[i][1]
+                mapObject = MapObject(object_id, object_name, object_type_name, object_x, object_y, description)
+                self.map_objects[object_id] = mapObject
 
 
-        
 
     def loadBackground(self):
         background_model = self.viewData('background')
@@ -48,7 +51,8 @@ class ObjectsManagement(DataAccess):
             x = background_model[i][1]
             y = background_model[i][2]
             rate = background_model[i][3]
-            self.map_background = MapBackground( pic_name, rate, x, y)
+            pic_str = background_model[i][4]
+            self.map_background = MapBackground( pic_name, rate, x, y, pic_str)
 
     def renameObject(self, object_id, new_name):
         if not isinstance(new_name, str):
@@ -81,7 +85,7 @@ class ObjectsManagement(DataAccess):
     def updatePosition(self, object_id, x, y):
         if not isinstance(x,int) and not isinstance(y,int):
             if not isinstance(x, float) and not isinstance(y, float):
-                raise ValueError("position should be int or float(input:%s,%s)"% x, y)
+                raise ValueError("position should be int or float(input:%s,%s)"% (x, y))
         targetObject = self.getObjectById(object_id)
         targetObject.x = float(x)
         targetObject.y = float(y)
@@ -190,12 +194,30 @@ class ObjectsManagement(DataAccess):
             objects.append(map_object.serialize())
 
         return OrderedDict([
-                ('background', background_data),
-                ('map_objects', objects)
+                ('map_objects', objects),
+                ('background', background_data)
             ])
 
-    def loadJsonFile(self):
-        pass
+    def loadJsonFile(self, data):
+        self.map_objects.clear()
+        self.clearTempSet()
+        with open('./json/'+data, "r") as file:
+            raw_data = file.read()
+            data = json.loads(raw_data, encoding='utf-8')
+            
+            for i in data['map_objects']:
+                object_id = i['object_id']
+                map_object = MapObject(object_id)
+                map_object.deserialize(i)
+                self.map_objects[object_id] = map_object
+
+            if data['background']['pic_name'] == 'None':
+                self.map_background = None
+            else:
+                pic_name = data['background']['pic_name']
+                self.map_background = MapBackground(pic_name)
+                self.map_background.deserialize(data['background'])
+
 
    
 

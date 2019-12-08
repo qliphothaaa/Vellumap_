@@ -15,7 +15,8 @@ class TypeTableWidget(QWidget):
         super(TypeTableWidget,self).__init__(parent,Qt.Window)
         self.setWindowTitle('type table')
         self.tableView = None
-        self.mapName=mapName
+        #self.mapName=mapName
+        self.mapName="iseki"
         self.type_list = []
         
         self.initUI()

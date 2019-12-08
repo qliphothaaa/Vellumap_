@@ -5,7 +5,7 @@ from model.object_graphics import QMapObjectGraphics
 
 
 #class that contain the graphics
-class QMapGraphicsView(QGraphicsView):
+class QMapGraphicsView2(QGraphicsView):
     ScenePosSignal = pyqtSignal(int, int)
     UpdateObjectPosSignal = pyqtSignal(int, float, float)
     CreateObjectSignal = pyqtSignal(str, int, int)
@@ -19,8 +19,15 @@ class QMapGraphicsView(QGraphicsView):
         self.initUI()
         self.setScene(self.grScene)
 
-        self.mode = 'select'
-        #self.temp_type_name = ''
+
+        #drawing part
+        self.drawing = False
+        self.drawing2 = False
+        self.brushSize = 2
+        self.brushColor = Qt.black
+        self.lastPoint = QPoint()
+
+        
 
         self.zoomInFactor = 1.25
         self.zoomOutFactor = 1 / self.zoomInFactor
@@ -32,64 +39,70 @@ class QMapGraphicsView(QGraphicsView):
     def setTempTypeName(self, name):
         self.temp_type_name = name
 
+    def setPan(self, condition):
+        self.drawing2 = condition
+
     
     def initUI(self):
         self.setRenderHints(QPainter.Antialiasing| QPainter.HighQualityAntialiasing | QPainter.SmoothPixmapTransform)
         self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
         self.setMouseTracking(True)
         #self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setDragMode(QGraphicsView.RubberBandDrag)
 
     def mouseMoveEvent(self, event):
         self.last_scene_mouse_position = self.mapToScene(event.pos())
         self.ScenePosSignal.emit(int(self.last_scene_mouse_position.x()), int(self.last_scene_mouse_position.y()))
+        if(event.buttons() & Qt.LeftButton) & (self.drawing & self.drawing2):
+            painter = QPainter(self.grScene.background_graphic.scaled_pixmap)
+            painter.setPen(QPen(Qt.black, 3, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+            painter.drawLine(self.changePoint(self.lastPoint), self.changePoint(self.mapToScene(event.pos())))
+            #painter.drawLine(QPoint(-250,-250), QPoint(250,250))
+            self.lastPoint = self.mapToScene(event.pos())
+            self.grScene.background_graphic.updateBack()
         super().mouseMoveEvent(event)
 
+
     def changeMode(self, mode_name):
-        self.mode = mode_name
+        pass
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Up:
             self.zoomIn()
         elif event.key() == Qt.Key_Down:
             self.zoomOut()
+        elif event.key() == Qt.Key_C:
+            self.clear()
         else:
             super().keyPressEvent(event)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
+            self.drawing = True
+            self.lastPoint = self.mapToScene(event.pos())
+            
             self.leftMouseButtonPress(event)
 
     def mouseReleaseEvent(self,event):
         if event.button() == Qt.LeftButton:
+            self.drawing = False
+            #self.grScene.background_graphic.save('asdzxc.png' ,quality=100)
             self.leftMouseButtonRelease(event)
 
     def leftMouseButtonPress(self, event):
-        if (self.mode == 'select'):
-            self.current_item = self.getItemAtClicked(event)
-            if isinstance(self.current_item, QMapObjectGraphics):
-                self.CurrentObjectSignal.emit(*self.current_item.getObjectInfo())
-                self.addToTop()
-            else:
-                self.CurrentObjectSignal.emit(-1,'','','','','',0.0,0.0)
-        elif (self.mode == 'create'):
-            pass
-            #self.CreateObjectSignal.emit(self.temp_type_name, int(self.mapToScene(event.pos()).x()), int(self.mapToScene(event.pos()).y()))
+        self.current_item = self.getItemAtClicked(event)
+        if isinstance(self.current_item, QMapObjectGraphics):
+            self.CurrentObjectSignal.emit(*self.current_item.getObjectInfo())
+            self.addToTop()
+        else:
+            self.CurrentObjectSignal.emit(-1,'','','','','',0.0,0.0)
 
         super().mousePressEvent(event)
 
     def leftMouseButtonRelease(self, event):
-        if (self.mode == 'select'):
-            '''
-            for item in self.grScene.selectedItems():
-                if isinstance(item, QMapObjectGraphics):
-                    pass
-                    #self.UpdateObjectPosSignal.emit(item.object_id, *item.getCentrelPos())
-            '''
-            if isinstance(self.current_item, QMapObjectGraphics):
-                self.CurrentObjectSignal.emit(*self.current_item.getObjectInfo())
-            else:
-                self.CurrentObjectSignal.emit(-1,'','','','','',0.0,0.0)
+        if isinstance(self.current_item, QMapObjectGraphics):
+            self.CurrentObjectSignal.emit(*self.current_item.getObjectInfo())
+        else:
+            self.CurrentObjectSignal.emit(-1,'','','','','',0.0,0.0)
         super().mouseReleaseEvent(event)
 
     def getItemAtClicked(self, event):
@@ -99,15 +112,31 @@ class QMapGraphicsView(QGraphicsView):
             obj = obj.parentItem()
         return obj
 
-    '''
-    def deleteSelectedItem(self):
-        message_text = 'delete select object?' 
-        message = QMessageBox.question(self, 'question message', message_text, QMessageBox.Yes, QMessageBox.No)
-        if message == QMessageBox.Yes:
-            for item in self.grScene.selectedItems():
-                if isinstance(item, QMapObjectGraphics):
-                    self.BackSpaceSignal.emit(item.object_id)
-    '''
+    def clear(self):
+        self.grScene.background_graphic.resetBack()
+
+    def changePoint(self,point):
+        size = self.grScene.background_graphic.size
+        width = size.width()
+        height = size.width()
+        x = point.x()
+        y = point.y()
+
+        if x >(width/2):
+            x = width
+        elif x <(-width/2):
+            x = 0
+        else:
+            x = x +width/2
+        
+        if y >(height/2):
+            y = height
+        elif y <(-height/2):
+            y = 0
+        else:
+            y = y + height/2
+        return QPoint(x,y)
+
 
 
     def addToTop(self):

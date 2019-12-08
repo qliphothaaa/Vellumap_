@@ -11,7 +11,8 @@ class ObjectTableWidget(QWidget):
     def __init__(self,mapName, parent=None):
         super(ObjectTableWidget,self).__init__(parent, Qt.Window)
         self.setWindowTitle('Object table')
-        self.mapName=mapName
+        #self.mapName=mapName
+        self.mapName="iseki"
         self.squeryModel = None
         self.tableView = None
         self.currentPage = 0

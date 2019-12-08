@@ -44,6 +44,7 @@ class OpenMapDialog(QDialog):
             self.setNameFinished = True
             self.close()
 
+
     def openViewMode(self):
         filter = "JSON (*.json)"
         filename, _ = QFileDialog.getOpenFileName(None, "Open File", "./json/", filter)
